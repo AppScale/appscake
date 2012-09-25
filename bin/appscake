@@ -1,0 +1,5 @@
+#!/bin/bash
+# Programmer: Chris Bunch (cgb@cs.ucsb.edu)
+# Makes AppsCake exec'able, nice when you install via gem
+
+ruby ../appscake.rb
