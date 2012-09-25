@@ -9,6 +9,9 @@ require 'webrick'
 require 'webrick/https'
 require 'openssl'
 
+CURRENT_DIR = File.expand_path(File.dirname(__FILE__))
+
+$:.unshift CURRENT_DIR
 require 'appscake_utils'
 
 puts "\nAppsCake - Makes deploying AppScale a 'piece of cake'!\n\n"
@@ -34,10 +37,10 @@ class AppsCake < Sinatra::Base
       return report_error("AppScale Administrator Account Configuration Error", acc_result)
     end
 
-    #status,ssh_result = validate_ssh_credentials(params[:keyname], params[:root_password], yaml)
-    #if !status
-    #  return report_error("AppScale SSH Configuration Error", ssh_result)
-    #end
+    status,ssh_result = validate_ssh_credentials(params[:keyname], params[:root_password], yaml)
+    if !status
+      return report_error("AppScale SSH Configuration Error", ssh_result)
+    end
 
     add_key_options = {
         'ips' => yaml,
@@ -135,8 +138,10 @@ webrick_options = {
     :DocumentRoot       => "/ruby/htdocs",
     :SSLEnable          => true,
     :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
-    :SSLCertificate     => OpenSSL::X509::Certificate.new(File.open(File.join("certificates", "cert-appscake.pem")).read),
-    :SSLPrivateKey      => OpenSSL::PKey::RSA.new(File.open(File.join("certificates", "pk-appscake.pem")).read),
+    :SSLCertificate     => OpenSSL::X509::Certificate.new(
+        File.open(File.join(CURRENT_DIR, "certificates", "cert-appscake.pem")).read),
+    :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
+        File.open(File.join(CURRENT_DIR, "certificates", "pk-appscake.pem")).read),
     :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
     :app                => AppsCake
 }

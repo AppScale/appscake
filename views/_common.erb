@@ -14,13 +14,15 @@
     <td align="right">Key Name:</td>
     <td><input name="keyname" type="text" value="appscale"/></td>
 </tr>
-<% if Dir.glob('./repository/*').length > 0 %>
+<% repo_path = File.join(File.expand_path(File.dirname(__FILE__)), '..', 'repository')
+   puts repo_path
+   if Dir.glob(repo_path + '/*').length > 0 %>
     <tr>
         <td align="right">Target Application:</td>
         <td>
             <select name="target_app">
                 <option value="_none_">None</option>
-                <% for item in Dir.glob('./repository/*') %>
+                <% for item in Dir.glob(repo_path + "/*") %>
                     <% if File.directory?(item) %>
                         <option value="<%=File.basename(item)%>"><%=File.basename(item)%></option>
                     <% end %>

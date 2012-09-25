@@ -227,9 +227,10 @@ def redirect_standard_io(timestamp)
   begin
     orig_stderr = $stderr.clone
     orig_stdout = $stdout.clone
-    $stderr.reopen File.new("./logs/deploy-#{timestamp}.log", "w")
+    log_path = File.join(File.expand_path(File.dirname(__FILE__)), "logs")
+    $stderr.reopen File.new(File.join(log_path, "deploy-#{timestamp}.log"), "w")
     $stderr.sync = true
-    $stdout.reopen File.new("./logs/deploy-#{timestamp}.log", "w")
+    $stdout.reopen File.new(File.join(log_path, "deploy-#{timestamp}.log"), "w")
     $stdout.sync = true
     retval = yield
   rescue Exception => e

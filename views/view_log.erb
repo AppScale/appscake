@@ -5,7 +5,8 @@
 <body>
 <h1>Cloud Deployment Log - <%= @timestamp %></h1>
 <%
-   file_name = "./logs/deploy-" + @timestamp + ".log"
+   file_name = File.join(File.expand_path(File.dirname(__FILE__)), "..",
+                         "logs", "deploy-" + @timestamp + ".log")
    content_loaded = false
    if File.exists?(file_name)
      file = File.new(file_name, "r")
