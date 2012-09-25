@@ -8,7 +8,7 @@ if tools_home.length == 0
   require 'appscale-tools'
 else
   # Give priority to the the local copy of AppScale Tools
-  $:.unshift File.join(File.dirname(tools_home), "lib")
+  $:.unshift File.join(File.dirname(tools_home), "..", "lib")
   require 'appscale_tools'
 end
 
