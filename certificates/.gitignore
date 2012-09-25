@@ -2,3 +2,5 @@
 *
 # Except this file
 !.gitignore
+!cert-appscake.pem
+!pk-appscake.pem

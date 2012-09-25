@@ -6,6 +6,7 @@
 <h1>Cloud Deployment Log - <%= @timestamp %></h1>
 <%
    file_name = "./logs/deploy-" + @timestamp + ".log"
+   content_loaded = false
    if File.exists?(file_name)
      file = File.new(file_name, "r")
      content = ""
@@ -13,6 +14,7 @@
        content += line
      end
      file.close
+     content_loaded = true
    else
      content = "Unable to locate deployment log with timestamp: " + @timestamp
    end
@@ -38,6 +40,15 @@
    if step7 == "Done" and step6 == "Pending"
      step6 = "Skipped"
    end
+
+   status = "In Progress"
+   if step7 == "Done"
+    status = "Finished"
+   elsif content.include?("__ERROR__")
+     status = "Failed"
+   elsif !content_loaded
+     status = "Invalid"
+   end
 %>
 <table>
     <tr>
@@ -45,6 +56,7 @@
             <textarea rows="30" cols="100" readonly><%= content %></textarea>
         </td>
         <td>
+            <p>Status: <%= status %></p>
             <p>Deployment steps:</p>
             <table>
                 <tr>
