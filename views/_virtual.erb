@@ -1,0 +1,14 @@
+<h3>AppScale Deployment for Virtualized Cluster (Xen/KVM)</h3>
+<form method="POST" action="virtual.do">
+    <table border="1">
+        <tr>
+            <td>Enter your server configuration (ips.yaml):</td>
+            <td><textarea name="ips" rows="10" cols="50"></textarea></td>
+        </tr>
+        <tr>
+            <td align="right">Root Password:</td>
+            <td><input name="root_password" type="password"/></td>
+        </tr>
+        <%= erb:_common %>
+    </table>
+</form>

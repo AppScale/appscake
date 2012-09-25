@@ -1,0 +1,35 @@
+<tr>
+    <td align="right">Administrator E-mail:</td>
+    <td><input name="user" type="text"/></td>
+</tr>
+<tr>
+    <td align="right">Administrator Password:</td>
+    <td><input name="pass" type="password"/></td>
+</tr>
+<tr>
+    <td align="right">Confirm Password:</td>
+    <td><input name="pass2" type="password"/></td>
+</tr>
+<tr>
+    <td align="right">Key Name:</td>
+    <td><input name="keyname" type="text" value="appscale"/></td>
+</tr>
+<% if Dir.glob('./repository/*').length > 0 %>
+    <tr>
+        <td align="right">Target Application:</td>
+        <td>
+            <select name="target_app">
+                <option value="_none_">None</option>
+                <% for item in Dir.glob('./repository/*') %>
+                    <% if File.directory?(item) %>
+                        <option value="<%=File.basename(item)%>"><%=File.basename(item)%></option>
+                    <% end %>
+                <% end %>
+            </select>
+        </td>
+    </tr>
+<% end %>
+<tr>
+    <td></td>
+    <td><input type="submit" name="submit" value="Launch"/></td>
+</tr>

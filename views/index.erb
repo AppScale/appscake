@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>AppsCake - The AppScale Bootstrapper</title>
+</head>
+<body>
+<h1>AppsCake - Makes Deploying AppScale a Piece of Cake</h1>
+<script>
+    function showForm(selector) {
+        var table = document.getElementById('config.table');
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            row.setAttribute('style','display:none');
+        }
+        var selected = document.getElementById(selector.value);
+        selected.setAttribute('style', '');
+    }
+</script>
+<p>Select your deployment environment: </p>
+<select onchange="showForm(this)" id="infra.selector">
+    <option value="virtual">Virtualized Cluster (Xen/KVM)</option>
+    <option value="iaas_ec2">IaaS (EC2)</option>
+</select>
+<p>&nbsp;</p>
+<table id="config.table">
+    <tr id="virtual">
+        <td>
+            <%= erb :_virtual %>
+        </td>
+    </tr>
+    <tr id="iaas_ec2">
+        <td>
+            <%= erb :_ec2 %>
+        </td>
+    </tr>
+</table>
+<script>
+    var selector = document.getElementById('infra.selector');
+    showForm(selector);
+</script>
+</body>
+</html>

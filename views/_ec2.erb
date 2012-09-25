@@ -1,0 +1,58 @@
+<h3>AppScale Deployment for IaaS (EC2)</h3>
+<form method="POST" action="iaas_ec2.do" enctype="multipart/form-data">
+    <table border="1">
+        <tr>
+            <td align="right">Minimum Instances:</td>
+            <td><input name="min" type="text" value="1"/></td>
+        </tr>
+        <tr>
+            <td align="right">Maximum Instances:</td>
+            <td><input name="max" type="text" value="1"/></td>
+        </tr>
+        <tr>
+            <td align="right">Amazon Machine Image (AMI) ID:</td>
+            <td><input name="ami" type="text"/></td>
+        </tr>
+        <tr>
+            <td align="right">Instance Type:</td>
+            <td>
+                <select name="instance_type">
+                    <option value="m1.large">m1.large (Large)</option>
+                    <option value="m1.xlarge">m1.xlarge (Extra Large)</option>
+                    <option value="c1.xlarge">c1.xlarge (High CPU Extra Large)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">Region:</td>
+            <td>
+                <select name="region">
+                    <option value="us-east-1">US East (Northern Virginia)</option>
+                    <option value="us-west-1">US West (Oregon)</option>
+                    <option value="us-west-2">US West (Northern California)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">EC2 Username:</td>
+            <td><input name="username" type="text"/></td>
+        </tr>
+        <tr>
+            <td align="right">EC2 Private Key:</td>
+            <td><input name="private_key" type="file"/></td>
+        </tr>
+        <tr>
+            <td align="right">EC2 X509 Certificate:</td>
+            <td><input name="cert" type="file"/></td>
+        </tr>
+        <tr>
+            <td align="right">EC2 Access Key:</td>
+            <td><input name="access_key" type="text"/></td>
+        </tr>
+        <tr>
+            <td align="right">EC2 Secret Key:</td>
+            <td><input name="secret_key" type="password"/></td>
+        </tr>
+        <%= erb:_common %>
+    </table>
+</form>
