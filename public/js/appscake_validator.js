@@ -36,6 +36,34 @@ $(document).ready(function() {
 
     $('#iaas_ec2_form').validate({
         rules: {
+            min: {
+                required: true,
+                number: true,
+                min: 1
+            },
+            max: {
+                required: true,
+                number: true,
+                min: 1
+            },
+            ami: {
+                required: true
+            },
+            username: {
+                required: true
+            },
+            private_key: {
+                required: true
+            },
+            cert: {
+                required: true
+            },
+            access_key: {
+                required: true
+            },
+            secret_key: {
+                required: true
+            },
             user: {
                 required: true,
                 email: true

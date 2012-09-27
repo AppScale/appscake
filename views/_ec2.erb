@@ -15,7 +15,7 @@
     <div class="control-group">
         <label class="control-label" for="min">Minimum Instances <span class="required">*</span></label>
         <div class="controls">
-            <input name="min" type="text" value="1"/>
+            <input name="min" id="min" type="text" value="1"/>
             <span class="help-block">
                 Minimum number of EC2 instances that should be used for this AppScale
                 deployment.
@@ -25,7 +25,7 @@
     <div class="control-group">
         <label class="control-label" for="max">Maximum Instances <span class="required">*</span></label>
         <div class="controls">
-            <input name="max" type="text" value="1"/>
+            <input name="max" id="max" type="text" value="1"/>
             <span class="help-block">
                 Maximum number of EC2 instances that should be used for this AppScale
                 deployment.
@@ -35,7 +35,7 @@
     <div class="control-group">
         <label class="control-label" for="ami">AMI ID <span class="required">*</span></label>
         <div class="controls">
-            <input name="ami" type="text" placeholder="Enter AMI ID"/>
+            <input name="ami" id="ami" type="text" placeholder="Enter AMI ID"/>
             <span class="help-block">
                 Identifier of the Amazon Machine Image (AMI) that should be used to
                 spawn the required cloud VMs.
@@ -76,7 +76,7 @@
     <div class="control-group">
         <label class="control-label" for="username">Amazon Username <span class="required">*</span></label>
         <div class="controls">
-            <input name="username" type="text" placeholder="Enter Username"/>
+            <input name="username" id="username" type="text" placeholder="Enter Username"/>
             <span class="help-block">
                 Specify your Amazon username. This is the username you generally
                 use to login to any Amazon or AWS related website.
@@ -86,7 +86,7 @@
     <div class="control-group">
         <label class="control-label" for="private_key">EC2 Private Key <span class="required">*</span></label>
         <div class="controls">
-            <input name="private_key" type="file"/>
+            <input name="private_key" id="private_key" type="file"/>
             <span class="help-block">
                 Upload your EC2 private key in PEM format. If you don't have an EC2
                 private key, you can download one from your AWS Security Credentials page.
@@ -96,7 +96,7 @@
     <div class="control-group">
         <label class="control-label" for="cert">EC2 X509 Certificate <span class="required">*</span></label>
         <div class="controls">
-            <input name="cert" type="file"/>
+            <input name="cert" id="cert" type="file"/>
             <span class="help-block">
                 Upload your EC2 X509 certificate in PEM format. If you don't have an EC2
                 certificate, you can download one from your AWS Security Credentials page.
@@ -106,7 +106,7 @@
     <div class="control-group">
         <label class="control-label" for="access_key">EC2 Access Key <span class="required">*</span></label>
         <div class="controls">
-            <input name="access_key" type="text" placeholder="Enter Access Key"/>
+            <input name="access_key" id="access_key" type="text" placeholder="Enter Access Key"/>
             <span class="help-block">
                 Specify your EC2 access key. If you don't have an access key, you
                 may generate one at the AWS Security Credentials page.
@@ -116,7 +116,7 @@
     <div class="control-group">
         <label class="control-label" for="secret_key">EC2 Secret Key <span class="required">*</span></label>
         <div class="controls">
-            <input name="secret_key" type="text" placeholder="Enter Secret Key"/>
+            <input name="secret_key" id="secret_key" type="text" placeholder="Enter Secret Key"/>
             <span class="help-block">
                 Specify your EC2 secret key. If you don't have a secret key, you
                 may generate one at the AWS Security Credentials page.

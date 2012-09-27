@@ -1,9 +1,41 @@
 <html>
 <head>
     <title>AppsCake - Cloud Deployment Log</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1>Cloud Deployment Log - <%= @timestamp %></h1>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    /*
+     Auto Refresh Page with Time script
+     By JavaScript Kit (javascriptkit.com)
+     Over 200+ free scripts here!
+     */
+    var limit="0:30"
+
+    if (document.images){
+        var parselimit=limit.split(":")
+        parselimit = parselimit[0] * 60 + parselimit[1] * 1
+    }
+    function beginrefresh(){
+        if (!document.images)
+            return
+        if (parselimit==1)
+            window.location.reload()
+        else{
+            parselimit-=1
+            curmin=Math.floor(parselimit/60)
+            cursec=parselimit%60
+            if (curmin!=0)
+                curtime=curmin+" minutes and "+cursec+" seconds left until page refresh!"
+            else
+                curtime="Refreshing this page in " + cursec + " seconds"
+            document.getElementById("next_refresh").textContent = curtime
+            window.status=curtime
+            setTimeout("beginrefresh()",1000)
+        }
+    }
+</script>
 <%
    file_name = File.join(File.expand_path(File.dirname(__FILE__)), "..",
                          "logs", "deploy-" + @timestamp + ".log")
@@ -48,49 +80,88 @@
    elsif content.include?("__ERROR__")
      status = "Failed"
    elsif !content_loaded
-     status = "Invalid"
+     status = "Invalid Request (Unable to Locate the Specified Log)"
+     step1 = step2 = step3 = step4 = step5 = step6 = step7 = "?"
+   end
+
+   progress = "20%"
+   if step7 == "Done"
+     progress = "100%"
+   elsif step6 == "Done"
+     progress = "90%"
+   elsif step5 == "Done"
+     progress = "70%"
+   elsif step4 == "Done"
+     progress = "40%"
+   elsif step3 == "Done"
+     progress = "30%"
+   elsif step2 == "Done"
+     progress = "20%"
+   elsif step1 == "Done"
+     progress = "10%"
    end
 %>
-<table>
-    <tr>
-        <td>
-            <textarea rows="30" cols="100" readonly><%= content %></textarea>
-        </td>
-        <td>
-            <p>Status: <%= status %></p>
-            <p>Deployment steps:</p>
-            <table>
-                <tr>
-                    <td>Generate cryptographic keys (Xen/KVM Only)</td>
-                    <td><%=step1%></td>
-                </tr>
-                <tr>
-                    <td>Distribute keys among the nodes (Xen/KVM Only)</td>
-                    <td><%=step2%></td>
-                </tr>
-                <tr>
-                    <td>Start the head node</td>
-                    <td><%=step3%></td>
-                </tr>
-                <tr>
-                    <td>Start AppController on head node</td>
-                    <td><%=step4%></td>
-                </tr>
-                <tr>
-                    <td>Create AppScale administrator account</td>
-                    <td><%=step5%></td>
-                </tr>
-                <tr>
-                    <td>Deploy target application</td>
-                    <td><%=step6%></td>
-                </tr>
-                <tr>
-                    <td>Finalize deployment</td>
-                    <td><%=step7%></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+<%
+   if status != "Failed" and !status.include?("Invalid Request")
+%>
+    <script type="text/javascript">window.onload=beginrefresh</script>
+<%
+   end
+%>
+<div class="container">
+    <div class="page-header">
+        <h1>AppsCake <small>Makes deploying AppScale a piece of cake!</small></h1>
+    </div>
+    <div class="span10 well">
+        <h3>Status: <%= status %></h3>
+        <p><small id="next_refresh"></small></p>
+        <div class="progress progress-striped">
+            <div class="bar" style="width: <%= progress %>;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="javascript: window.location.reload()">Refresh</button>
+        <button class="btn btn-primary" onclick="javascript: window.location.href='/'">Home</button>
+    </div>
+    <div class="span10 well">
+        <h3>Deployment Stages</h3>
+        <table class="table table-striped">
+            <tr id="step1">
+                <td>Generate cryptographic keys (Xen/KVM Only)</td>
+                <td><%=step1%></td>
+            </tr>
+            <tr id="step2">
+                <td>Distribute keys among the nodes (Xen/KVM Only)</td>
+                <td><%=step2%></td>
+            </tr>
+            <tr id="step3">
+                <td>Start the head node</td>
+                <td><%=step3%></td>
+            </tr>
+            <tr id="step4">
+                <td>Start AppController on head node</td>
+                <td><%=step4%></td>
+            </tr>
+            <tr id="step5">
+                <td>Create AppScale administrator account</td>
+                <td><%=step5%></td>
+            </tr>
+            <tr id="step6">
+                <td>Deploy target application</td>
+                <td><%=step6%></td>
+            </tr>
+            <tr id="step7">
+                <td>Finalize deployment</td>
+                <td><%=step7%></td>
+            </tr>
+        </table>
+    </div>
+    <div id="content" class="span10 well">
+        <h3>Cloud Deployment Log - <%= @timestamp %></h3>
+        <textarea rows="15" class="span10" id="log_text" readonly><%= content %></textarea>
+    </div>
+</div>
+<script type="text/javascript">
+    var textarea = document.getElementById('log_text');
+    textarea.scrollTop = textarea.scrollHeight;
+</script>
 </body>
 </html>

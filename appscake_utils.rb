@@ -257,9 +257,10 @@ def deploy_on_virtual_cluster(params, add_key_options, run_instances_options, su
               puts "AppScale key '#{params[:keyname]}' found on the disk. Reusing..."
             else
               puts "AppScale key '#{params[:keyname]}' not found on the disk. Generating..."
-              AppScaleTools.add_keypair(add_key_options)
+              #AppScaleTools.add_keypair(add_key_options)
             end
-            AppScaleTools.run_instances(run_instances_options)
+            deploy(run_instances_options)
+            #AppScaleTools.run_instances(run_instances_options)
           end
         ensure
           # If the fork was successful, the sub-process should release the lock
@@ -300,7 +301,6 @@ def deploy_on_ec2(params, run_instances_options, cert_timestamp)
         ENV['S3_URL'] = "https://s3.amazonaws.com:443"
         begin
           redirect_standard_io(timestamp) do
-            #deploy(run_instances_options)
             AppScaleTools.run_instances(run_instances_options)
           end
         ensure
