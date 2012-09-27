@@ -1,37 +1,53 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>AppsCake - The AppScale Bootstrapper</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1>AppsCake - Makes Deploying AppScale a Piece of Cake</h1>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src="js/jquery.validate.min.js"></script>
+<script src="js/appscake_validator.js"></script>
 <script>
     function showForm(selector) {
-        var table = document.getElementById('config.table');
-        for (var i = 0, row; row = table.rows[i]; i++) {
-            row.setAttribute('style','display:none');
-        }
+        document.getElementById('virtual').setAttribute('style', 'display:none')
+        document.getElementById('iaas_ec2').setAttribute('style', 'display:none')
+
         var selected = document.getElementById(selector.value);
         selected.setAttribute('style', '');
     }
 </script>
-<p>Select your deployment environment: </p>
-<select onchange="showForm(this)" id="infra.selector">
-    <option value="virtual">Virtualized Cluster (Xen/KVM)</option>
-    <option value="iaas_ec2">IaaS (EC2)</option>
-</select>
-<p>&nbsp;</p>
-<table id="config.table">
-    <tr id="virtual">
-        <td>
-            <%= erb :_virtual %>
-        </td>
-    </tr>
-    <tr id="iaas_ec2">
-        <td>
-            <%= erb :_ec2 %>
-        </td>
-    </tr>
-</table>
+<div class="container">
+    <div class="page-header">
+        <h1>AppsCake <small>Makes deploying AppScale a piece of cake!</small></h1>
+    </div>
+    <div class="row">
+        <div id="content" class="span12">
+            <form class="well span12">
+                <legend>Select Deployment Environment</legend>
+                <select onchange="showForm(this)" id="infra.selector">
+                    <option value="virtual">Virtualized Cluster (Xen/KVM)</option>
+                    <option value="iaas_ec2">IaaS (EC2)</option>
+                </select>
+                <span class="help-block">
+                    Choose the cloud infrastructure setup on which you wish to
+                    deploy AppScale.
+                </span>
+            </form>
+            <div id="virtual">
+                <td>
+                    <%= erb :_virtual %>
+                </td>
+            </div>
+            <div id="iaas_ec2">
+                <td>
+                    <%= erb :_ec2 %>
+                </td>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     var selector = document.getElementById('infra.selector');
     showForm(selector);

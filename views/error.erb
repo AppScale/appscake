@@ -1,9 +1,29 @@
 <html>
 <head>
     <title>AppsCake - Error</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1><%= @title %></h1>
-<p><%= @error %></p>
+<script src="js/bootstrap.min.js"></script>
+<div class="container">
+    <div class="page-header">
+        <h1>AppsCake <small>Makes deploying AppScale a piece of cake!</small></h1>
+    </div>
+    <div class="row">
+        <div id="content" class="span12 well">
+            <h3>AppsCake Error!</h3>
+            <p>
+                AppsCake has detected an error with your request. Please check the
+                error details below, go back and re-submit the form with the correct
+                information.
+            </p>
+            <ul>
+                <li><strong>Error Message:</strong> <%= @title %></li>
+                <li><strong>Details:</strong> <%=  @error %></li>
+            </ul>
+            <button class="btn btn-primary" onclick="javascript: history.go(-1)">Go Back</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
