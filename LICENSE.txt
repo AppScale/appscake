@@ -35,3 +35,11 @@ IN THE REGENTS’ DISCRETION MAY INCLUDE, WITHOUT LIMITATION, REPLACEMENT
 OF THE CODE SO IDENTIFIED, LICENSING OF THE CODE SO IDENTIFIED, OR WITHDRAWAL
 OF THE CODE CAPABILITY TO THE EXTENT NEEDED TO COMPLY WITH ANY SUCH LICENSES
 OR RIGHTS.
+
+This software makes use of third party software libraries released under different
+licenses. The table below lists all the contained libraries and the licenses under
+which they are provided to you.
+
+* Twitter Bootstrap - Apache Software License 2.0
+* jQuery Validation Plugin - MIT License
+
