@@ -147,14 +147,14 @@ def validate_ec2_credentials(username, access_key, secret_key, region)
   elsif region.nil? or region.length == 0
     return [false, "EC2 region not specified"]
   else
-    #output = CommonFunctions::shell("ec2-describe-regions -O #{access_key}  -W #{secret_key}")
-    #if output.nil? or output.length == 0
-    #  return [false, "Unable to execute EC2 command line tools"]
-    #elsif output.include?"AuthFailure"
-    #  return [false, "EC2 authentication failed. Invalid EC2 access key or/and secret key."]
-    #elsif !output.include?region
-    #  return [false, "Invalid EC2 region. This region is not available for your account."]
-    #end
+    output = CommonFunctions::shell("ec2-describe-regions -O #{access_key}  -W #{secret_key}")
+    if output.nil? or output.length == 0
+      return [false, "Unable to execute EC2 command line tools"]
+    elsif output.include?"AuthFailure"
+      return [false, "EC2 authentication failed. Invalid EC2 access key or/and secret key."]
+    elsif !output.include?region
+      return [false, "Invalid EC2 region. This region is not available for your account."]
+    end
   end
   [true, ""]
 end
@@ -257,10 +257,9 @@ def deploy_on_virtual_cluster(params, add_key_options, run_instances_options, su
               puts "AppScale key '#{params[:keyname]}' found on the disk. Reusing..."
             else
               puts "AppScale key '#{params[:keyname]}' not found on the disk. Generating..."
-              #AppScaleTools.add_keypair(add_key_options)
+              AppScaleTools.add_keypair(add_key_options)
             end
-            deploy(run_instances_options)
-            #AppScaleTools.run_instances(run_instances_options)
+            AppScaleTools.run_instances(run_instances_options)
           end
         ensure
           # If the fork was successful, the sub-process should release the lock
