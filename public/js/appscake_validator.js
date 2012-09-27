@@ -7,20 +7,20 @@ $(document).ready(function() {
             root_password: {
                 required: true
             },
-            user: {
+            virtual_user: {
                 required: true,
                 email: true
             },
-            pass: {
+            virtual_pass: {
                 required: true,
                 minlength: 6
             },
-            pass2: {
+            virtual_pass2: {
                 required: true,
                 minlength: 6,
-                equalTo: pass
+                equalTo: virtual_pass
             },
-            keyname: {
+            virtual_keyname: {
                 required: true
             }
         },
@@ -64,20 +64,20 @@ $(document).ready(function() {
             secret_key: {
                 required: true
             },
-            user: {
+            ec2_user: {
                 required: true,
                 email: true
             },
-            pass: {
+            ec2_pass: {
                 required: true,
                 minlength: 6
             },
-            pass2: {
+            ec2_pass2: {
                 required: true,
                 minlength: 6,
-                equalTo: pass
+                equalTo: ec2_pass
             },
-            keyname: {
+            ec2_keyname: {
                 required: true
             }
         },

@@ -116,7 +116,7 @@
     <div class="control-group">
         <label class="control-label" for="secret_key">EC2 Secret Key <span class="required">*</span></label>
         <div class="controls">
-            <input name="secret_key" id="secret_key" type="text" placeholder="Enter Secret Key"/>
+            <input name="secret_key" id="secret_key" type="password" placeholder="Enter Secret Key"/>
             <span class="help-block">
                 Specify your EC2 secret key. If you don't have a secret key, you
                 may generate one at the AWS Security Credentials page.
@@ -124,5 +124,6 @@
         </div>
     </div>
     <hr/>
+    <% @prefix = 'ec2' %>
     <%= erb:_common %>
 </form>

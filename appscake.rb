@@ -32,19 +32,20 @@ class AppsCake < Sinatra::Base
       return report_error("IP Configuration Error", yaml_result)
     end
 
-    status,acc_result = validate_appscale_credentials(params[:user], params[:pass], params[:pass2])
+    status,acc_result = validate_appscale_credentials(params[:virtual_user],
+                                                      params[:virtual_pass], params[:virtual_pass2])
     if !status
       return report_error("AppScale Administrator Account Configuration Error", acc_result)
     end
 
-    status,ssh_result = validate_ssh_credentials(params[:keyname], params[:root_password], yaml)
+    status,ssh_result = validate_ssh_credentials(params[:virtual_keyname], params[:root_password], yaml)
     if !status
       return report_error("AppScale SSH Configuration Error", ssh_result)
     end
 
     add_key_options = {
         'ips' => yaml,
-        'keyname' => params[:keyname],
+        'keyname' => params[:virtual_keyname],
         'auto' => true,
         'root_password' => params[:root_password]
     }
@@ -59,7 +60,7 @@ class AppsCake < Sinatra::Base
 
     run_instances_options = {
         'ips' => yaml,
-        'keyname' => params[:keyname],
+        'keyname' => params[:virtual_keyname],
         'file_location' => file_location,
         'appname' => app_name,
         'appengine' => 1,
@@ -68,8 +69,8 @@ class AppsCake < Sinatra::Base
         'confirm' => false,
         'table' => 'cassandra',
         'infrastructure' => nil,
-        'admin_user' => params[:user],
-        'admin_pass' => params[:pass]
+        'admin_user' => params[:virtual_user],
+        'admin_pass' => params[:virtual_pass]
     }
 
     deploy_on_virtual_cluster(params, add_key_options, run_instances_options, yaml_result)
@@ -94,6 +95,12 @@ class AppsCake < Sinatra::Base
     end
     cert_timestamp = result
 
+    status,acc_result = validate_appscale_credentials(params[:ec2_user],
+                                                      params[:ec2_pass], params[:ec2_pass2])
+    if !status
+      return report_error("AppScale Administrator Account Configuration Error", acc_result)
+    end
+
     app_name = nil
     file_location = nil
     if !params[:target_app].nil? and params[:target_app] != '_none_'
@@ -102,8 +109,8 @@ class AppsCake < Sinatra::Base
     end
 
     run_instances_options = {
-        'keyname' => params[:keyname],
-        'group' => params[:keyname],
+        'keyname' => params[:ec2_keyname],
+        'group' => params[:ec2_keyname],
         'file_location' => file_location,
         'appname' => app_name,
         'appengine' => 1,
@@ -116,8 +123,8 @@ class AppsCake < Sinatra::Base
         'max_images' => params[:max].to_i,
         'instance_type' => params[:instance_type],
         'machine' => params[:ami],
-        'admin_user' => params[:user],
-        'admin_pass' => params[:pass],
+        'admin_user' => params[:ec2_user],
+        'admin_pass' => params[:ec2_pass],
     }
     deploy_on_ec2(params, run_instances_options, cert_timestamp)
   end
@@ -143,7 +150,8 @@ webrick_options = {
     :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
         File.open(File.join(CURRENT_DIR, "certificates", "pk-appscake.pem")).read),
     :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
-    :app                => AppsCake
+    :app                => AppsCake,
+    :server             => 'webrick'
 }
 
 Rack::Server.start webrick_options

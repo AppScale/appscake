@@ -7,9 +7,8 @@
 <script src="js/bootstrap.min.js"></script>
 <script>
     /*
-     Auto Refresh Page with Time script
-     By JavaScript Kit (javascriptkit.com)
-     Over 200+ free scripts here!
+     * Auto refresh this page
+     * (Free script taken with thanks from javascriptkit.com)
      */
     var limit="0:30"
 
@@ -27,9 +26,9 @@
             curmin=Math.floor(parselimit/60)
             cursec=parselimit%60
             if (curmin!=0)
-                curtime=curmin+" minutes and "+cursec+" seconds left until page refresh!"
+                curtime = curmin + " minutes and " + cursec + " seconds left until page refresh!"
             else
-                curtime="Refreshing this page in " + cursec + " seconds"
+                curtime = "Refreshing this page in " + cursec + " seconds"
             document.getElementById("next_refresh").textContent = curtime
             window.status=curtime
             setTimeout("beginrefresh()",1000)
@@ -84,7 +83,7 @@
      step1 = step2 = step3 = step4 = step5 = step6 = step7 = "?"
    end
 
-   progress = "20%"
+   progress = "0%"
    if step7 == "Done"
      progress = "100%"
    elsif step6 == "Done"
