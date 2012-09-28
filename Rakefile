@@ -7,7 +7,7 @@ require 'rake/testtask'
 # TODO(cgb): This probably should be moved into a Gemfile and out of this file.
 spec = Gem::Specification.new do |s|
   s.name = 'appscake'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
 
   s.summary = "A web interface to the AppScale command-line tools."
   s.description = <<-EOF
@@ -24,10 +24,12 @@ spec = Gem::Specification.new do |s|
   s.default_executable = 'appscake'
   s.platform = Gem::Platform::RUBY
 
-  candidates = Dir.glob("{bin,doc,test}/**/*")
+  candidates = Dir.glob("**/*")
   s.files = candidates.delete_if do |item|
-    item.include?(".git") || item.include?("rdoc")
+    item.include?(".git") || item.include?("rdoc") || item.include?("pkg")
   end
+  s.require_path = "lib"
+  s.autorequire = "appscake_utils"
 
   s.has_rdoc = false
   s.add_dependency('net-ssh', '>= 2.6.0')
