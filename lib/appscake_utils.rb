@@ -116,7 +116,7 @@ def validate_yaml(yaml_str)
     critical_roles.each do |role|
       result += "#{role}, "
     end
-    return [false, result[0..-3]]
+    #return [false, result[0..-3]]
   end
 
   [true, success_result, yaml]

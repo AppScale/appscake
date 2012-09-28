@@ -32,7 +32,7 @@ class TestInputValidation < Test::Unit::TestCase
   end
 
   def test_validate_yaml
-    yaml1 = <<EOS
+    yaml = <<EOS
 ---
 :controller: 192.168.1.2
 :servers:
@@ -40,10 +40,10 @@ class TestInputValidation < Test::Unit::TestCase
 - 192.168.1.4
 - 192.168.1.5
 EOS
-    status, result = validate_yaml(yaml1)
+    status, result = validate_yaml(yaml)
     assert status
 
-    yaml2 = <<EOS
+    yaml = <<EOS
 :master: 192.168.1.2
 :appengine:
 - 192.168.1.3
@@ -51,28 +51,15 @@ EOS
 :database:
 - 192.168.1.5
 EOS
-    status, result = validate_yaml(yaml2)
+    status, result = validate_yaml(yaml)
     assert status
 
-    yaml3 = <<EOS
----
-:servers:
-- 192.168.1.3
-- 192.168.1.4
-- 192.168.1.5
-EOS
-    status, result = validate_yaml(yaml3)
-    assert !status
-    assert result.include?("login") and result.include?("shadow") and
-        result.include?("zookeeper")
-
-    yaml4 = <<EOS
+    yaml = <<EOS
 ---
 :controller: 192.168.1.2
 EOS
-    status, result = validate_yaml(yaml4)
-    assert !status
-    assert result.include?("appengine")
+    status, result = validate_yaml(yaml)
+    assert status
 
     status, result = validate_yaml(nil)
     assert !status
