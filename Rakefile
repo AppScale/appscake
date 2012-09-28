@@ -31,7 +31,11 @@ spec = Gem::Specification.new do |s|
   s.require_path = "lib"
   s.autorequire = "appscake_utils"
 
-  s.has_rdoc = false
+  s.has_rdoc = false  # to be fixed by 0.0.3
+
+  # Dependencies: AppsCake uses the AppScale Tools to run AppScale, net-ssh to
+  # copy over files, and the Sinatra web server to present a web UI to users.
+  s.add_dependency('appscale-tools', '>= 1.6.0')
   s.add_dependency('net-ssh', '>= 2.6.0')
   s.add_dependency('sinatra', '>= 1.3.2')
 end
