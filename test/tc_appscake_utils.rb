@@ -179,7 +179,38 @@ EOS
     assert output.length == 0
     assert locked?
 
-    puts "Waiting 10 seconds for the mock deployment tasks to complete"
+    puts "Waiting 10 seconds for the mock Xen deployment tasks to complete"
+    sleep(10)
+
+    assert !locked?
+    log = File.join(File.expand_path(File.dirname(__FILE__)), "..",
+                    "logs", "deploy-#{result[1]}.log")
+    assert File.exist?(log)
+    File.delete(log)
+  end
+
+  def test_deploy_on_ec2
+    flexmock(AppScaleTools).should_receive(:run_instances).and_return do
+      5.times do |i|
+        puts "Deploying..."
+        sleep(1)
+      end
+    end
+
+    params = { :keyname => "appscale",
+        :region => "us-east-1",
+        :access_key => "access_key",
+        :secret_key => "secret_key",
+        :username => "username"
+    }
+    result = deploy_on_ec2(params, {}, 12345678)
+    assert result[0]
+
+    output = `kill -0 #{result[2]}`
+    assert output.length == 0
+    assert locked?
+
+    puts "Waiting 10 seconds for the mock EC2 deployment tasks to complete"
     sleep(10)
 
     assert !locked?

@@ -315,18 +315,15 @@ def deploy_on_ec2(params, run_instances_options, cert_timestamp)
         end
       end
       Process.detach(pid)
-      @timestamp = timestamp
-      @pid = pid
-      @html = ""
-      return erb :success
+      return [true, timestamp, pid]
     rescue Exception => e
       # If something went wrong with the fork, release the lock immediately and return
       unlock
-      return report_error("Unexpected Runtime Error", "Runtime error while executing" +
-          " appscale tools: #{e.message}")
+      return [false, "Unexpected Runtime Error", "Runtime error while executing" +
+          " appscale tools: #{e.message}"]
     end
   else
-    return report_error("Server Busy", "AppsCake is currently busy deploying a cloud." +
-        " Please try again later.")
+    return [false, "Server Busy", "AppsCake is currently busy deploying a cloud." +
+        " Please try again later."]
   end
 end

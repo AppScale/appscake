@@ -138,7 +138,15 @@ class AppsCake < Sinatra::Base
         'admin_user' => params[:ec2_user],
         'admin_pass' => params[:ec2_pass],
     }
-    deploy_on_ec2(params, run_instances_options, cert_timestamp)
+    result = deploy_on_ec2(params, run_instances_options, cert_timestamp)
+    if result[0]
+      @timestamp = timestamp
+      @pid = pid
+      @html = ""
+      return erb :success
+    else
+      report_error(result[1], result[2])
+    end
   end
 
   get '/view_logs' do
