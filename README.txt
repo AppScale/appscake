@@ -58,5 +58,5 @@ security group so that it allows inbound traffic on the port 8443.
 
 ======================================================================
 AppsCake is a project by the UCSB RACELab
-http://appscake.cs.ucsb.edu
+http://appscale.cs.ucsb.edu
 
