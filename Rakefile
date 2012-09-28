@@ -7,7 +7,7 @@ require 'rake/testtask'
 # TODO(cgb): This probably should be moved into a Gemfile and out of this file.
 spec = Gem::Specification.new do |s|
   s.name = 'appscake'
-  s.version = '0.0.2'
+  s.version = '0.0.1'
 
   s.summary = "A web interface to the AppScale command-line tools."
   s.description = <<-EOF
