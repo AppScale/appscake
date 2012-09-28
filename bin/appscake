@@ -77,7 +77,15 @@ class AppsCake < Sinatra::Base
         'admin_pass' => params[:virtual_pass]
     }
 
-    deploy_on_virtual_cluster(params, add_key_options, run_instances_options, yaml_result)
+    result = deploy_on_virtual_cluster(params, add_key_options, run_instances_options)
+    if result[0]
+      @timestamp = result[1]
+      @pid = result[2]
+      @html = yaml_result
+      return erb :success
+    else
+      report_error(result[1], result[2])
+    end
   end
 
   post '/iaas_ec2.do' do

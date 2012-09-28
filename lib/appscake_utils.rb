@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'thread'
 require 'net/ssh'
 require 'yaml'
@@ -160,7 +161,9 @@ def validate_ec2_credentials(username, access_key, secret_key, region)
 end
 
 def validate_ec2_certificate_uploads(username, pk_upload, cert_upload)
-  if pk_upload.nil?
+  if username.nil? or username.length == 0
+    return [false, "EC2 username not specified"]
+  elsif pk_upload.nil?
     return [false, "Primary key not uploaded"]
   elsif pk_upload[:type] != "application/x-x509-ca-cert" and
       pk_upload[:type] != "application/x-pem-file"
@@ -227,7 +230,7 @@ def redirect_standard_io(timestamp)
   begin
     orig_stderr = $stderr.clone
     orig_stdout = $stdout.clone
-    log_path = File.join(File.expand_path(File.dirname(__FILE__)), "logs")
+    log_path = File.join(File.expand_path(File.dirname(__FILE__)), "..", "logs")
     $stderr.reopen File.new(File.join(log_path, "deploy-#{timestamp}.log"), "w")
     $stderr.sync = true
     $stdout.reopen File.new(File.join(log_path, "deploy-#{timestamp}.log"), "w")
@@ -245,7 +248,14 @@ def redirect_standard_io(timestamp)
   retval
 end
 
-def deploy_on_virtual_cluster(params, add_key_options, run_instances_options, success_msg)
+# Initiates a task in the background to deploy AppScale on a virtualized
+# cluster. Returns a 3-element array as the result of the operation. The
+# first element of the array is a boolean value indicating success or
+# failure. In case of success, the second value will be the timestamp
+# on which the task was launched. The third value will be the process ID
+# of the newly launched task. In case of failure the second and third values
+# will provide detailed error information.
+def deploy_on_virtual_cluster(params, add_key_options, run_instances_options)
   if lock
     begin
       timestamp = Time.now.to_i
@@ -267,19 +277,16 @@ def deploy_on_virtual_cluster(params, add_key_options, run_instances_options, su
         end
       end
       Process.detach(pid)
-      @timestamp = timestamp
-      @pid = pid
-      @html = success_msg
-      return erb :success
+      return [true, timestamp, pid]
     rescue Exception => e
       # If something went wrong with the fork, release the lock immediately and return
       unlock
-      return report_error("Unexpected Runtime Error", "Runtime error while executing" +
-          " appscale tools: #{e.message}")
+      return [false, "Unexpected Runtime Error", "Runtime error while executing" +
+          " appscale tools: #{e.message}"]
     end
   else
-    return report_error("Server Busy", "AppsCake is currently busy deploying a cloud." +
-        " Please try again later.")
+    return [false, "Server Busy", "AppsCake is currently busy deploying a cloud." +
+        " Please try again later."]
   end
 end
 
