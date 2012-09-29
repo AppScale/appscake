@@ -140,8 +140,8 @@ class AppsCake < Sinatra::Base
     }
     result = deploy_on_ec2(params, run_instances_options, cert_timestamp)
     if result[0]
-      @timestamp = timestamp
-      @pid = pid
+      @timestamp = result[1]
+      @pid = result[2]
       @html = ""
       return erb :success
     else
