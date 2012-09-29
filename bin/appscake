@@ -117,7 +117,7 @@ class AppsCake < Sinatra::Base
     file_location = nil
     if !params[:target_app].nil? and params[:target_app] != '_none_'
       app_name = params[:target_app]
-      file_location = File.join(File.dirname(__FILE__), "repository", params[:target_app])
+      file_location = File.join(File.dirname(__FILE__), "..", "repository", params[:target_app])
     end
 
     run_instances_options = {
