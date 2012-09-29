@@ -45,3 +45,16 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_tar = true
 end
+
+# responds to 'rake test'
+Rake::TestTask.new do |test|
+  test.libs << "test"
+  test.test_files = Dir[ "test/test*.rb" ]
+  test.verbose = true
+end
+
+task :default => 'test'
+
+task :coverage do
+  puts `bash generate_coverage.sh`
+end
