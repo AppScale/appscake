@@ -171,10 +171,10 @@ def validate_ec2_certificate_uploads(username, pk_upload, cert_upload)
   else
     timestamp = Time.now.to_i
     cert_dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "certificates"))
-    File.open(File.join(cert_dir, "#{username}_#{timestamp}_pk.pem", "w")) do |f|
+    File.open(File.join(cert_dir, "#{username}_#{timestamp}_pk.pem"), "w") do |f|
       f.write(pk_upload[:tempfile].read)
     end
-    File.open(File.join(cert_dir, "#{username}_#{timestamp}_cert.pem", "w")) do |f|
+    File.open(File.join(cert_dir, "#{username}_#{timestamp}_cert.pem"), "w") do |f|
       f.write(cert_upload[:tempfile].read)
     end
   end
