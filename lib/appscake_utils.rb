@@ -1,17 +1,21 @@
-require 'rubygems'
 require 'thread'
 require 'net/ssh'
 require 'yaml'
 
 tools_home = `which appscale-run-instances`
-if tools_home.length == 0
-  # If AppScale-Tools are not installed on the local machine, use the Gem
-  require 'appscale-tools'
-else
-  # Give priority to the the local copy of AppScale Tools
-  $:.unshift File.join(File.dirname(tools_home), "..", "lib")
-  require 'appscale_tools'
+if tools_home.length > 0
+  # AppScale-Tools are installed on the local machine
+  lib_dir = File.join(File.dirname(tools_home), "..", "lib")
+  tools_impl = File.join(lib_dir, "appscale_tools.rb")
+  if File.exists?(tools_impl)
+    # AppScale-Tools have been installed manually
+    # by building the source or by similar means.
+    # (as opposed to installing the appscale-tools gem)
+    # Add the lib directory into the load path.
+    $:.unshift lib_dir
+  end
 end
+require 'appscale_tools'
 
 $mutex = Mutex.new
 
@@ -81,42 +85,33 @@ def validate_yaml(yaml_str)
   end
 
   yaml = YAML.load(yaml_str)
-  critical_roles = %w[ appengine loadbalancer database login shadow zookeeper ]
-  aggregate_roles = {
-      'master' => %w[ shadow loadbalancer zookeeper login ],
-      'controller' => %w[ shadow loadbalancer zookeeper database login ],
-      'servers' => %w[ appengine database loadbalancer ]
-  }
-  optional_roles = %w[ open memcache ]
-
-  success_result = ''
-  yaml.each do |symbol, value|
-    role = symbol.to_s
-    if !critical_roles.include? role and !aggregate_roles.has_key? role and
-        !optional_roles.include? role
-      return [false, "Unknown AppScale server role: #{role}"]
-    else
-      critical_roles.delete_if { |r|
-        r == role or (aggregate_roles.has_key? role and aggregate_roles[role].include? r)
-      }
-      success_result += "<p>#{role}</p><ul>"
-      if value.kind_of?(Array)
-        value.each do |val|
-          success_result += "<li>#{val}</li>"
+  node_layout = NodeLayout.new(yaml, {})
+  if !node_layout.valid?
+    errors = node_layout.errors
+    error_result = ""
+    for error in errors
+      if !error.nil? and error.length > 0
+        if error_result.length > 0
+          error_result += ", "
         end
-      else
-        success_result += "<li>#{value}</li>"
+        error_result += error
       end
-      success_result += '</ul>'
     end
+    return [false, error_result]
   end
 
-  if critical_roles.length > 0
-    result = "Following required roles are not configured: "
-    critical_roles.each do |role|
-      result += "#{role}, "
+  success_result = ""
+  yaml.each do |symbol, value|
+    role = symbol.to_s
+    success_result += "<p>#{role}</p><ul>"
+    if value.kind_of?(Array)
+      value.each do |val|
+        success_result += "<li>#{val}</li>"
+      end
+    else
+      success_result += "<li>#{value}</li>"
     end
-    #return [false, result[0..-3]]
+    success_result += "</ul>"
   end
 
   [true, success_result, yaml]
@@ -175,10 +170,11 @@ def validate_ec2_certificate_uploads(username, pk_upload, cert_upload)
     return [false, "Invalid certificate format: #{cert_upload[:type]}"]
   else
     timestamp = Time.now.to_i
-    File.open("certificates/#{username}_#{timestamp}_pk.pem", "w") do |f|
+    cert_dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "certificates"))
+    File.open(File.join(cert_dir, "#{username}_#{timestamp}_pk.pem", "w")) do |f|
       f.write(pk_upload[:tempfile].read)
     end
-    File.open("certificates/#{username}_#{timestamp}_cert.pem", "w") do |f|
+    File.open(File.join(cert_dir, "#{username}_#{timestamp}_cert.pem", "w")) do |f|
       f.write(cert_upload[:tempfile].read)
     end
   end
@@ -296,9 +292,9 @@ def deploy_on_ec2(params, run_instances_options, cert_timestamp)
       timestamp = Time.now.to_i
       pid = fork do
         ENV['EC2_REGION'] = params[:region]
-        ENV['EC2_PRIVATE_KEY'] = File.join(File.dirname(__FILE__), "certificates",
+        ENV['EC2_PRIVATE_KEY'] = File.join(File.dirname(__FILE__), "..", "certificates",
                                     "#{params[:username]}_#{cert_timestamp}_pk.pem")
-        ENV['EC2_CERT'] = File.join(File.dirname(__FILE__), "certificates",
+        ENV['EC2_CERT'] = File.join(File.dirname(__FILE__), "..", "certificates",
                                            "#{params[:username]}_#{cert_timestamp}_cert.pem")
         ENV['EC2_ACCESS_KEY'] = params[:access_key]
         ENV['EC2_SECRET_KEY'] = params[:secret_key]
