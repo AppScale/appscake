@@ -61,6 +61,24 @@ EOS
     status, result = validate_yaml(yaml)
     assert status
 
+    yaml = <<EOS
+---
+:appengine: 192.168.1.2
+EOS
+    status, result = validate_yaml(yaml)
+    assert !status
+
+    yaml = <<EOS
+---
+:controller: 192.168.1.2
+:bogus_role:
+- 192.168.1.3
+- 192.168.1.4
+- 192.168.1.5
+EOS
+    status, result = validate_yaml(yaml)
+    assert !status
+
     status, result = validate_yaml(nil)
     assert !status
     status, result = validate_yaml("")
@@ -114,6 +132,15 @@ EOS
     assert !status
     status, result = validate_ec2_credentials("bwayne", "batcowl", "batmobile", nil)
     assert !status
+
+    flexmock(CommonFunctions).should_receive(:shell).times(3).
+        and_return("", "AuthFailure", "us-east-1")
+    status, result = validate_ec2_credentials("bwayne", "batcowl", "batmobile", "us-east-1")
+    assert !status
+    status, result = validate_ec2_credentials("bwayne", "batcowl", "batmobile", "us-east-1")
+    assert !status
+    status, result = validate_ec2_credentials("bwayne", "batcowl", "batmobile", "us-east-1")
+    assert status
   end
 
   def test_validate_ec2_certificate_uploads
@@ -145,6 +172,15 @@ EOS
     assert_equal(1, counter)
 
     File.delete(log)
+  end
+
+  def test_locking
+    assert lock
+    assert !lock
+    assert locked?
+    assert unlock
+    assert !unlock
+    assert !locked?
   end
 
   def test_deploy_on_virtual_cluster
