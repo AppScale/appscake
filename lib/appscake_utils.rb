@@ -258,11 +258,11 @@ def deploy_on_virtual_cluster(params, add_key_options, run_instances_options)
       pid = fork do
         begin
           redirect_standard_io(timestamp) do
-            key_file = File.expand_path("~/.appscale/#{params[:keyname]}")
+            key_file = File.expand_path("~/.appscale/#{params[:virtual_keyname]}")
             if File.exists?(key_file)
-              puts "AppScale key '#{params[:keyname]}' found on the disk. Reusing..."
+              puts "AppScale key '#{params[:virtual_keyname]}' found on the disk. Reusing..."
             else
-              puts "AppScale key '#{params[:keyname]}' not found on the disk. Generating..."
+              puts "AppScale key '#{params[:virtual_keyname]}' not found on the disk. Generating..."
               AppScaleTools.add_keypair(add_key_options)
             end
             AppScaleTools.run_instances(run_instances_options)
