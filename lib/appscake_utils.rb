@@ -161,12 +161,14 @@ def validate_ec2_certificate_uploads(username, pk_upload, cert_upload)
   elsif pk_upload.nil?
     return [false, "Primary key not uploaded"]
   elsif pk_upload[:type] != "application/x-x509-ca-cert" and
-      pk_upload[:type] != "application/x-pem-file"
+      pk_upload[:type] != "application/x-pem-file" and
+      pk_upload[:type] != "application/octet-stream"
     return [false, "Invalid primary key format: #{pk_upload[:type]}"]
   elsif cert_upload.nil?
     return [false, "X509 certificate not uploaded"]
   elsif cert_upload[:type] != "application/x-x509-ca-cert" and
-      cert_upload[:type] != "application/x-pem-file"
+      cert_upload[:type] != "application/x-pem-file" and
+      cert_upload[:type] != "application/octet-stream"
     return [false, "Invalid certificate format: #{cert_upload[:type]}"]
   else
     timestamp = Time.now.to_i
