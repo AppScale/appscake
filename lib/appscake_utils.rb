@@ -25,6 +25,22 @@ def report_error(title, msg)
   return erb :error
 end
 
+def check_and_generate_certificates
+  cert_dir = File.expand_path(File.join(File.dirname(__FILE__), "..", "certificates"))
+  cert_file = File.join(cert_dir, "cert-appscake.pem")
+  if !File.exists?(cert_file)
+    puts "No SSL certificates found for the web server. Generating..."
+    output = `#{cert_dir}/keygen.sh`
+    if $?.exitstatus != 0
+      puts output
+      return false
+    else
+      return true
+    end
+  end
+  return true
+end
+
 def validate_appscale_credentials(user, pass1, pass2)
   if user.nil? or user.length == 0
     return [false, "Administrator username not provided"]

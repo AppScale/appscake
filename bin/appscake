@@ -160,23 +160,27 @@ class AppsCake < Sinatra::Base
   end
 end
 
-webrick_options = {
-    :Port               => 8443,
-    :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::INFO),
-    :DocumentRoot       => "/ruby/htdocs",
-    :SSLEnable          => true,
-    :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
-    :SSLCertificate     => OpenSSL::X509::Certificate.new(
-        File.open(File.join(CERT_DIR, "cert-appscake.pem")).read),
-    :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
-        File.open(File.join(CERT_DIR, "pk-appscake.pem")).read),
-    :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
-    :app                => AppsCake,
-    :server             => 'webrick'
-}
+if check_and_generate_certificates
+  webrick_options = {
+      :Port               => 8443,
+      :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::INFO),
+      :DocumentRoot       => "/ruby/htdocs",
+      :SSLEnable          => true,
+      :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
+      :SSLCertificate     => OpenSSL::X509::Certificate.new(
+          File.open(File.join(CERT_DIR, "cert-appscake.pem")).read),
+      :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
+          File.open(File.join(CERT_DIR, "pk-appscake.pem")).read),
+      :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
+      :app                => AppsCake,
+      :server             => 'webrick'
+  }
 
-Rack::Server.start webrick_options
+  Rack::Server.start webrick_options
 
-at_exit do
-  puts "Terminating AppsCake..."
+  at_exit do
+    puts "Terminating AppsCake..."
+  end
+else
+  puts "Error while loading SSL certificates"
 end
