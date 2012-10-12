@@ -7,7 +7,7 @@ require 'rake/testtask'
 # TODO(cgb): This probably should be moved into a Gemfile and out of this file.
 spec = Gem::Specification.new do |s|
   s.name = 'appscake'
-  s.version = '0.0.2'
+  s.version = '0.0.3'
 
   s.summary = "A web interface to the AppScale command-line tools."
   s.description = <<-EOF
@@ -31,7 +31,7 @@ spec = Gem::Specification.new do |s|
   s.require_path = "lib"
   s.autorequire = "appscake_utils"
 
-  s.has_rdoc = false  # to be fixed by 0.0.3
+  s.has_rdoc = false  # to be fixed by 0.0.4
 
   # Dependencies: AppsCake uses the AppScale Tools to run AppScale, net-ssh to
   # copy over files, and the Sinatra web server to present a web UI to users.
