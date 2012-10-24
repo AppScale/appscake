@@ -133,7 +133,7 @@ def validate_yaml(yaml_str)
   [true, success_result, yaml]
 end
 
-def validate_ec2_cluster_settings(min, max, ami)
+def validate_iaas_cluster_settings(min, max, ami)
   if min.nil? or min.length == 0
     return [false, "Minimum number of nodes unspecified"]
   elsif max.nil? or max.length == 0
@@ -143,7 +143,7 @@ def validate_ec2_cluster_settings(min, max, ami)
   elsif min.to_i <= 0
     return [false, "Minimum number of nodes must be positive"]
   elsif max.to_i < min.to_i
-    return [false, "Maximum number of nodes must not be smaller than the minimum numberof nodes"]
+    return [false, "Maximum number of nodes must not be smaller than the minimum number of nodes"]
   else
     return [true, ""]
   end
@@ -157,7 +157,7 @@ def validate_ec2_credentials(username, access_key, secret_key, region)
   elsif secret_key.nil? or secret_key.length == 0
     return [false, "EC2 secret key not specified"]
   elsif region.nil? or region.length == 0
-    return [false, "EC2 region not specified"]
+    return [false, "EC2 availability region not specified"]
   else
     output = CommonFunctions::shell("ec2-describe-regions -O #{access_key}  -W #{secret_key}")
     if output.nil? or output.length == 0
@@ -171,9 +171,24 @@ def validate_ec2_credentials(username, access_key, secret_key, region)
   [true, ""]
 end
 
-def validate_ec2_certificate_uploads(username, pk_upload, cert_upload)
+def validate_euca_credentials(username, access_key, secret_key, url, walrus_url)
   if username.nil? or username.length == 0
-    return [false, "EC2 username not specified"]
+    return [false, "Eucalyptus username not specified"]
+  elsif access_key.nil? or access_key.length == 0
+    return [false, "Eucalyptus access key not specified"]
+  elsif secret_key.nil? or secret_key.length == 0
+    return [false, "Eucalyptus secret key not specified"]
+  elsif url.nil? or url.length == 0
+    return [false, "Eucalyptus URL not specified"]
+  elsif walrus_url.nil? or walrus_url.length == 0
+    return [false, "Walrus URL not specified"]
+  end
+  [true, ""]
+end
+
+def validate_iaas_certificate_uploads(username, pk_upload, cert_upload)
+  if username.nil? or username.length == 0
+    return [false, "Username not specified"]
   elsif pk_upload.nil?
     return [false, "Primary key not uploaded"]
   elsif pk_upload[:type] != "application/x-x509-ca-cert" and
@@ -319,6 +334,43 @@ def deploy_on_ec2(params, run_instances_options, cert_timestamp)
         ENV['EC2_JVM_ARGS'] = "-Djavax.net.ssl.trustStore=#{ENV['JAVA_HOME']}/lib/security/cacerts"
         ENV['EC2_URL'] = "https://ec2.#{params[:region]}.amazonaws.com"
         ENV['S3_URL'] = "https://s3.amazonaws.com:443"
+        begin
+          redirect_standard_io(timestamp) do
+            AppScaleTools.run_instances(run_instances_options)
+          end
+        ensure
+          # If the fork was successful, the sub-process should release the lock
+          unlock
+        end
+      end
+      Process.detach(pid)
+      return [true, timestamp, pid]
+    rescue Exception => e
+      # If something went wrong with the fork, release the lock immediately and return
+      unlock
+      return [false, "Unexpected Runtime Error", "Runtime error while executing" +
+          " appscale tools: #{e.message}"]
+    end
+  else
+    return [false, "Server Busy", "AppsCake is currently busy deploying a cloud." +
+        " Please try again later."]
+  end
+end
+
+def deploy_on_eucalyptus(params, run_instances_options, cert_timestamp)
+  if lock
+    begin
+      timestamp = Time.now.to_i
+      pid = fork do
+        ENV['EC2_PRIVATE_KEY'] = File.join(File.dirname(__FILE__), "..", "certificates",
+                                           "#{params[:euca_username]}_#{cert_timestamp}_pk.pem")
+        ENV['EC2_CERT'] = File.join(File.dirname(__FILE__), "..", "certificates",
+                                    "#{params[:euca_username]}_#{cert_timestamp}_cert.pem")
+        ENV['EC2_ACCESS_KEY'] = params[:euca_access_key]
+        ENV['EC2_SECRET_KEY'] = params[:euca_secret_key]
+        ENV['EC2_JVM_ARGS'] = "-Djavax.net.ssl.trustStore=#{ENV['JAVA_HOME']}/lib/security/cacerts"
+        ENV['S3_URL'] = params[:euca_walrus_url]
+        ENV['EC2_URL'] = params[:euca_url]
         begin
           redirect_standard_io(timestamp) do
             AppScaleTools.run_instances(run_instances_options)

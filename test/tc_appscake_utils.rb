@@ -86,32 +86,32 @@ EOS
   end
 
   def test_validate_ec2_cluster_settings
-    status, result = validate_ec2_cluster_settings("1", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "1", "ami-123456")
     assert status
 
-    status, result = validate_ec2_cluster_settings(nil, "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings(nil, "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", nil, "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", nil, "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "1", nil)
+    status, result = validate_iaas_cluster_settings("1", "1", nil)
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "1", "")
+    status, result = validate_iaas_cluster_settings("1", "1", "")
     assert !status
-    status, result = validate_ec2_cluster_settings("0", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("0", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "0", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "0", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("5", "4", "ami-123456")
+    status, result = validate_iaas_cluster_settings("5", "4", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("-1", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("-1", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "-1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "-1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("a", "b", "ami-123456")
+    status, result = validate_iaas_cluster_settings("a", "b", "ami-123456")
     assert !status
   end
 
@@ -143,14 +143,40 @@ EOS
     assert status
   end
 
+  def test_validate_euca_credentials
+    status, result = validate_euca_credentials("", "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials(nil, "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", nil, "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", nil, "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", nil, "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", "")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", nil)
+    assert !status
+
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert status
+  end
+
   def test_validate_ec2_certificate_uploads
-    status, result = validate_ec2_certificate_uploads("", "dummy", "dummy")
+    status, result = validate_iaas_certificate_uploads("", "dummy", "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads(nil, "dummy", "dummy")
+    status, result = validate_iaas_certificate_uploads(nil, "dummy", "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads("bwayne", nil, "dummy")
+    status, result = validate_iaas_certificate_uploads("bwayne", nil, "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads("bwayne", "dummy", nil)
+    status, result = validate_iaas_certificate_uploads("bwayne", "dummy", nil)
     assert !status
   end
 
