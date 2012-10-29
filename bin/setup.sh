@@ -13,6 +13,7 @@ sudo gem install sinatra
 sudo gem install net-ssh
 sudo gem install json
 sudo gem install webrick
+sudo gem install optiflag
 
 tools_path=`which appscale-run-instances`
 if [ -z "$tools_path" ]; then

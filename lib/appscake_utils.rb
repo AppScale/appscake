@@ -2,21 +2,6 @@ require 'thread'
 require 'net/ssh'
 require 'yaml'
 
-tools_home = `which appscale-run-instances`
-if tools_home.length > 0
-  # AppScale-Tools are installed on the local machine
-  lib_dir = File.join(File.dirname(tools_home), "..", "lib")
-  tools_impl = File.join(lib_dir, "appscale_tools.rb")
-  if File.exists?(tools_impl)
-    # AppScale-Tools have been installed manually
-    # by building the source or by similar means.
-    # (as opposed to installing the appscale-tools gem)
-    # Add the lib directory into the load path.
-    $:.unshift lib_dir
-  end
-end
-require 'appscale_tools'
-
 $mutex = Mutex.new
 
 def report_error(title, msg)

@@ -8,23 +8,66 @@ require 'sinatra/base'
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+require 'optiflag'
 
+DEFAULT_APPSCAKE_PORT = 28443
 CERT_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "certificates"))
-
 LIB_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
+
+module AppsCakeFlags extend OptiFlagSet
+  optional_flag "p" do
+    description "Port for the AppsCake web service"
+    long_form "port"
+  end
+
+  optional_flag "td" do
+    description "Tools directory (Directory where AppScale Tools are installed)"
+    long_form "tools-dir"
+  end
+
+  and_process!
+end
+
+if ARGV.flags.p?
+  appscake_port = ARGV.flags.p.to_i
+else
+  appscake_port = DEFAULT_APPSCAKE_PORT
+end
+
+if ARGV.flags.td?
+  tools_dir = ARGV.flags.td
+else
+  tools_dir = `which appscale-run-instances`
+  if tools_dir.length > 0
+    tools_dir = File.join(File.dirname(tools_dir), "..")
+  end
+end
+
+if tools_dir.length > 0
+  # AppScale-Tools are installed on the local machine
+  lib_dir = File.join(tools_dir, "lib")
+  tools_impl = File.join(lib_dir, "appscale_tools.rb")
+  if File.exists?(tools_impl)
+    # AppScale-Tools have been installed manually
+    # by building the source or by similar means.
+    # (as opposed to installing the appscale-tools gem)
+    # Add the lib directory into the load path.
+    $:.unshift lib_dir
+  elsif ARGV.flags.td?
+    # We can't find AppScale-Tools in the directory
+    # explicitly specified by the user. Complain and
+    # give up.
+    puts "Unable to locate AppScale-Tools in #{tools_dir}"
+    exit 1
+  end
+end
+require 'appscale_tools'
+
 $:.unshift LIB_DIR
 require 'appscake_utils'
 
-APPSCAKE_PORT = 28443
-if (ARGV.length != 0 and ARGV.length != 2) or (ARGV.length == 2 and ARGV[0] != '-p')
-  puts "Usage: appscake [-p port]"
-  exit 1
-elsif ARGV.length == 2
-  APPSCAKE_PORT = ARGV[1].to_i
-end
-
 puts "\nAppsCake - Makes deploying AppScale a 'piece of cake'!\n"
-puts "Using port #{APPSCAKE_PORT}...\n\n"
+puts "Using port #{appscake_port}...\n\n"
 
 class AppsCake < Sinatra::Base
   set :views, settings.root + '/../views'
@@ -233,7 +276,7 @@ end
 
 if check_and_generate_certificates
   webrick_options = {
-      :Port               => APPSCAKE_PORT,
+      :Port               => appscake_port,
       :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::INFO),
       :DocumentRoot       => "/ruby/htdocs",
       :SSLEnable          => true,

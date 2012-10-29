@@ -2,6 +2,21 @@ require 'rubygems'
 require 'test/unit'
 require 'flexmock/test_unit'
 
+tools_dir = `which appscale-run-instances`
+if tools_dir.length > 0
+  # AppScale-Tools are installed on the local machine
+  lib_dir = File.join(tools_dir, "..", "lib")
+  tools_impl = File.join(lib_dir, "appscale_tools.rb")
+  if File.exists?(tools_impl)
+    # AppScale-Tools have been installed manually
+    # by building the source or by similar means.
+    # (as opposed to installing the appscale-tools gem)
+    # Add the lib directory into the load path.
+    $:.unshift lib_dir
+  end
+end
+require 'appscale_tools'
+
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require 'appscake_utils'
 

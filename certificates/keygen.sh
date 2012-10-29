@@ -7,8 +7,8 @@ openssl genrsa -out ${KEY_FILE} 1024
 echo "US"
 echo "California"
 echo "Santa Barbara"
-echo "UC Santa Barbara"
-echo "Dept. of Computer Science"
+echo "AppScale Systems, Inc."
+echo "AppScale Systems, Inc."
 echo "AppsCake"
 echo "appscale_community@googlegroups.com"
 echo
