@@ -8,14 +8,66 @@ require 'sinatra/base'
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+require 'optiflag'
 
+DEFAULT_APPSCAKE_PORT = 28443
 CERT_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "certificates"))
-
 LIB_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
+
+module AppsCakeFlags extend OptiFlagSet
+  optional_flag "p" do
+    description "Port for the AppsCake web service"
+    long_form "port"
+  end
+
+  optional_flag "td" do
+    description "Tools directory (Directory where AppScale Tools are installed)"
+    long_form "tools-dir"
+  end
+
+  and_process!
+end
+
+if ARGV.flags.p?
+  appscake_port = ARGV.flags.p.to_i
+else
+  appscake_port = DEFAULT_APPSCAKE_PORT
+end
+
+if ARGV.flags.td?
+  tools_dir = ARGV.flags.td
+else
+  tools_dir = `which appscale-run-instances`
+  if tools_dir.length > 0
+    tools_dir = File.join(File.dirname(tools_dir), "..")
+  end
+end
+
+if tools_dir.length > 0
+  # AppScale-Tools are installed on the local machine
+  lib_dir = File.join(tools_dir, "lib")
+  tools_impl = File.join(lib_dir, "appscale_tools.rb")
+  if File.exists?(tools_impl)
+    # AppScale-Tools have been installed manually
+    # by building the source or by similar means.
+    # (as opposed to installing the appscale-tools gem)
+    # Add the lib directory into the load path.
+    $:.unshift lib_dir
+  elsif ARGV.flags.td?
+    # We can't find AppScale-Tools in the directory
+    # explicitly specified by the user. Complain and
+    # give up.
+    puts "Unable to locate AppScale-Tools in #{tools_dir}"
+    exit 1
+  end
+end
+require 'appscale_tools'
+
 $:.unshift LIB_DIR
 require 'appscake_utils'
 
-puts "\nAppsCake - Makes deploying AppScale a 'piece of cake'!\n\n"
+puts "\nAppsCake - Makes deploying AppScale a 'piece of cake'!\n"
+puts "Using port #{appscake_port}...\n\n"
 
 class AppsCake < Sinatra::Base
   set :views, settings.root + '/../views'
@@ -90,7 +142,7 @@ class AppsCake < Sinatra::Base
   end
 
   post '/iaas_ec2.do' do
-    status, result = validate_ec2_cluster_settings(params[:min], params[:max], params[:ami])
+    status, result = validate_iaas_cluster_settings(params[:min], params[:max], params[:ami])
     if !status
       return report_error("Cluster Configuration Error", result)
     end
@@ -101,7 +153,7 @@ class AppsCake < Sinatra::Base
       return report_error("EC2 Security Configuration Error", result)
     end
 
-    status, result = validate_ec2_certificate_uploads(params[:username], params[:private_key],
+    status, result = validate_iaas_certificate_uploads(params[:username], params[:private_key],
                                                       params[:cert])
     if !status
       return report_error("EC2 Security Configuration Error", result)
@@ -150,6 +202,68 @@ class AppsCake < Sinatra::Base
     end
   end
 
+  post '/iaas_euca.do' do
+    status, result = validate_iaas_cluster_settings(params[:euca_min], params[:euca_max], params[:euca_emi])
+    if !status
+      return report_error("Cluster Configuration Error", result)
+    end
+
+    status, result = validate_euca_credentials(params[:euca_username], params[:euca_access_key],
+                                              params[:euca_secret_key], params[:euca_url],
+                                              params[:euca_walrus_url])
+    if !status
+      return report_error("Eucalyptus Configuration Error", result)
+    end
+
+    status, result = validate_iaas_certificate_uploads(params[:euca_username], params[:euca_private_key],
+                                                      params[:euca_cert])
+    if !status
+      return report_error("Eucalyptus Security Configuration Error", result)
+    end
+    cert_timestamp = result
+
+    status,acc_result = validate_appscale_credentials(params[:euca_user],
+                                                      params[:euca_pass], params[:euca_pass2])
+    if !status
+      return report_error("AppScale Administrator Account Configuration Error", acc_result)
+    end
+
+    app_name = nil
+    file_location = nil
+    if !params[:target_app].nil? and params[:target_app] != '_none_'
+      app_name = params[:target_app]
+      file_location = File.join(File.dirname(__FILE__), "..", "repository", params[:target_app])
+    end
+
+    run_instances_options = {
+        'keyname' => params[:euca_keyname],
+        'group' => params[:euca_keyname],
+        'file_location' => file_location,
+        'appname' => app_name,
+        'appengine' => 1,
+        'autoscale' => true,
+        'separate' => false,
+        'confirm' => false,
+        'table' => 'cassandra',
+        'infrastructure' => 'euca',
+        'min_images' => params[:euca_min].to_i,
+        'max_images' => params[:euca_max].to_i,
+        'instance_type' => params[:euca_instance_type],
+        'machine' => params[:euca_emi],
+        'admin_user' => params[:euca_user],
+        'admin_pass' => params[:euca_pass],
+    }
+    result = deploy_on_eucalyptus(params, run_instances_options, cert_timestamp)
+    if result[0]
+      @timestamp = result[1]
+      @pid = result[2]
+      @html = ""
+      return erb :success
+    else
+      report_error(result[1], result[2])
+    end
+  end
+
   get '/view_logs' do
     timestamp = params[:ts]
     if timestamp.nil? or timestamp.length == 0
@@ -160,23 +274,27 @@ class AppsCake < Sinatra::Base
   end
 end
 
-webrick_options = {
-    :Port               => 8443,
-    :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::INFO),
-    :DocumentRoot       => "/ruby/htdocs",
-    :SSLEnable          => true,
-    :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
-    :SSLCertificate     => OpenSSL::X509::Certificate.new(
-        File.open(File.join(CERT_DIR, "cert-appscake.pem")).read),
-    :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
-        File.open(File.join(CERT_DIR, "pk-appscake.pem")).read),
-    :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
-    :app                => AppsCake,
-    :server             => 'webrick'
-}
+if check_and_generate_certificates
+  webrick_options = {
+      :Port               => appscake_port,
+      :Logger             => WEBrick::Log::new($stderr, WEBrick::Log::INFO),
+      :DocumentRoot       => "/ruby/htdocs",
+      :SSLEnable          => true,
+      :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
+      :SSLCertificate     => OpenSSL::X509::Certificate.new(
+          File.open(File.join(CERT_DIR, "cert-appscake.pem")).read),
+      :SSLPrivateKey      => OpenSSL::PKey::RSA.new(
+          File.open(File.join(CERT_DIR, "pk-appscake.pem")).read),
+      :SSLCertName        => [["CN", WEBrick::Utils::getservername]],
+      :app                => AppsCake,
+      :server             => 'webrick'
+  }
 
-Rack::Server.start webrick_options
+  Rack::Server.start webrick_options
 
-at_exit do
-  puts "Terminating AppsCake..."
+  at_exit do
+    puts "Terminating AppsCake..."
+  end
+else
+  puts "Error while loading SSL certificates"
 end

@@ -13,6 +13,7 @@
     function showForm(selector) {
         document.getElementById('virtual').setAttribute('style', 'display:none')
         document.getElementById('iaas_ec2').setAttribute('style', 'display:none')
+        document.getElementById('iaas_euca').setAttribute('style', 'display:none')
 
         var selected = document.getElementById(selector.value);
         selected.setAttribute('style', '');
@@ -29,6 +30,7 @@
                 <select onchange="showForm(this)" id="infra.selector">
                     <option value="virtual">Virtualized Cluster (Xen/KVM)</option>
                     <option value="iaas_ec2">IaaS (EC2)</option>
+                    <option value="iaas_euca">IaaS (Eucalyptus)</option>
                 </select>
                 <span class="help-block">
                     Choose the cloud infrastructure setup on which you wish to
@@ -43,6 +45,11 @@
             <div id="iaas_ec2">
                 <td>
                     <%= erb :_ec2 %>
+                </td>
+            </div>
+            <div id="iaas_euca">
+                <td>
+                    <%= erb :_euca %>
                 </td>
             </div>
         </div>
