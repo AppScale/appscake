@@ -2,6 +2,21 @@ require 'rubygems'
 require 'test/unit'
 require 'flexmock/test_unit'
 
+tools_dir = `which appscale-run-instances`
+if tools_dir.length > 0
+  # AppScale-Tools are installed on the local machine
+  lib_dir = File.join(tools_dir, "..", "lib")
+  tools_impl = File.join(lib_dir, "appscale_tools.rb")
+  if File.exists?(tools_impl)
+    # AppScale-Tools have been installed manually
+    # by building the source or by similar means.
+    # (as opposed to installing the appscale-tools gem)
+    # Add the lib directory into the load path.
+    $:.unshift lib_dir
+  end
+end
+require 'appscale_tools'
+
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require 'appscake_utils'
 
@@ -86,32 +101,32 @@ EOS
   end
 
   def test_validate_ec2_cluster_settings
-    status, result = validate_ec2_cluster_settings("1", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "1", "ami-123456")
     assert status
 
-    status, result = validate_ec2_cluster_settings(nil, "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings(nil, "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", nil, "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", nil, "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "1", nil)
+    status, result = validate_iaas_cluster_settings("1", "1", nil)
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "1", "")
+    status, result = validate_iaas_cluster_settings("1", "1", "")
     assert !status
-    status, result = validate_ec2_cluster_settings("0", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("0", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "0", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "0", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("5", "4", "ami-123456")
+    status, result = validate_iaas_cluster_settings("5", "4", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("-1", "1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("-1", "1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("1", "-1", "ami-123456")
+    status, result = validate_iaas_cluster_settings("1", "-1", "ami-123456")
     assert !status
-    status, result = validate_ec2_cluster_settings("a", "b", "ami-123456")
+    status, result = validate_iaas_cluster_settings("a", "b", "ami-123456")
     assert !status
   end
 
@@ -143,14 +158,40 @@ EOS
     assert status
   end
 
+  def test_validate_euca_credentials
+    status, result = validate_euca_credentials("", "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials(nil, "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "", "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", nil, "batmobile", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "", "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", nil, "http://euca", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "", "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", nil, "http://walrus")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", "")
+    assert !status
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", nil)
+    assert !status
+
+    status, result = validate_euca_credentials("bwayne", "batcowl", "batmobile", "http://euca", "http://walrus")
+    assert status
+  end
+
   def test_validate_ec2_certificate_uploads
-    status, result = validate_ec2_certificate_uploads("", "dummy", "dummy")
+    status, result = validate_iaas_certificate_uploads("", "dummy", "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads(nil, "dummy", "dummy")
+    status, result = validate_iaas_certificate_uploads(nil, "dummy", "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads("bwayne", nil, "dummy")
+    status, result = validate_iaas_certificate_uploads("bwayne", nil, "dummy")
     assert !status
-    status, result = validate_ec2_certificate_uploads("bwayne", "dummy", nil)
+    status, result = validate_iaas_certificate_uploads("bwayne", "dummy", nil)
     assert !status
   end
 
@@ -234,6 +275,38 @@ EOS
     assert locked?
 
     puts "Waiting 10 seconds for the mock EC2 deployment tasks to complete"
+    sleep(10)
+
+    assert !locked?
+    log = File.join(File.expand_path(File.dirname(__FILE__)), "..",
+                    "logs", "deploy-#{result[1]}.log")
+    assert File.exist?(log)
+    File.delete(log)
+  end
+
+  def test_deploy_on_euca
+    flexmock(AppScaleTools).should_receive(:run_instances).and_return do
+      5.times do |i|
+        puts "Deploying..."
+        sleep(1)
+      end
+    end
+
+    params = { :euca_keyname => "appscale",
+               :euca_access_key => "access_key",
+               :euca_secret_key => "secret_key",
+               :euca_username => "username",
+               :euca_url => "https://testing.eucalyptus.com/euca2",
+               :euca_walrus_url => "https://testing.eucalyptus.com/walrus"
+    }
+    result = deploy_on_eucalyptus(params, {}, 12345678)
+    assert result[0]
+
+    output = `kill -0 #{result[2]}`
+    assert output.length == 0
+    assert locked?
+
+    puts "Waiting 10 seconds for the mock Eucalyptus deployment tasks to complete"
     sleep(10)
 
     assert !locked?
