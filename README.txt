@@ -31,6 +31,10 @@ There are 2 ways to install AppsCake:
 1. Pull the latest source from the Github
 	git clone https://github.com/AppScale/appscake
 
+If you are on a Debian based system such as Ubuntu or Mint, you can run
+the 'debian_setup.sh' script in the 'bin' directory to install all the
+required dependencies and setup AppsCake.
+
 2. Install the AppsCake gem
 	sudo gem install appscake
 
