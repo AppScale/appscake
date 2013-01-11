@@ -41,13 +41,22 @@ required dependencies and setup AppsCake.
 Gem installation will take care of installing the necessary dependencies
 too.
 
+Next, install the AppScale Tools:
+
+```
+cd ~
+git clone git://github.com/AppScale/appscale-tools
+cd appscale-tools/debian
+bash appscale_build.sh
+```
+
 Running AppsCake
 ================
 
 If you installed AppsCake from source, simply go into the 'bin' directory
 of the installation and run the 'appscake' script.
 
-./appscake
+./appscake -td ~/appscale-tools
 
 If you installed the AppsCake gem, simply execute the 'appscake' command
 (which should be in your PATH).
@@ -56,7 +65,7 @@ Once the server has started up, fire up your web browser and navigate
 to https://<appscake-host>:28443
 
 If you're installing AppsCake on an EC2 image make sure to modify your
-security group so that it allows inbound traffic on the port 8443.
+security group so that it allows inbound traffic on the port 28443.
 
 Optional Parameters
 ===================
