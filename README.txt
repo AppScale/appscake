@@ -43,12 +43,11 @@ too.
 
 Next, install the AppScale Tools:
 
-```
 cd ~
 git clone git://github.com/AppScale/appscale-tools
 cd appscale-tools/debian
 bash appscale_build.sh
-```
+
 
 Running AppsCake
 ================
