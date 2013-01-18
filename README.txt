@@ -43,6 +43,7 @@ too.
 
 Next, install the AppScale Tools:
 
+sudo su
 cd ~
 git clone git://github.com/AppScale/appscale-tools
 cd appscale-tools/debian
