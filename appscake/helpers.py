@@ -1,4 +1,5 @@
 """ Helper functions for AppsCake. """
+import uuid
 
 def generate_keyname():
   """ Generates a random keyname to use for an AppScale deployment. 
@@ -6,4 +7,4 @@ def generate_keyname():
   Returns:
     A string which is the name of the AppScale key.
   """
-  return "appscale"
+  return str(uuid.uuid1())

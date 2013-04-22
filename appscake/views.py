@@ -9,6 +9,7 @@ from appscake.forms import Cluster
 from django.contrib import  messages
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http import HttpResponseServerError
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.utils import simplejson
@@ -23,7 +24,7 @@ CLOUD_DEPLOY = "cloud"
 # A global variable to store all threads running the tools.
 ALL_THREADS = {}
 
-# Strategies for cloud deployments.
+# Placement stategies for cloud deployments.
 SIMPLE_DEPLOYMENT = "simple"
 ADVANCE_DEPLOYMENT = "advance"
 
@@ -37,16 +38,16 @@ def get_status(request):
   """ Returns a json string of the status of the tools being run. """
   post = request.POST.copy()
   identifier = None
-  if 'tools_id' in post:
-    identifier = post['tools_id']
+  if 'keyname' in post:
+    identifier = post['keyname']
   else:
     message = { 'error': True, 'error_message': 
-      "Bad JSON request (missing tools_id identifier)."}
+      "Bad JSON request (missing keyname)."}
     return HttpResponse(simplejson.dumps(message))  
 
-  if identifier not in ALL_THREADS[post['tools_id']]:
+  if identifier not in ALL_THREADS[post['keyname']]:
     message = {'error': True, 'error_message': 
-      "Unknown identifier give {0}.".form(identifier)}
+      "Unknown keyname give {0}.".form(identifier)}
 
   message = ALL_THREADS[identifier].get_status()
   return HttpResponse(simplejson.dumps(message))  
@@ -55,21 +56,24 @@ def start(request):
   """ This is the page a user submits a request to start AppScale. """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
-
     tools_runner = None
-
-    email = form['admin_email']
-    password = form['admin_pass']
+    email = form['admin_email'].value()
+    password = form['admin_pass'].value()
     keyname = helpers.generate_keyname()
-    logging.info(str(form))
-    cloud_type = form['cloud']
+   
+    cloud_type = None
+    if 'cluster' in request.POST:
+      cloud_type = CLUSTER_DEPLOY
+    elif 'cloud' in request.POST:
+      cloud_type = CLOUD_DEPLOY
+
     if cloud_type == CLOUD_DEPLOY:
-      infras = form['infrastructure'] 
-      deployment_type = form['deployment_type']
-      machine = form['machine']
+      infras = form['infrastructure'].value()
+      deployment_type = form['deployment_type'].value()
+      machine = form['machine'].value()
       if deployment_type == ADVANCE_DEPLOYMENT:
-        ips_yaml = form['ips_yaml']
-        tools_runner = ToolsRunner(cloud_type,
+        ips_yaml = form['ips_yaml'].value()
+        tools_runner = create_instances.ToolsRunner(cloud_type,
                                    keyname,
                                    email,
                                    password,
@@ -78,9 +82,9 @@ def start(request):
                                    instance_type=instance_type,
                                    ips_yaml=ips_yaml)
       elif deployment_type == SIMPLE_DEPLOYMENT:
-        min_nodes = form['min']
-        max_nodes = form['max']
-        tools_runner = ToolsRunner(cloud_type,
+        min_nodes = form['min'].value()
+        max_nodes = form['max'].value()
+        tools_runner = create_instances.ToolsRunner(cloud_type,
                                    keyname,
                                    email,
                                    password,
@@ -89,14 +93,23 @@ def start(request):
                                    instance_type=instance_type,
                                    min_nodes=min_nodes,
                                    max_nodes=max_nodes)
+      else:
+        logging.error(str(form))
+        return HttpServerErrorResponse("Unable to get the deployment strategy")
     elif cloud_type == CLUSTER_DEPLOY:
-      ips_yaml = form['ips_yaml']
-      tools_runner = ToolsRunner(cloud_type,
+      ips_yaml = form['ips_yaml'].value()
+      tools_runner = create_instances.ToolsRunner(cloud_type,
                                  keyname,
                                  email,
                                  password,
                                  ips_yaml=ips_yaml)
+    else:
+      logging.error(str(form))
+      return HttpResponseServerError("Unable to figure out the type of cloud deployment")  
     tools_runner.start()
-    ALL_THREADS[tools_runner.identifier] = tools_runner
+    identifier = tools_runner.keyname
+    ALL_THREADS[identifier] = tools_runner
+    return render(request, 'base/start.html', {'keyname': identifier})
   else:
-    return  render(request, 'base/start.html')
+    logging.error(str(form))
+    return HttpServerErrorResponse("404 Page not found")

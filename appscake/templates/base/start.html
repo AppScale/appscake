@@ -3,6 +3,7 @@
 {% block content %}
 
     <script type="text/javascript">
+        var identifier = '{{ keyname }}';
         var progress = setInterval(function() {
             var $bar = $('.bar');
 
@@ -17,7 +18,7 @@
     </script>
 
     <script type="text/javascript">
-
+        var identifier = '{{ keyname }}';
         $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
             var items = [];
 
