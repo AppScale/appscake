@@ -2,56 +2,50 @@
 {% block content %}
 
     <div class="container" xmlns="http://www.w3.org/1999/html">
-            <div class="row">
-                <div class="span12 hero-unit">
-                    <h1>Welcome to AppsCake!</h1>
-                    <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
-                    <p>
+        <div class="row">
+            <div class="span12 hero-unit">
+                <h1>Welcome to AppsCake!</h1>
+                <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
+                <p>
                     AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
                     Virtualbox.</p>
-                    <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
-                        <hr/>
+                <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
+                <hr/>
 
 
 
 
-                </div>
             </div>
+        </div>
 
 
 
         <div class="row">
-            <div class="span4">
+            <div class="span12">
 
+                <form action="/start/" method="post" data-validate="parsley"> {% csrf_token %}
 
                     <label>Choose deployment infrastructure:</label>
                     <label class="radio"><input class="" id="rdb1 optionsRadio1" type="radio" name="toggler" value="1"  />Cluster</label>
                     <label class="radio"><input class="" id="rdb2" type="radio" name="toggler" value="2"  />Cloud</label>
 
-            </div>
-        </div>
+
                     <div id="blk-1" class="toHide" style="display:none">
                         <div class="span4" id="clusterDiv">
-                            <form action="/start/" method="post" data-validate="parsley"> {% csrf_token %}
-                                {{ form.non_field_errors }}
-                                <label for="email">Admin Email:</label>
-                                {{ form.admin_email }}
-                                {{ feild }}
-                                <label for="id_admin_pass">Admin password:</label>
-                                {{ form.admin_pass }}
-                                {{ field }}
-                                <label for="id_pass_confirm">Confirm password:</label>
-                                {{ form.pass_confirm }}
-                                {{ field }}
-                                <label for="id_keyname">AppScale keyname:</label>
-                                {{ form.keyname }}
-                                {{ field }}
-
-                            <br><br>
-                            <div style="padding:30px 0 0 0; width: 314px; height: 70px" class="well">
-                            <button type="submit" style="margin:0px 0 0 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
-                            </div>
-
+                            {{ form.non_field_errors }}
+                            <label for="email">Admin Email:</label>
+                            {{ form.admin_email }}
+                            {{ feild }}
+                            <label for="id_admin_pass">Admin password:</label>
+                            {{ form.admin_pass }}
+                            {{ field }}
+                            <label for="id_pass_confirm">Confirm password:</label>
+                            {{ form.pass_confirm }}
+                            {{ field }}
+                            <label for="id_keyname">AppScale keyname:</label>
+                            {{ form.keyname }}
+                            {{ field }}
+                            {{ form.cluster }}
                         </div>
 
                         <div class="span6">
@@ -69,63 +63,68 @@ ips_layout:
                             <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                             {{ form.ips_yaml }}
                             {{ field }}
-                            </form>
-                        </div>
+                            <button type="submit" style="margin:10px 120px 25px 0; width: 314px;" class="btn btn-large btn-success pull-right">Launch Now!</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
-                    </div>
+    </div>
 
 
 
-                    <div id="blk-2" class="toHide" style="display:none">
-                        <div class="row">
+    <div id="blk-2" class="row toHide" style="display:none">
 
-                            <div class="span4" id="clusterDiv">
-                                <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
-                                    {{ form.non_field_errors }}
-                                <label for="email">Admin Email:</label>
-                                {{ form.admin_email }}
-                                {{ feild }}
-                                <label for="id_admin_pass">Admin password:</label>
-                                {{ form.admin_pass }}
-                                {{ field }}
-                                <label for="id_pass_confirm">Confirm password:</label>
-                                {{ form.pass_confirm }}
-                                {{ field }}
-                                <label for="id_keyname">AppScale keyname:</label>
-                                {{ form.keyname }}
-                                {{ field }}
-                                <label for="deploy_option1">Choose deployment setting:</label>
-                                {{ form.infras }}
-                                {{ feild }}
-                                <label for="machine">Choose machine type:</label>
-                                {{ form.machine }}
-                                {{ feild }}
-                                <label for="key">Enter your Amazon EC2/Eucalyptus Secret:</label>
-                                {{ form.key }}
-                                {{ feild }}
-                                <label for="secret">Enter your Amazon EC2/Eucalyptus Key:</label>
-                                {{ form.secret }}
-                                {{ feild }}
-                                <br><br>
-                                <div style="padding:30px 0 0 0; width: 314px; height: 70px" class="well">
-                                    <button type="submit" style="margin:0px 0 0 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
-                                </div>
-                            </div>
+        <div class="span4" id="">
+            <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
+                {{ form.non_field_errors }}
 
-                            <div class="span6">
+                <label>A deployment strategy is required,<br/> please select one from the drop down below:</label>
+                <select class="required" data-required="true" id="select-required">
+                    <option value>- - - Select Strategy - - -</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Simple">Simple</option>
+                </select>
+                <label for="email">Admin Email:</label>
+                {{ form.admin_email }}
+                {{ feild }}
+                <label for="id_admin_pass">Admin password:</label>
+                {{ form.cloud_admin_pass }}
+                {{ field }}
+                <label for="id_pass_confirm">Confirm password:</label>
+                {{ form.cloud_pass_confirm }}
+                {{ field }}
+                <label for="id_keyname">AppScale keyname:</label>
+                {{ form.keyname }}
+                {{ field }}
+                <label for="deploy_option1">Choose deployment setting:</label>
+                {{ form.infras }}
+                {{ feild }}
+                <label for="machine">Choose machine type:</label>
+                {{ form.machine }}
+                {{ feild }}
+                <label for="key">Enter your Amazon EC2/Eucalyptus Secret:</label>
+                {{ form.key }}
+                {{ feild }}
+                <label for="secret">Enter your Amazon EC2/Eucalyptus Key:</label>
+                {{ form.secret }}
+                {{ feild }}
+                {{ form.cloud }}
+                <br><br>
+                <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
 
-                                <label>Select deployment strategy:</label>
-                                <select id="selectField">
-                                    <option value="option0">- - - Select Strategy - - -</option>
-                                    <option value="option1">Advanced</option>
-                                    <option value="option2">Simple</option>
-                                </select>
+        </div>
 
-                                <div id="option1" class="box" style="display: none;"><p>Enter the desired deployment strategy in the dialog box below,
-                                    if you are unfamiliar with how this works, please visit the
-                                    <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
-                                    Below is a sample strategy: </p>
+        <div class="span6">
+
+
+
+            <div id="Advanced" class="box" style="display: none;">
+                <p>Enter the desired deployment strategy in the dialog box below,
+                    if you are unfamiliar with how this works, please visit the
+                    <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
+                    Below is a sample strategy: </p>
                                 <pre>
 ips_layout:
   master : 192.168.33.10
@@ -133,25 +132,25 @@ ips_layout:
   database: 192.168.33.10
   zookeeper: 192.168.33.10
                                 </pre>
-                                    <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
-                                    {{ form.ips_yaml }}
-                                    {{ field }}</div>
-                                <div id="option2" class="box"><label>Minimum number of nodes:</label>
-                                    {{ form.min }}
-                                    {{ feild }}
-                                    <label>Maximum number of nodes:</label>
-                                    {{ form.max }}
-                                    {{ feild }}</div>
+                <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
+                {{ form.ips_yaml }}
+                {{ field }}</div>
+            <div id="Simple" class="box">
+                <label>Minimum number of nodes:</label>
+                {{ form.min }}
+                {{ feild }}
+                <label>Maximum number of nodes:</label>
+                {{ form.max }}
+                {{ feild }}</div>
 
-                                </form>
-                            </div>
-
-
-                        </div>
+            </form>
+        </div>
 
 
-                        </div>
-                    </div>
+
+
+    </div>
+    </div>
 
 
 

@@ -7,7 +7,7 @@
 
    ========================================================================== */
 
- #admin_pass, #id_min, #id_max, #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2, #dk_container_id_machine, #dk_container_infrastructure{
+#admin_pass, #cloud_admin_pass, #cloud_pass_confirm, #id_min, #id_max, #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2, #dk_container_id_machine, #dk_container_infrastructure{
     width: 300px;
 }
 
@@ -22,6 +22,7 @@
 
 #ips_yaml {
     width: 555px;
+    height: 200px;
 }
 
 #launch {

@@ -6,9 +6,8 @@ from django.core.validators import email_re
 from django.core.exceptions import ValidationError
 
 INFRAS=[
-    ('euca', 'Eucaylptus'),
-    ('ec2', 'Amazon EC2')]
-
+  ('euca', 'Eucaylptus'),
+  ('ec2', 'Amazon EC2')]
 
 DEPLOYS=[('cluster','Cluster'),
          ('cloud','Cloud')]
@@ -16,82 +15,115 @@ DEPLOYS=[('cluster','Cluster'),
 CASSANDRA=[('cassandra', 'Cassandra')]
 
 MACHINE=[('m1.small', 'm1.small'),
-    ('m1.medium', 'm1.medium'),
-    ('m1.large', 'm1.large'),
-    ('m1.xlarge', 'm1.xlarge')]
+         ('m1.medium', 'm1.medium'),
+         ('m1.large', 'm1.large'),
+         ('m1.xlarge', 'm1.xlarge')]
+
+
 
 
 class CommonFields(forms.Form):
-    cloud = forms.ChoiceField(choices=DEPLOYS,
-                              required = True,
-                              label = False,
-                              widget=forms.RadioSelect(attrs={
-                                   'value': '',
-                                   'onclick': 'checkTransType(this.value)',
-                                   'type': 'radio',
-                                   'name': '',
 
-                                   }))
+  cloud = forms.ChoiceField(choices=DEPLOYS,
+                            required = True,
+                            label = False,
+                            widget=forms.RadioSelect(attrs={
+                              'value': '',
+                              'onclick': 'checkTransType(this.value)',
+                              'type': 'radio',
+                              'name': '',
+                              'data-required': 'true',
+                              'class': 'required',
+
+                              }))
 
 
-    machine = forms.ChoiceField(choices=MACHINE,
-                                widget=forms.Select(attrs={
-                                  'class': 'dk_fix'
-                                }))
+  machine = forms.ChoiceField(choices=MACHINE,
+                              widget=forms.Select(attrs={
+                                'class': 'dk_fix'
+                              }))
 
-    key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True)
+  key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+    'class': 'required'
+  }))
 
-    secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True)
+  secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+    'class': 'required'
+  }))
 
-    infras = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
-      'id': 'infrastructure',
-      'class': 'dk_fix'
+  infras = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
+    'id': 'infrastructure',
+    'class': 'dk_fix'
+  }))
+
+  min = forms.IntegerField(max_value=100,min_value=1,
+                           widget=forms.TextInput(attrs={
+                             'data-required': 'true',
+                             'value': '1',
+                             'class': 'required'
+                           }))
+
+  max = forms.IntegerField(max_value=100,min_value=1, widget=forms.TextInput(attrs={
+    'value': '1',
     }))
 
-    min = forms.IntegerField(max_value=100,min_value=1)
+  cloud = forms.CharField(widget = forms.HiddenInput(attrs={'readonly':'CLOUD'}))
 
-    max = forms.IntegerField(max_value=100,min_value=1)
+  cluster = forms.CharField(widget = forms.HiddenInput(attrs={'readonly':'CLUSTER'}))
 
-    admin_email = forms.EmailField(validators=[validate_email], max_length=40,
-    required=True, widget=forms.TextInput(attrs={'id':'email', 'data-type':'email', 
-      'name':"email", 'data-trigger':"change", 'data-required':"true"}))
+  admin_email = forms.EmailField(validators=[validate_email], max_length=40,
+                                 required=True, widget=forms.TextInput(attrs={'id':'email', 'data-type':'email', 'name':"email",
+                                                                              'data-trigger':"change", 'data-required':"true"}))
 
-    admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 'parsley-validate', 
-      'data-required':"true"}), label=("Admin Password"), min_length=6, required=True, )
+  admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
+                                                          attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 'required parsley-validate',
+                                                                 'data-minlength': '6', 'data-required':"true"}),
+                               label="Admin Password", min_length=6, required=True, )
 
-    pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'pass_confirm', 'class': 'parsley-validate', 'data-equalto': '#admin_pass',
-           'name':"pass_confirm", 'data-required':"true"}),
+  pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
+                                                            attrs={'id':'pass_confirm', 'class': 'required parsley-validate', 'data-equalto': '#admin_pass',
+                                                                   'name':'pass_confirm', 'data-minlength': '6', 'data-required':"true"}),
+                                 label="Confirm Password", min_length=6)
 
-    label="Confirm Password", min_length=6, required=True)
+  cloud_admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
+                                                                attrs={'id':'cloud_admin_pass',
+                                                                       'name':"admin_pass",
+                                                                       'class': 'required parsley-validate',
+                                                                       'data-minlength': '6',
+                                                                       'data-required':"true"}),
+                                     label="Admin Password", min_length=6)
 
-    keyname = forms.CharField(min_length=4, max_length=24, required=True,
-    widget=forms.TextInput(attrs={'id':'keyname', 'name':"keyname",
-    'data-trigger':"change", 'data-required':"true"}))
+  cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
+                                                                  attrs={'id':'cloud_pass_confirm',
+                                                                         'class': 'required parsley-validate',
+                                                                         'data-equalto': '#cloud_admin_pass',
+                                                                         'name':'pass_confirm',
+                                                                         'data-minlength': '6',
+                                                                         'data-required':"true"}),
+                                       label="Confirm Password", min_length=6)
 
-    ips_yaml = forms.CharField(label=("ips.yaml"), max_length=120,
-    widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",'data-trigger':"change",
-    'data-required':"true"}), required=True)
+  keyname = forms.CharField(min_length=4, max_length=24, required=True,
+                            widget=forms.TextInput(attrs={'id':'keyname', 'name':"keyname",
+                                                          'data-trigger':"change", 'data-required':"true"}))
 
-    machine = forms.ChoiceField(choices=MACHINE)
+  ips_yaml = forms.CharField(label=("ips.yaml"), max_length=120,
+                             widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",'data-trigger':"change",
+                                                          'data-required':"true", 'class': 'required' }), required=True)
 
-    def clean_password(self):
-      if self.data['admin_pass'] != self.data['pass_confirm']:
-        raise forms.ValidationError('Passwords are not the same')
-      return self.data['admin_pass']
+  machine = forms.ChoiceField(choices=MACHINE)
 
-    def clean(self,*args, **kwargs):
-      self.clean_password()
-      return super(CommonFields, self).clean(*args, **kwargs)
+  def clean_password(self):
+    if self.data['admin_pass'] != self.data['pass_confirm']:
+      raise forms.ValidationError('Passwords are not the same')
+    return self.data['admin_pass']
 
-def clean_forms(self):
-  clean_secret = self.cleaned_data['secret']
-  clean_key = self.cleaned_data['key']
-  if clean_key:
-    if not clean_secret:
-      raise forms.ValidationError("Required Feild")
-  return clean_secret
+  def clean(self,*args, **kwargs):
+    self.clean_password()
+    return super(CommonFields, self).clean(*args, **kwargs)
+
+
 
 
 
@@ -99,18 +131,4 @@ def clean_forms(self):
 
 class Cluster(forms.Form):
 
-  min_max = forms.IntegerField(max_value=100,min_value=1)
-
   machine = forms.ChoiceField(choices=MACHINE)
-
-
-
-
-class ec2(forms.Form):
-    ec2_key = forms.CharField(label=("Amazon EC2 Key"), required=True)
-    ec2_secret = forms.CharField(label=("Amazon EC2 Secret"), required=True)
-
-class euca(forms.Form):
-    ec2_key = forms.CharField(label=("Amazon EC2 Key"), required=True)
-    ec2_secret = forms.CharField(label=("Amazon EC2 Secret"), required=True)
-

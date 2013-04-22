@@ -10,7 +10,7 @@ $(function() {
 $(document).ready(function () {
     $('.box').hide();
     $('#option0').show();
-    $('#selectField').change(function () {
+    $('#select-required').change(function () {
         $('.box').hide();
         $('#'+$(this).val()).show();
     });
