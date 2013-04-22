@@ -9,8 +9,6 @@ INFRAS=[
     ('euca', 'Eucaylptus'),
     ('ec2', 'Amazon EC2')]
 
-CLUSTER=[('cluster','Cluster')]
-CLOUD=[('cloud','Cloud')]
 
 DEPLOYS=[('cluster','Cluster'),
          ('cloud','Cloud')]
@@ -22,8 +20,6 @@ MACHINE=[('m1.small', 'm1.small'),
     ('m1.large', 'm1.large'),
     ('m1.xlarge', 'm1.xlarge')]
 
-DEPLOY_OPTION = [('simple', 'Simple'),
-  ('advanced', 'Advanced')]
 
 
 
@@ -39,13 +35,6 @@ class CommonFields(forms.Form):
 
                                    }))
 
-    advanced = forms.ChoiceField(choices=DEPLOY_OPTION,
-                               label = False,
-                               widget=forms.RadioSelect(attrs={
-                                      'name': 'advanced',
-                                      'value': 'advanced',
-                                      'onclick': 'checkMinMax(this.value)',
-                                    }))
 
     machine = forms.ChoiceField(choices=MACHINE,
                                 widget=forms.Select(attrs={
@@ -70,11 +59,12 @@ class CommonFields(forms.Form):
     'data-trigger':"change", 'data-required':"true"}))
 
     admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'admin_pass', 'name':"admin_pass", 'data-equalto': '#equalToModel', 'data-trigger':"change", 'data-required':"true"}),
+    attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 'parsley-validate', 'data-required':"true"}),
     label=("Admin Password"), min_length=6, required=True, )
 
     pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'pass_confirm eqalToModel', 'data-equalto': '#equalToModel', 'name':"pass_confirm", 'data-trigger':"change", 'data-required':"true"}),
+    attrs={'id':'pass_confirm', 'class': 'parsley-validate', 'data-equalto': '#admin_pass',
+           'name':"pass_confirm", 'data-required':"true"}),
     label="Confirm Password", min_length=6, required=True)
 
     keyname = forms.CharField(min_length=4, max_length=24, required=True,
@@ -108,23 +98,6 @@ def clean_forms(self):
   return clean_secret
 
 
-# I used this instead of lambda expression after scope problems
-def _get_cleaner(form, field):
-    def clean_field():
-        return getattr(form.instance, field, None)
-    return clean_field
-
-class ROFormMixin(forms.BaseForm):
-    def __init__(self, *args, **kwargs):
-        super(ROFormMixin, self).__init__(*args, **kwargs)
-        if hasattr(self, "read_only"):
-            if self.instance and self.instance.pk:
-                for field in self.read_only:
-                    self.fields[field].widget.attrs['readonly'] = True
-                    setattr(self, "clean_" + field, _get_cleaner(self, field))
-
-class Cassandra(ROFormMixin):
-    table = ('Cassandra')
 
 
 
