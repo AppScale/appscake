@@ -19,7 +19,7 @@ based on Django.
 - Django 1.5 (get the tar ball here: https://www.djangoproject.com/download/1.5.1/tarball/)
 
 # Install process ##
-Run ```bash get\_tools.sh```.
+Run ```bash get_tools.sh```.
 
 ### For Mac OSX ###
 Install the tools by going into appscale-tools/osx
