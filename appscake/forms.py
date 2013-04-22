@@ -25,8 +25,6 @@ MACHINE=[('m1.small', 'm1.small'),
 DEPLOY_OPTION = [('simple', 'Simple'),
   ('advanced', 'Advanced')]
 
-
-
 class CommonFields(forms.Form):
     cloud = forms.ChoiceField(choices=DEPLOYS,
                               required = True,
@@ -66,15 +64,17 @@ class CommonFields(forms.Form):
     max = forms.IntegerField(max_value=100,min_value=1)
 
     admin_email = forms.EmailField(validators=[validate_email], max_length=40,
-    required=True, widget=forms.TextInput(attrs={'id':'email', 'data-type':'email', 'name':"email",
-    'data-trigger':"change", 'data-required':"true"}))
+    required=True, widget=forms.TextInput(attrs={'id':'email', 'data-type':'email', 
+      'name':"email", 'data-trigger':"change", 'data-required':"true"}))
 
     admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'admin_pass', 'name':"admin_pass", 'data-equalto': '#equalToModel', 'data-trigger':"change", 'data-required':"true"}),
-    label=("Admin Password"), min_length=6, required=True, )
+    attrs={'id':'admin_pass', 'name':"admin_pass", 'data-equalto': '#equalToModel', 
+      'data-trigger':"change", 'data-required':"true"}), label=("Admin Password"), 
+      min_length=6, required=True, )
 
     pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'pass_confirm eqalToModel', 'data-equalto': '#equalToModel', 'name':"pass_confirm", 'data-trigger':"change", 'data-required':"true"}),
+    attrs={'id':'pass_confirm eqalToModel', 'data-equalto': '#equalToModel', 
+      'name':"pass_confirm", 'data-trigger':"change", 'data-required':"true"}),
     label="Confirm Password", min_length=6, required=True)
 
     keyname = forms.CharField(min_length=4, max_length=24, required=True,
@@ -95,9 +95,6 @@ class CommonFields(forms.Form):
     def clean(self,*args, **kwargs):
       self.clean_password()
       return super(CommonFields, self).clean(*args, **kwargs)
-
-
-
 
 def clean_forms(self):
   clean_secret = self.cleaned_data['secret']
