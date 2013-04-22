@@ -41,9 +41,6 @@ class ToolsRunner(threading.Thread):
   # Cloud type deployment.
   CLOUD = "cloud"
 
-  # Default args given to the tools.
-  DEFAULT_ARGS = ['--table', 'cassandra']
-
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
 
@@ -96,8 +93,9 @@ class ToolsRunner(threading.Thread):
     self.std_out_capture = StringIO()
     self.std_err_capture = StringIO()
     self.status = self.INIT_STATE
-    self.err_message = ""
-    self.args = self.DEFAULT_ARGS
+    self.err_message = "" 
+    self.args = ['--table', 'cassandra']
+    logging.error("Args at init: {0}".format(self.args))
     self.args.extend(["--admin_user", self.admin_email,
                       "--admin_pass", self.admin_pass,
                       "--keyname", self.keyname])
