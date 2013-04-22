@@ -1,0 +1,54 @@
+/* =============================================================================
+   App specific CSS file.
+
+   This is usually where the site/app's CSS specific rules are setup. Note that you could
+   do exactly the same using less by adding a '@import "app.less";' at the end of
+   css/less/bootstrap.less file.
+
+   ========================================================================== */
+
+ #admin_pass, #id_min, #id_max, #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2, #dk_container_id_machine, #dk_container_infrastructure{
+    width: 300px;
+}
+
+.dk_options_inner, .dk_options{
+    width: 280px;
+}
+
+
+.strat_fix {
+    width: 300px;
+}
+
+#ips_yaml {
+    width: 555px;
+}
+
+#launch {
+    bottom: 10px;
+    left: 10px;
+}
+
+#infra_choice li {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+#id_cloud_type_1 {
+    display: inline;
+    list-style-type: none;
+    padding-right: 20px;
+}
+
+
+html, body {height:100%;overflow:auto}
+
+.box{
+    display:block;
+}
+
+#selectField{
+    border: 1px solid #ddd;
+    width: 200px;
+}

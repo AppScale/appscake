@@ -1,0 +1,157 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/i/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>AppsCake</title>
+  <meta name="description" content="Deploy AppScale Instantly">
+  <meta name="author" content="The AppScale Team">
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css">
+
+  {% block css %}{% endblock %}
+  <style>
+  </style>
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except this Modernizr build.
+       Modernizr enables HTML5 elements & feature detects for optimal performance.
+       Create your own custom Modernizr build: www.modernizr.com/download/ -->
+    <script src="{{ STATIC_URL }}js/parsley.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <!--<script src="{{ STATIC_URL }}js/flat-js/jquery-ui-1.10.0.custom.min.js"> </script>-->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-ui.min.js"><\/script>')</script>
+
+
+
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+{% block body %}
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+  <![endif]-->
+  <header>
+      <div id="navbar" class="navbar navbar-inverse navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
+          <div class="navbar-inner">
+              <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </a>
+                  <a class="brand" href="/">AppsCake</a>
+                  <div class="nav-collapse collapse">
+                      <ul class="nav">
+                          <li><a href="about">About</a> </li>
+                          <li><a href="http://www.github.com/AppScale/appscale/wiki/">Wiki</a> </li>
+                          <li><a href="http://community.appscale.com/">Community</a> </li>
+                          <li><a href="http://www.appscale.com/contact">Contact</a></li>
+                      </ul>
+                      <!--<form class="navbar-form pull-right">
+                          <input class="span2" type="text" placeholder="Admin">
+                          <input class="span2" type="password" placeholder="Password">
+                          <button type="submit" class="btn">Sign in</button>
+                      </form>-->
+                  </div><!--/.nav-collapse -->
+              </div>
+          </div>
+      </div>
+  </header>
+
+  <div role="main">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer>
+      <div id="footer" class="container">
+          <div class="row">
+              <div class="span7">
+                  <h3 class="footer-title">Subscribe</h3>
+                  <p>Do you love Google App Engine? Do you love open source? <br/>
+                      Subscribe to AppScale news and updates to stay tuned on great product releases.<br/>
+                      Go to: <a href="http://appscale.com/" target="_blank">appscale.com/</a>
+                  </p>
+
+                  <p class="pvl">
+                      <a href="https://twitter.com/share" class="twitter-share-button" data-url=""
+                         data-text="AppsCake by AppScale" data-via="appscalecloud" data-size="large">Tweet</a>
+                      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                  </p>
+
+
+              </div> <!-- /span8 -->
+
+              <div class="span5">
+                  <div class="footer-banner">
+                      <h3 class="footer-title"><a href="http://appscale.com/">About AppScale</a></h3>
+                      <ul>
+                          <li>Google App Engine Compatible</li>
+                          <li>100% Open Source</li>
+                          <li>Built by developers for developers</li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </footer>
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+
+
+    <!-- le scripts concatenated and minified via django-compressor -->
+  <!--<script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>-->
+  <script src="{{ STATIC_URL }}js/plugins.js"></script>
+  <script src="{{ STATIC_URL }}js/main.js"></script>
+
+  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
+    <!-- le flat ui js files -->
+  <!--<script src="{{ STATIC_URL }}js/flat-js/jquery-1.8.2.min.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/jquery-ui-1.10.0.custom.min.js"></script>-->
+  <script src="{{ STATIC_URL }}js/flat-js/custom_checkbox_and_radio.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/custom_radio.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/html5shiv.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/jquery.dropkick-1.0.0.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/jquery.tagsinput.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/bootstrap-tooltip.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/jquery.placeholder.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/application.js"></script>
+
+
+
+  <!-- end scripts -->
+    <script type="text/javascript">
+
+    </script>
+  <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID.
+       mathiasbynens.be/notes/async-analytics-snippet -->
+  <script>
+    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
+{% endblock %}
+</body>
+</html>

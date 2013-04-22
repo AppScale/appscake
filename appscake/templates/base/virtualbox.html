@@ -1,0 +1,46 @@
+{% extends "_layouts/base.html" %}
+
+{% block content %}
+
+<form action="/virtualbox/" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="submit">
+</form>
+
+
+    <form method="POST" action="virtual.do" class="well form-horizontal span12" id="virtual_form">
+        <legend>AppScale Deployment for Virtualized Cluster (Xen/KVM)</legend>
+        <ul>
+            <li>
+                All the machines/VMs you intend to use in this deployment must be already
+                up and running.
+            </li>
+            <li style="color: red;">All fields on this form are required.</li>
+        </ul>
+        <hr/>
+        <div class="control-group">
+            <label class="control-label" for="ips">Server Configuration (ips.yaml) <span class="required">*</span></label>
+            <div class="controls">
+                <textarea name="ips" id="ips" rows="10" cols="50" class="span6"></textarea>
+            <span class="help-block">
+                List of IP addresses and their corresponding roles in the standard YAML
+                format. Make sure that all critical roles are assigned to an IP address.
+                All the specified hosts should be already up and running.
+            </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="root_password">Root Password <span class="required">*</span></label>
+            <div class="controls">
+                <input name="root_password" id="root_password" type="password" placeholder="Enter Password"/>
+            <span class="help-block">
+                Unix/Linux root passwords for the machines/VMs. The same root password
+                should work on all the machines/VMs specified in ips.yaml.
+            </span>
+            </div>
+        </div>
+        <input type="submit" value="submit">
+    </form>
+
+
+{% endblock %}

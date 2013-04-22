@@ -1,0 +1,112 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+    <script type="text/javascript">
+        var progress = setInterval(function() {
+            var $bar = $('.bar');
+
+            if ($bar.width()==400) {
+                clearInterval(progress);
+                $('.progress').removeClass('active');
+            } else {
+                $bar.width($bar.width()+40);
+            }
+            $bar.text($bar.width()/4 + "%");
+        }, 800);
+    </script>
+
+    <script type="text/javascript">
+
+        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
+            var items = [];
+
+            $.each(data, function(key, val) {
+                items.push('<li id="' + key + '">' + val + '</li>');
+            });
+
+            $('<ul/>', {
+                'class': '',
+                html: items.join('')
+            }).appendTo('#init');
+        });
+
+        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
+            var items = [];
+
+            $.each(data, function(key, val) {
+                items.push('<li id="' + key + '">' + val + '</li>');
+            });
+
+            $('<ul/>', {
+                'class': '',
+                html: items.join('')
+            }).appendTo('#init-errors');
+        });
+
+        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
+            var items = [];
+
+            $.each(data, function(key, val) {
+                items.push('<a id="' + key + '">' + val + '</a>');
+            });
+
+            $( {
+                'class': 'btn btn-large btn-block btn-success',
+                html: items.join('')
+            }).appendTo('#cloud-link');
+        });
+
+
+
+    </script>
+
+
+    <div class="container">
+        <div class="row">
+            <div style="text-align: center;" class="span10 hero-unit">
+                <h1>Congratulations!</h1>
+                <hr>
+                <h4> Your cloud is being processed, please be patient.</h4>
+                    <!--<img width="5%"  src="{{ STATIC_URL }}img/illustrations/settings.png">-->
+
+                <div style="width:400px; margin:25px 0 -40px 300px;">
+                    <div class="progress progress-success progress-striped active">
+                        <div class="bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="text-align: center;" class="row">
+            <div class="span6">
+                <h3>AppScale Initialization Status:</h3>
+                <span id="init"></span>
+            </div>
+
+            <div class="span6">
+                <h3>AppScale Error Status:</h3>
+                <span id="init-errors"></span>
+            </div>
+        </div>
+        <hr class="span10">
+        <div class="row">
+
+            <div style="padding: 10px 0 25px 0;" class="offset4 span4">
+                <a href="#" class="btn btn-large btn-block btn-success disabled">Login to your AppScale Cloud</a>
+                <a href="#" class="btn btn-large btn-block btn-success">Login to your AppScale Cloud</a>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+{% endblock %}
