@@ -46,6 +46,9 @@
                             {{ form.keyname }}
                             {{ field }}
                             {{ form.cluster }}
+                            <br><br>
+                            <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
+
                         </div>
 
                         <div class="span6">
@@ -63,7 +66,6 @@ ips_layout:
                             <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                             {{ form.ips_yaml }}
                             {{ field }}
-                            <button type="submit" style="margin:10px 120px 25px 0; width: 314px;" class="btn btn-large btn-success pull-right">Launch Now!</button>
                 </form>
             </div>
         </div>
@@ -80,7 +82,7 @@ ips_layout:
             <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
                 {{ form.non_field_errors }}
 
-                <label>A deployment strategy is required,<br/> please select one from the drop down below:</label>
+                <label>Please select a deployment strategy:</label>
                 <select class="required" data-required="true" id="select-required">
                     <option value>- - - Select Strategy - - -</option>
                     <option value="Advanced">Advanced</option>
