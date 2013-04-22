@@ -9,7 +9,6 @@ import sys
 import threading
 
 sys.path.append(os.path.join(os.path.dirname(__file__),"../appscale-tools/lib"))
-from appscale_logger import AppScaleLogger
 from appscale_tools import AppScaleTools
 
 from cStringIO import StringIO 

@@ -17,6 +17,7 @@ based on Django.
 ## Prerequisites ##
 - Python 2.7
 - Django 1.5 (get the tar ball here: https://www.djangoproject.com/download/1.5.1/tarball/)
+- Git
 
 # Install process ##
 Run ```bash get_tools.sh```.
