@@ -23,6 +23,10 @@ CLOUD_DEPLOY = "cloud"
 # A global variable to store all threads running the tools.
 ALL_THREADS = {}
 
+# Strategies for cloud deployments.
+SIMPLE_DEPLOYMENT = "simple"
+ADVANCE_DEPLOYMENT = "advance"
+
 def home(request):
   return render(request, 'base/home.html', {'form': CommonFields(),})
 
@@ -51,15 +55,13 @@ def start(request):
   """ This is the page a user submits a request to start AppScale. """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
-    if not form.is_valid():
-      return HttpResponseRedirect('/start/?error=badform') # Redirect after POST
 
     tools_runner = None
 
     email = form['admin_email']
     password = form['admin_pass']
     keyname = helpers.generate_keyname()
-
+    logging.info(str(form))
     cloud_type = form['cloud']
     if cloud_type == CLOUD_DEPLOY:
       infras = form['infrastructure'] 
