@@ -4,10 +4,10 @@ import unittest
 from flexmock import flexmock
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 from appscake import create_instances
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../appscale-tools/lib"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../appscale-tools/lib"))
 from appscale_tools import AppScaleTools
 import parse_args
 

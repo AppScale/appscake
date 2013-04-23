@@ -44,14 +44,20 @@ class ToolsRunner(threading.Thread):
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
 
+  # Contents of the line which contains the status link from the tools output.
+  STATUS_LINK_LINE = "View status information about your AppScale deployment at"
+
   # Deployment clouds.
   EC2 = "ec2"
   EUCA = "euca"
 
+  # The default location URL for EC2.
+  EC2_URL_DEFAULT = "https://ec2.us-east-1.amazonaws.com"
+
   def __init__(self, deployment_type, keyname, admin_email, admin_pass, 
     placement=None, infrastructure=None, min_nodes=None, max_nodes=None, 
     machine=None, instance_type=None, ips_yaml=None, ec2_secret=None, 
-    ec2_access=None):
+    ec2_access=None, ec2_url=None):
     """ Constructor. 
     
     Args:
@@ -66,11 +72,11 @@ class ToolsRunner(threading.Thread):
       min_nodes: An int, the minimum number of nodes AppScale can run.
       machine: A str representing the emi or ami identifier of the cloud image 
         to use.
-      infrastructure: A str, the infrastructure used (ec2, euca, etc.).
       instance_type: A str, the instance size to use when starting up VMs.
       ips_yaml: A str, of the contents of the ips.yaml file.
       ec2_secret: A str, the EC2 secret key for EC2 and Euca.
       ec2_access: A str, the EC2 access key for EC2 and Euca.
+      ec2_url: A str, the EC2 URL location for EC2 and Euca.
     """
     threading.Thread.__init__(self)
     self.keyname = keyname
@@ -85,6 +91,11 @@ class ToolsRunner(threading.Thread):
     self.instance_type = instance_type
     self.ec2_secret = ec2_secret
     self.ec2_access = ec2_access
+
+    self.ec2_url = ec2_url
+    if not ec2_url:
+      self.ec2_url = self.EC2_URL_DEFAULT
+
     self.ips_yaml = ips_yaml
     self.ips_yaml_b64 = None
     if ips_yaml:
@@ -133,8 +144,10 @@ class ToolsRunner(threading.Thread):
     self.args.extend(["--infrastructure", self.infrastructure, 
                       "--machine", self.machine,  
                       "--ips_layout", self.ips_yaml_b64,
-                      "--EC2_SECRET_KEY", self.ec2_secert,
-                      "--EC2_ACCESS_KEY", self.ec2_access])
+                      "--group", self.keyname,
+                      "--EC2_SECRET_KEY", self.ec2_secret,
+                      "--EC2_ACCESS_KEY", self.ec2_access,
+                      "--EC2_URL", self.ec2_url])
     self.run_appscale()
 
   def run_simple_cloud_deploy(self):
@@ -145,8 +158,10 @@ class ToolsRunner(threading.Thread):
                       "--machine", self.machine,  
                       "--min", self.min_nodes,
                       "--max", self.max_nodes,
+                      "--group", self.keyname,
                       "--EC2_SECRET_KEY", self.ec2_secret,
-                      "--EC2_ACCESS_KEY", self.ec2_access])
+                      "--EC2_ACCESS_KEY", self.ec2_access,
+                      "--EC2_URL", self.ec2_url])
     self.run_appscale()
 
   def run_appscale(self):
@@ -182,9 +197,12 @@ class ToolsRunner(threading.Thread):
 
   def set_status_link(self):
     """ Parses the output of the tools and get the status link. """
-    
-    self.link = "http://localhost:80/status"
- 
+    lines = self.std_out_capture.getvalue().split('\n')
+    for line in lines:
+      if self.STATUS_LINK_LINE in line:
+        self.link = line.split(' ')[-1]
+        return
+
   def get_completion_percentage(self):
     """ Gets an estimated percentage of how close to finished we are based
         on the number of lines output by appscale-run-instances.
