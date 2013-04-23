@@ -53,3 +53,11 @@ html, body {height:100%;overflow:auto}
     border: 1px solid #ddd;
     width: 200px;
 }
+
+#percent {
+    display: none;
+}
+
+#status.li {
+    list-style: none;
+}

@@ -2,65 +2,58 @@
 
 {% block content %}
 
-    <script type="text/javascript">
-        var identifier = '{{ keyname }}';
-        var progress = setInterval(function() {
-            var $bar = $('.bar');
+  <script type="text/javascript">
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      crossDomain: false, // obviates need for sameOrigin test
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", '{% csrf_token %}');
+        }
+      }
+    });
 
-            if ($bar.width()==400) {
-                clearInterval(progress);
-                $('.progress').removeClass('active');
-            } else {
-                $bar.width($bar.width()+40);
-            }
-            $bar.text($bar.width()/4 + "%");
-        }, 800);
-    </script>
+  </script>
 
-    <script type="text/javascript">
-        var identifier = '{{ keyname }}';
-        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
-            var items = [];
+  <script type="text/javascript">
 
-            $.each(data, function(key, val) {
-                items.push('<li id="' + key + '">' + val + '</li>');
-            });
+    /* window.onload=function(){
+      $("#init").html('Initializing');
+      $("#progress").css('width','0%');
+      $("#progress").html('0%');
+        console.log('hello');
+    };
+*/
+    $(document).ready(function(){
+      var progresspump = setInterval(function(){
+        $.getJSON("/getstatus/",
+                {"keyname": "{{ keyname }}"}, function(data){
+                  console.log('hello');
+          if(data.status == "complete") {
+            clearInterval(progresspump);
+            $("#progressouter").removeClass("active");
+            $("#progress").html(data.link);
+          }
+          else if(data.status == 'error'){
+            $.('#init').html(data.error_message)
+          }
+          else if(data.status == 'running'){
+            $("#progress").css('width',data.percent+'%');
+            $("#progress").html(data.percent+'%');
+            $('#init').html(data.status);
+          }
+        })
+        /*poll every 5000ms*/
+      }, 5000);
 
-            $('<ul/>', {
-                'class': '',
-                html: items.join('')
-            }).appendTo('#init');
-        });
-
-        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
-            var items = [];
-
-            $.each(data, function(key, val) {
-                items.push('<li id="' + key + '">' + val + '</li>');
-            });
-
-            $('<ul/>', {
-                'class': '',
-                html: items.join('')
-            }).appendTo('#init-errors');
-        });
-
-        $.getJSON('{{ STATIC_URL }}/test.json', function(data) {
-            var items = [];
-
-            $.each(data, function(key, val) {
-                items.push('<a id="' + key + '">' + val + '</a>');
-            });
-
-            $( {
-                'class': 'btn btn-large btn-block btn-success',
-                html: items.join('')
-            }).appendTo('#cloud-link');
-        });
+    });
 
 
+  </script>
 
-    </script>
 
 
     <div class="container">
@@ -71,37 +64,24 @@
                 <h4> Your cloud is being processed, please be patient.</h4>
                     <!--<img width="5%"  src="{{ STATIC_URL }}img/illustrations/settings.png">-->
 
-                <div style="width:400px; margin:25px 0 -40px 300px;">
-                    <div class="progress progress-success progress-striped active">
-                        <div class="bar" style="width: 0%;"></div>
-                    </div>
+                <div style="width:600px; margin:25px 0 0px 180px;">
+                  <div style="height: 40px" class="progress progress-success
+                  progress-striped
+                  active"
+                       id="progressouter">
+                    <div class="bar" id="progress"></div>
+                  </div>
+                </div>
+                    <hr>
+              <div style="text-align: center;">
+                  <h3>AppScale Status:</h3>
+                  <h1 id="init"></h1>
                 </div>
 
+              </div>
+
             </div>
         </div>
-
-        <div style="text-align: center;" class="row">
-            <div class="span6">
-                <h3>AppScale Initialization Status:</h3>
-                <span id="init"></span>
-            </div>
-
-            <div class="span6">
-                <h3>AppScale Error Status:</h3>
-                <span id="init-errors"></span>
-            </div>
-        </div>
-        <hr class="span10">
-        <div class="row">
-
-            <div style="padding: 10px 0 25px 0;" class="offset4 span4">
-                <a href="#" class="btn btn-large btn-block btn-success disabled">Login to your AppScale Cloud</a>
-                <a href="#" class="btn btn-large btn-block btn-success">Login to your AppScale Cloud</a>
-            </div>
-
-        </div>
-
-
     </div>
 
 
