@@ -120,31 +120,33 @@ class ToolsRunner(threading.Thread):
         self.deployment_type)) 
 
   def run_cluster_deploy(self):
-    """ Sets up deployment of a cluster and runs the appscale tools. """
+    """ Sets up deployment arguments of a cluster and runs the appscale 
+        tools. 
+    """
     self.args.extend(["--ips_layout", self.ips_yaml_b64])
     self.run_appscale()
 
   def run_advance_cloud_deploy(self):
-    """ Sets up deployment of an advance cloud layout and runs the appscale 
-        tools.
+    """ Sets up deployment arguments of an advance cloud layout and 
+        runs the appscale tools.
     """
     self.args.extend(["--infrastructure", self.infrastructure, 
                       "--machine", self.machine,  
                       "--ips_layout", self.ips_yaml_b64,
-                      "--ec2_access", self.ec2_access,
-                      "--ec2_secret", self.ec2_secret])
+                      "--EC2_SECRET_KEY", self.ec2_secert,
+                      "--EC2_ACCESS_KEY", self.ec2_access])
     self.run_appscale()
 
   def run_simple_cloud_deploy(self):
-    """ Sets up deployment of a simple cloud layout and runs the appscale 
-        tools. 
+    """ Sets up deployment arguments of a simple cloud layout and 
+        runs the appscale tools. 
     """
     self.args.extend(["--infrastructure", self.infrastructure, 
                       "--machine", self.machine,  
                       "--min", self.min_nodes,
                       "--max", self.max_nodes,
-                      "--ec2_access", self.ec2_access,
-                      "--ec2_secret", self.ec2_secret])
+                      "--EC2_SECRET_KEY", self.ec2_secret,
+                      "--EC2_ACCESS_KEY", self.ec2_access])
     self.run_appscale()
 
   def run_appscale(self):
@@ -180,7 +182,7 @@ class ToolsRunner(threading.Thread):
 
   def set_status_link(self):
     """ Parses the output of the tools and get the status link. """
-    # TODO
+    
     self.link = "http://localhost:80/status"
  
   def get_completion_percentage(self):

@@ -36,16 +36,17 @@ def about(request):
 
 def get_status(request):
   """ Returns a json string of the status of the tools being run. """
-  post = request.POST.copy()
+  logging.error("Get status")
+  get = request.GET.copy()
   identifier = None
-  if 'keyname' in post:
-    identifier = post['keyname']
+  if 'keyname' in get:
+    identifier = get['keyname']
   else:
     message = { 'error': True, 'error_message': 
       "Bad JSON request (missing keyname)."}
     return HttpResponse(simplejson.dumps(message))  
 
-  if identifier not in ALL_THREADS[post['keyname']]:
+  if identifier not in ALL_THREADS:
     message = {'error': True, 'error_message': 
       "Unknown keyname give {0}.".form(identifier)}
 
