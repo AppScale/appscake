@@ -114,25 +114,23 @@ zookeeper: 192.168.33.10
 
         </div>
 
-        <div class="offset1 span7">
-            <div id="advanced" class="box" style="display: none;">
-                <p class="pull-left">Enter the desired deployment strategy in the
-                  dialog
-                  box below,
-                    if you are unfamiliar with how this works, please visit the
-                    <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
-                    Below is a sample strategy: </p>
+        <div class="span7">
+            <div id="advanced" class="box" >
+              <p>Enter the desired deployment strategy in the dialog box below,
+                if you are unfamiliar with how this works, please visit the
+                <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
+                Below is a sample strategy: </p>
                                 <pre>
-  master : node-1
-  appengine: node-2
-  database: node-3
-  zookeeper: node-4
+  master : 192.168.33.10
+  appengine: 192.168.33.10
+  database: 192.168.33.10
+  zookeeper: 192.168.33.10
                                 </pre>
                 <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                 {{ form.ips_yaml }}
             </div>
           <!--min/max-->
-            <div id="simple" class="box">
+            <div id="simple" class="" style="">
                 <label>Minimum number of nodes:</label>
                 {{ form.min }}
                 <label>Maximum number of nodes:</label>
