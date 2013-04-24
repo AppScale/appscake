@@ -73,6 +73,7 @@ def start(request):
       deployment_type = form['deployment_type'].value()
       instance_type = form['instance_type'].value()
       machine = form['machine'].value()
+      instance_type = form['instance_type'].value()
       access_key = form['key'].value()
       secret_key = form['secret'].value()
       ec2_url = form['ec2_euca_url'].value()

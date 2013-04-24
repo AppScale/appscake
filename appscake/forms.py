@@ -23,10 +23,11 @@ DEPLOY_TYPE=[
 ]
 
 # Different instance sizes for the user to pick from.
-MACHINE=[('m1.small', 'm1.small'),
-         ('m1.medium', 'm1.medium'),
-         ('m1.large', 'm1.large'),
-         ('m1.xlarge', 'm1.xlarge')]
+MACHINE=[('selection', 'Select Instance Type'),
+  ('m1.small', 'm1.small'),
+  ('m1.medium', 'm1.medium'),
+  ('m1.large', 'm1.large'),
+  ('m1.xlarge', 'm1.xlarge')]
 
 class CommonFields(forms.Form):
   """ A form object for the user to deploy AppScale. """
