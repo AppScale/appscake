@@ -35,16 +35,10 @@
                             {{ form.non_field_errors }}
                             <label for="email">Admin Email:</label>
                             {{ form.admin_email }}
-                            {{ feild }}
                             <label for="id_admin_pass">Admin password:</label>
                             {{ form.admin_pass }}
-                            {{ field }}
                             <label for="id_pass_confirm">Confirm password:</label>
                             {{ form.pass_confirm }}
-                            {{ field }}
-                            <label for="id_keyname">AppScale keyname:</label>
-                            {{ form.keyname }}
-                            {{ field }}
                             {{ form.cluster }}
                             <br><br>
                             <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
@@ -57,7 +51,6 @@
                                 <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
                                 Below is a sample strategy: </p>
                                 <pre>
-ips_layout:
   master : 192.168.33.10
   appengine: 192.168.33.10
   database: 192.168.33.10
@@ -76,6 +69,8 @@ ips_layout:
 
 
 
+
+
     <div id="blk-2" class="row toHide" style="display:none">
 
         <div class="span4" id="">
@@ -85,33 +80,24 @@ ips_layout:
                 <label>Please select a deployment strategy:</label>
                 <select class="required" data-required="true" id="select-required">
                     <option value>- - - Select Strategy - - -</option>
-                    <option value="Advanced">Advanced</option>
                     <option value="Simple">Simple</option>
+                    <option value="Advanced">Advanced</option>
                 </select>
                 <label for="email">Admin Email:</label>
                 {{ form.admin_email }}
-                {{ feild }}
                 <label for="id_admin_pass">Admin password:</label>
                 {{ form.cloud_admin_pass }}
-                {{ field }}
                 <label for="id_pass_confirm">Confirm password:</label>
                 {{ form.cloud_pass_confirm }}
-                {{ field }}
-                <label for="id_keyname">AppScale keyname:</label>
-                {{ form.keyname }}
-                {{ field }}
                 <label for="deploy_option1">Choose deployment setting:</label>
                 {{ form.infras }}
-                {{ feild }}
                 <label for="machine">Choose machine type:</label>
                 {{ form.machine }}
-                {{ feild }}
-                <label for="key">Enter your Amazon EC2/Eucalyptus Secret:</label>
-                {{ form.key }}
-                {{ feild }}
-                <label for="secret">Enter your Amazon EC2/Eucalyptus Key:</label>
+                <label for="secret">Enter your Amazon EC2/Eucalyptus
+                Access Key:</label>
                 {{ form.secret }}
-                {{ feild }}
+                <label for="key">Enter your Amazon EC2/Eucalyptus Secret Key:</label>
+                {{ form.key }}
                 {{ form.cloud }}
                 <br><br>
                 <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
@@ -128,22 +114,20 @@ ips_layout:
                     <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
                     Below is a sample strategy: </p>
                                 <pre>
-ips_layout:
-  master : 192.168.33.10
-  appengine: 192.168.33.10
-  database: 192.168.33.10
-  zookeeper: 192.168.33.10
+  master : node-1
+  appengine: node-2
+  database: node-3
+  zookeeper: node-4
                                 </pre>
                 <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                 {{ form.ips_yaml }}
-                {{ field }}</div>
+            </div>
             <div id="Simple" class="box">
                 <label>Minimum number of nodes:</label>
                 {{ form.min }}
-                {{ feild }}
                 <label>Maximum number of nodes:</label>
                 {{ form.max }}
-                {{ feild }}</div>
+            </div>
 
             </form>
         </div>

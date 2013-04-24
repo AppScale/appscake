@@ -1,3 +1,4 @@
+![AppScale Logo](http://www.appscale.com/img/appscale-logo.png)
 
 #Appscake - Web Frontend for AppScale Tools #
 
@@ -29,6 +30,17 @@ Install the tools by going into appscale-tools/osx
 ### For Debian based systems ###
 Install the tools by going into appscale-tools/debian and running
 ```bash appscale_install.sh```
+If your default installation of python is not 2.7, then you will have to 
+install boto, SOAPpy, yaml, and termcolor by hand for 2.7.
+
+Fetching source code of dependencies:
+```
+wget https://pypi.python.org/pypi/termcolor
+git clone https://github.com/boto/boto.git
+wget http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz
+https://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz#md5=7df2a529a074f613b509fb44feefe74e
+git clone https://github.com/kiorky/SOAPpy.git
+```
 
 ### Other distros ###
 See the install script for MacOSX for the required dependencies. Contact us if you 
