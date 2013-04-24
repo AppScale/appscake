@@ -17,7 +17,6 @@ DEPLOYS=[('cluster','Cluster'),
 
 #Deployment type: simple or advanced
 DEPLOY_TYPE=[
-  ('Select Option', '- - Select Strategy - -'),
   ('simple', 'Simple'),
   ('advanced', 'Advanced')
 ]
@@ -113,8 +112,11 @@ class CommonFields(forms.Form):
                              max_length=120,
                              )
 
-  deployment_type = forms.ChoiceField(choices=DEPLOY_TYPE,
+  deployment_type = forms.ChoiceField(label='Select Deployment Type',
+                                      initial={'advanced': 'Advanced'},
+                                      choices=DEPLOY_TYPE,
                                       widget=forms.Select(attrs={
+                                        'placeholder': 'Select Deployment',
                                         'id': 'select-required',
                                         'class': 'required',
                                         'data-required': 'true',
