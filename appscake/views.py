@@ -36,7 +36,6 @@ def about(request):
 
 def get_status(request):
   """ Returns a json string of the status of the tools being run. """
-  logging.error("Get status")
   get = request.GET.copy()
   identifier = None
   if 'keyname' in get:
@@ -44,13 +43,15 @@ def get_status(request):
   else:
     message = { 'error': True, 'error_message': 
       "Bad JSON request (missing keyname)."}
+    logging.info("Get status: {0}".format(message))
     return HttpResponse(simplejson.dumps(message))  
 
   if identifier not in ALL_THREADS:
     message = {'error': True, 'error_message': 
-      "Unknown keyname give {0}.".form(identifier)}
+      "Unknown keyname given: {0}.".format(identifier)}
 
   message = ALL_THREADS[identifier].get_status()
+  logging.info("Get status: {0}".format(message))
   return HttpResponse(simplejson.dumps(message))  
 
 def start(request):
@@ -95,7 +96,6 @@ def start(request):
                                    min_nodes=min_nodes,
                                    max_nodes=max_nodes)
       else:
-        logging.error(str(form))
         return HttpServerErrorResponse("Unable to get the deployment strategy")
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
@@ -105,12 +105,10 @@ def start(request):
                                  password,
                                  ips_yaml=ips_yaml)
     else:
-      logging.error(str(form))
       return HttpResponseServerError("Unable to figure out the type of cloud deployment")  
     tools_runner.start()
     identifier = tools_runner.keyname
     ALL_THREADS[identifier] = tools_runner
     return render(request, 'base/start.html', {'keyname': identifier})
   else:
-    logging.error(str(form))
     return HttpServerErrorResponse("404 Page not found")

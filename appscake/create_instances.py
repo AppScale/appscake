@@ -54,6 +54,9 @@ class ToolsRunner(threading.Thread):
   # The default location URL for EC2.
   EC2_URL_DEFAULT = "https://ec2.us-east-1.amazonaws.com"
 
+  # The default root password of an appscale instance.
+  HOST_ROOT_PASSWORD = "appscale" 
+
   def __init__(self, deployment_type, keyname, admin_email, admin_pass, 
     placement=None, infrastructure=None, min_nodes=None, max_nodes=None, 
     machine=None, instance_type=None, ips_yaml=None, ec2_secret=None, 
@@ -79,6 +82,10 @@ class ToolsRunner(threading.Thread):
       ec2_url: A str, the EC2 URL location for EC2 and Euca.
     """
     threading.Thread.__init__(self)
+
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(filename)s:' \
+      '%(lineno)s %(message)s ', level=logging.INFO)
+
     self.keyname = keyname
     self.admin_email = admin_email
     self.admin_pass = admin_pass
@@ -106,12 +113,12 @@ class ToolsRunner(threading.Thread):
     self.status = self.INIT_STATE
     self.err_message = "" 
     self.args = ['--table', 'cassandra']
-    logging.error("Args at init: {0}".format(self.args))
+    logging.debug("Args at init: {0}".format(self.args))
     self.args.extend(["--admin_user", self.admin_email,
                       "--admin_pass", self.admin_pass,
                       "--keyname", self.keyname])
     self.link = None
-
+  
   def run(self):
     """ The initial function called when starting a tools runner thread. """
     self.status = self.RUNNING_STATE
@@ -130,12 +137,36 @@ class ToolsRunner(threading.Thread):
       raise NotImplementedError("Unknown deployment of {0}".format(
         self.deployment_type)) 
 
+  def run_add_keypair(self):
+    """ Sets up the add keypair arguments and attempts to add the
+        keyname generated.
+
+    Returns:
+      True on success, False otherwise.
+    """
+    self.status = self.INIT_STATE
+    add_keypair_args = ['--keyname', self.keyname, '--ips_layout', 
+      self.ips_yaml_b64, "--root_password", self.HOST_ROOT_PASSWORD,
+      "--auto"]
+    options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair").\
+      args
+    try:
+      AppScaleTools.add_keypair(options)
+      logging.info("AppScale add key pair was successful")
+    except BadConfigurationException as bad_config:
+      self.status = self.ERROR_STATE
+      logging.error(str(bad_config))
+      self.err_message = "Bad configuration. Unable to set up keypairs."
+      return False
+    return True
+
   def run_cluster_deploy(self):
     """ Sets up deployment arguments of a cluster and runs the appscale 
         tools. 
     """
     self.args.extend(["--ips_layout", self.ips_yaml_b64])
-    self.run_appscale()
+    if self.run_add_keypair():
+      self.run_appscale()
 
   def run_advance_cloud_deploy(self):
     """ Sets up deployment arguments of an advance cloud layout and 
@@ -167,7 +198,7 @@ class ToolsRunner(threading.Thread):
   def run_appscale(self):
     """ Exectutes the appscale tools once the configuration has been set. """
     self.status = self.RUNNING_STATE
-    logging.error(str(self.args))
+    logging.info("Tool's arguments: {0}".format(str(self.args)))
     options = parse_args.ParseArgs(self.args, "appscale-run-instances").args
 
     old_stdout = sys.stdout
@@ -177,6 +208,7 @@ class ToolsRunner(threading.Thread):
 
     try:
       AppScaleTools.run_instances(options)
+      logging.info("AppScale run instances was successful!")
       self.status = self.COMPLETE_STATE 
       self.set_status_link()
     except BadConfigurationException as bad_config:
@@ -201,8 +233,10 @@ class ToolsRunner(threading.Thread):
     for line in lines:
       if self.STATUS_LINK_LINE in line:
         self.link = line.split(' ')[-1]
+        self.link = self.link.split('status')[0]
+        logging.info("AppScale status link: {0}".format(self.link))
         return
-
+  
   def get_completion_percentage(self):
     """ Gets an estimated percentage of how close to finished we are based
         on the number of lines output by appscale-run-instances.
@@ -210,10 +244,12 @@ class ToolsRunner(threading.Thread):
     Returns:
       An int, an estimated percentage up to 100.
     """
+    logging.info("Captured tools output thus far: {0}".\
+      format(self.std_out_capture.getvalue()))
     count = self.std_out_capture.getvalue().count('\n')
     if count >= self.EXPECTED_NUM_LINES:
-      count = self.EXECTED_NUM_LINES - 1
-    percentage = int((count/self.EXPECTED_NUM_LINES) * 100)
+      count = self.EXPECTED_NUM_LINES - 1
+    percentage = int((float(count)/float(self.EXPECTED_NUM_LINES)) * 100)
     return percentage
 
   def get_status(self):
