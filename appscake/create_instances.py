@@ -219,11 +219,11 @@ class ToolsRunner(threading.Thread):
     except BadConfigurationException as bad_config:
       self.status = self.ERROR_STATE
       logging.exception(bad_config)
-      self.err_message = "Bad configuration."
+      self.err_message = "Bad configuration. {0}".format(bad_config)
     except Exception as exception:
       self.status = self.ERROR_STATE
       logging.exception(exception)
-      self.err_message = "Unknown exception: {0}".format(str(exception))
+      self.err_message = "Exception--{0}".format(exception)
     except SystemExit as sys_exit:
       self.status = self.ERROR_STATE
       logging.error(str(sys_exit))
