@@ -44,7 +44,9 @@
                             {{ form.pass_confirm }}
                             {{ form.cluster }}
                             <br><br>
-                            <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
+                            <button type="submit" style="margin:0px 0 25px
+                            0px; width: 300px;" class="btn btn-large
+                            btn-success pull-left">Launch Now!</button>
 
                         </div>
 
@@ -80,8 +82,8 @@
             <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
                 {{ form.non_field_errors }}
 
-                <label>Please select a deployment strategy:</label>
-                
+                <label>Deployment strategy:</label>
+
 
                 {{ form.deployment_type }}
                 <label for="email">Admin Email:</label>
@@ -92,27 +94,30 @@
                 {{ form.cloud_pass_confirm }}
                 <label for="deploy_option1">Choose infrastructure:</label>
                 {{ form.infrastructure }}
-                <label>EC2/Eucalyptus URL (required for Eucalyptus):</label>
+                <label>URL (required for Eucalyptus):</label>
                 {{ form.ec2_euca_url }}
-                <label for="machine">Choose machine type:</label>
-                {{ form.machine }}
-                <label for="secret">Enter your Amazon EC2/Eucalyptus
+                <label for="instance_type">Choose instance type:</label>
+                {{ form.instance_type }}
+                <label for="secret">EC2/Eucalyptus
                 Access Key:</label>
                 {{ form.secret }}
-                <label for="key">Enter your Amazon EC2/Eucalyptus Secret Key:</label>
+                <label for="key">EC2/Eucalyptus Secret Key:</label>
                 {{ form.key }}
                 {{ form.cloud }}
+                <label>AMI/EMI:</label>
+                {{ form.machine }}
                 <br><br>
-                <button type="submit" style="margin:0px 0 25px 16px; width: 280px;" class="btn btn-large btn-success pull-left">Launch Now!</button>
+                <button type="submit" style="margin:0px 0 25px 0px; width:
+                300px;" class="btn btn-large btn-success pull-left">Launch
+                  Now!</button>
 
         </div>
 
-        <div class="span6">
-
-
-
-            <div id="ADVANCED_DEPLOYMENT" class="box" style="display: none;">
-                <p>Enter the desired deployment strategy in the dialog box below,
+        <div class="offset1 span7">
+            <div id="advanced" class="box" style="display: none;">
+                <p class="pull-left">Enter the desired deployment strategy in the
+                  dialog
+                  box below,
                     if you are unfamiliar with how this works, please visit the
                     <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
                     Below is a sample strategy: </p>
@@ -125,11 +130,12 @@
                 <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                 {{ form.ips_yaml }}
             </div>
-            <div id="SIMPLE_DEPLOYMENT" class="box">
+          <!--min/max-->
+            <div id="simple" class="box">
                 <label>Minimum number of nodes:</label>
-                {{ form.min_nodes }}
+                {{ form.min }}
                 <label>Maximum number of nodes:</label>
-                {{ form.max_nodes }}
+                {{ form.max }}
 
             </div>
 

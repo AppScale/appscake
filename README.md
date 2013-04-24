@@ -34,8 +34,8 @@ install boto, SOAPpy, yaml, and termcolor by hand for 2.7.
 
 Fetching source code of dependencies:
 ```
-wget https://pypi.python.org/pypi/termcolor
-git clone https//github.com/boto/boto.git
+wget https://pypi.python.org/packages/source/t/termcolor/termcolor-1.1.0.tar.gz#md5=043e89644f8909d462fbbfa511c768df
+git clone git://github.com/boto/boto.git
 wget http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz
 https://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz#md5=7df2a529a074f613b509fb44feefe74e
 git clone https://github.com/kiorky/SOAPpy.git

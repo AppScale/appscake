@@ -72,7 +72,7 @@ def start(request):
     if cloud_type == CLOUD_DEPLOY:
       infras = form['infrastructure'].value()
       deployment_type = form['deployment_type'].value()
-      machine = form['machine'].value()
+      instance_type = form['instance_type'].value()
       if deployment_type == ADVANCE_DEPLOYMENT:
         ips_yaml = form['ips_yaml'].value()
         tools_runner = create_instances.ToolsRunner(cloud_type,

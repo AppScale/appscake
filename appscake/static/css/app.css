@@ -7,10 +7,13 @@
 
    ========================================================================== */
 
-#admin_pass, #id_ec2_euca_url, #cloud_admin_pass, #cloud_pass_confirm, #id_min, #id_max, #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2, #dk_container_id_machine, #dk_container_infrastructure{
-    width: 300px;
+#admin_pass, #id_machine, #id_ec2_euca_url, #cloud_admin_pass, #cloud_pass_confirm, #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2, #dk_container_id_machine, #dk_container_infrastructure{
+    width: 288px;
 }
 
+#id_min, #id_max {
+    width: 100px;
+}
 .dk_options_inner, .dk_options{
     width: 280px;
 }

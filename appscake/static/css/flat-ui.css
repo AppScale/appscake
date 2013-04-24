@@ -1049,12 +1049,12 @@ textarea[readonly] {
     border-color: transparent;
     color: #cad2d3;
     cursor: default; }
-
+/*
 input,
 textarea,
 .uneditable-input {
     width: 192px; }
-
+*/
 .checkbox,
 .radio {
     margin-bottom: 12px;

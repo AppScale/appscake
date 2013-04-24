@@ -18,8 +18,8 @@ DEPLOYS=[('cluster','Cluster'),
 #Deployment type: simple or advanced
 DEPLOY_TYPE=[
   ('Select Option', '- - Select Strategy - -'),
-  ('SIMPLE_DEPLOYMENT', 'Simple'),
-  ('ADVANCED_DEPLOYMENT', 'Advanced')
+  ('simple', 'Simple'),
+  ('advanced', 'Advanced')
 ]
 
 # Different instance sizes for the user to pick from.
@@ -35,7 +35,8 @@ class CommonFields(forms.Form):
     'checkTransType(this.value)', 'type': 'radio', 'name': '', 'data-required': 
     'true', 'class': 'required', }))
 
-  machine = forms.ChoiceField(choices=MACHINE, widget=forms.Select(attrs={
+  instance_type = forms.ChoiceField(choices=MACHINE,
+                                    widget=forms.Select(attrs={
      'class': 'dk_fix' }))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
@@ -49,11 +50,11 @@ class CommonFields(forms.Form):
     'id':
     'infrastructure', 'class': 'dk_fix' }))
 
-  min_nodes = forms.IntegerField(max_value=100,min_value=1, 
+  min = forms.IntegerField(max_value=100,min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'value': '1', 
     'class': 'required' }))
 
-  max_nodes = forms.IntegerField(max_value=100,min_value=1, 
+  max = forms.IntegerField(max_value=100,min_value=1,
     widget=forms.TextInput(attrs={'value': '1', }))
 
   cloud = forms.CharField(widget = forms.HiddenInput(attrs={
@@ -102,8 +103,6 @@ class CommonFields(forms.Form):
     widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",'data-trigger':"change",
     'data-required':"true", 'class': 'required' }), required=True)
 
-  machine = forms.ChoiceField(choices=MACHINE)
-
   ec2_euca_url = forms.CharField(label='Eucalyptus URL',
                              max_length=120,
                              )
@@ -115,8 +114,7 @@ class CommonFields(forms.Form):
                                         'data-required': 'true',
                                       }))
 
-
+  machine = forms.CharField(max_length=100, widget=forms.TextInput)
 
 class Cluster(forms.Form):
   """ TODO(tyler): doc string """
-  machine = forms.ChoiceField(choices=MACHINE)
