@@ -1,3 +1,4 @@
+![AppScale Logo](http://www.appscale.com/img/appscale-logo.png)
 
 #Appscake - Web Frontend for AppScale Tools #
 
@@ -35,7 +36,7 @@ install boto, SOAPpy, yaml, and termcolor by hand for 2.7.
 Fetching source code of dependencies:
 ```
 wget https://pypi.python.org/pypi/termcolor
-git clone https//github.com/boto/boto.git
+git clone https://github.com/boto/boto.git
 wget http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz
 https://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz#md5=7df2a529a074f613b509fb44feefe74e
 git clone https://github.com/kiorky/SOAPpy.git
