@@ -7,7 +7,7 @@ from django.core.validators import email_re
 from django.core.exceptions import ValidationError
 
 # Infrastructures to choose from for cloud deployments.
-INFRAS=[('selection', 'Select Infrastructure'),
+INFRAS=[
   ('ec2', 'Amazon EC2'),
   ('euca', 'Eucaylptus')]
 
@@ -118,7 +118,6 @@ class CommonFields(forms.Form):
                                       widget=forms.Select(attrs={
                                         'placeholder': 'Select Deployment',
                                         'id': 'select-required',
-                                        'class': 'required',
                                         'data-required': 'true',
                                       }))
 
