@@ -26,7 +26,10 @@
                 <form action="/start/" method="post" data-validate="parsley"> {% csrf_token %}
 
                     <label>Choose deployment infrastructure:</label>
-                    <label class="radio"><input class="" id="rdb1 optionsRadio1" type="radio" name="toggler" value="1"  />Cluster</label>
+                    <label class="radio"><input class="" id="rdb1
+                    optionsRadio1" type="radio" name="toggler" value="1"
+                                                onclick="changeDeployType"
+                            />Cluster</label>
                     <label class="radio"><input class="" id="rdb2" type="radio" name="toggler" value="2"  />Cloud</label>
 
 
@@ -78,19 +81,19 @@
                 {{ form.non_field_errors }}
 
                 <label>Please select a deployment strategy:</label>
-                <select class="required" data-required="true" id="select-required">
-                    <option value>- - - Select Strategy - - -</option>
-                    <option value="Simple">Simple</option>
-                    <option value="Advanced">Advanced</option>
-                </select>
+                
+
+                {{ form.deployment_type }}
                 <label for="email">Admin Email:</label>
                 {{ form.admin_email }}
                 <label for="id_admin_pass">Admin password:</label>
                 {{ form.cloud_admin_pass }}
                 <label for="id_pass_confirm">Confirm password:</label>
                 {{ form.cloud_pass_confirm }}
-                <label for="deploy_option1">Choose deployment setting:</label>
-                {{ form.infras }}
+                <label for="deploy_option1">Choose infrastructure:</label>
+                {{ form.infrastructure }}
+                <label>EC2/Eucalyptus URL (required for Eucalyptus):</label>
+                {{ form.ec2_euca_url }}
                 <label for="machine">Choose machine type:</label>
                 {{ form.machine }}
                 <label for="secret">Enter your Amazon EC2/Eucalyptus
@@ -108,7 +111,7 @@
 
 
 
-            <div id="Advanced" class="box" style="display: none;">
+            <div id="ADVANCED_DEPLOYMENT" class="box" style="display: none;">
                 <p>Enter the desired deployment strategy in the dialog box below,
                     if you are unfamiliar with how this works, please visit the
                     <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
@@ -122,11 +125,12 @@
                 <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                 {{ form.ips_yaml }}
             </div>
-            <div id="Simple" class="box">
+            <div id="SIMPLE_DEPLOYMENT" class="box">
                 <label>Minimum number of nodes:</label>
-                {{ form.min }}
+                {{ form.min_nodes }}
                 <label>Maximum number of nodes:</label>
-                {{ form.max }}
+                {{ form.max_nodes }}
+
             </div>
 
             </form>

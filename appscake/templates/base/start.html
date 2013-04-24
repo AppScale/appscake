@@ -20,25 +20,24 @@
 
   <script type="text/javascript">
 
-    /* window.onload=function(){
+    window.onload=function(){
       $("#init").html('Initializing');
       $("#progress").css('width','0%');
       $("#progress").html('0%');
-        console.log('hello');
     };
-*/
+
     $(document).ready(function(){
       var progresspump = setInterval(function(){
         $.getJSON("/getstatus/",
                 {"keyname": "{{ keyname }}"}, function(data){
-                  console.log('hello');
           if(data.status == "complete") {
             clearInterval(progresspump);
             $("#progressouter").removeClass("active");
             $("#progress").html(data.link);
           }
           else if(data.status == 'error'){
-            $.('#init').html(data.error_message)
+            $('#progressrouter').html('ERROR')
+            $('#init').html(data.error_message)
           }
           else if(data.status == 'running'){
             $("#progress").css('width',data.percent+'%');

@@ -10,6 +10,7 @@ from django.contrib import  messages
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.utils import simplejson
@@ -96,7 +97,7 @@ def start(request):
                                    max_nodes=max_nodes)
       else:
         logging.error(str(form))
-        return HttpServerErrorResponse("Unable to get the deployment strategy")
+        return HttpResponseServerError("Unable to get the deployment strategy")
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
       tools_runner = create_instances.ToolsRunner(cloud_type,
@@ -113,4 +114,4 @@ def start(request):
     return render(request, 'base/start.html', {'keyname': identifier})
   else:
     logging.error(str(form))
-    return HttpServerErrorResponse("404 Page not found")
+    return HttpResponseServerError("404 Page not found")

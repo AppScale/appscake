@@ -7,11 +7,20 @@ from django.core.validators import email_re
 from django.core.exceptions import ValidationError
 
 # Infrastructures to choose from for cloud deployments.
-INFRAS=[ ('euca', 'Eucaylptus'), ('ec2', 'Amazon EC2')]
+INFRAS=[('selection', 'Select Infrastructure'),
+  ('ec2', 'Amazon EC2'),
+  ('euca', 'Eucaylptus')]
 
 # Deployment options.
 DEPLOYS=[('cluster','Cluster'),
          ('cloud','Cloud')]
+
+#Deployment type: simple or advanced
+DEPLOY_TYPE=[
+  ('Select Option', '- - Select Strategy - -'),
+  ('SIMPLE_DEPLOYMENT', 'Simple'),
+  ('ADVANCED_DEPLOYMENT', 'Advanced')
+]
 
 # Different instance sizes for the user to pick from.
 MACHINE=[('m1.small', 'm1.small'),
@@ -35,7 +44,9 @@ class CommonFields(forms.Form):
   secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, 
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required' }))
 
-  infras = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={ 'id': 
+  infrastructure = forms.ChoiceField(choices=INFRAS,
+                                    widget=forms.Select(attrs={
+    'id':
     'infrastructure', 'class': 'dk_fix' }))
 
   min_nodes = forms.IntegerField(max_value=100,min_value=1, 
@@ -45,9 +56,11 @@ class CommonFields(forms.Form):
   max_nodes = forms.IntegerField(max_value=100,min_value=1, 
     widget=forms.TextInput(attrs={'value': '1', }))
 
-  cloud = forms.CharField(widget = forms.HiddenInput(attrs={'readonly':'cloud'}))
+  cloud = forms.CharField(widget = forms.HiddenInput(attrs={
+    'readonly':'cloud'}))
 
-  cluster = forms.CharField(widget = forms.HiddenInput(attrs={'readonly':'cluster'}))
+  cluster = forms.CharField(widget = forms.HiddenInput(attrs={
+    'readonly':'cluster'}))
 
   admin_email = forms.EmailField(validators=[validate_email], max_length=40,
     required=True, widget=forms.TextInput(attrs={'id':'email', 
@@ -91,26 +104,18 @@ class CommonFields(forms.Form):
 
   machine = forms.ChoiceField(choices=MACHINE)
 
-  def clean_password(self):
-    """ Make sure the passwords entries match. 
-  
-    Returns:
-       The password if it is valid.
-    Raises:
-       forms.ValidationError: If the passwords are not the same.
-    """
-    if self.data['admin_pass'] != self.data['pass_confirm']:
-      raise forms.ValidationError('Passwords are not the same')
-    return self.data['admin_pass']
+  ec2_euca_url = forms.CharField(label='Eucalyptus URL',
+                             max_length=120,
+                             )
 
-  def clean(self,*args, **kwargs):
-    """ Removes the password entry from the form.
-   
-    Returns:
-      A clean CommonFields object.
-    """
-    self.clean_password()
-    return super(CommonFields, self).clean(*args, **kwargs)
+  deployment_type = forms.ChoiceField(choices=DEPLOY_TYPE,
+                                      widget=forms.Select(attrs={
+                                        'id': 'select-required',
+                                        'class': 'required',
+                                        'data-required': 'true',
+                                      }))
+
+
 
 class Cluster(forms.Form):
   """ TODO(tyler): doc string """
