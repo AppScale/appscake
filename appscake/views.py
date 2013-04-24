@@ -72,6 +72,7 @@ def start(request):
       infras = form['infrastructure'].value()
       deployment_type = form['deployment_type'].value()
       machine = form['machine'].value()
+      instance_type = form['instance_type'].value()
       if deployment_type == ADVANCE_DEPLOYMENT:
         ips_yaml = form['ips_yaml'].value()
         tools_runner = create_instances.ToolsRunner(cloud_type,
@@ -96,7 +97,7 @@ def start(request):
                                    max_nodes=max_nodes)
       else:
         logging.error(str(form))
-        return HttpServerErrorResponse("Unable to get the deployment strategy")
+        return HttpResponseServerError("Unable to get the deployment strategy")
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
       tools_runner = create_instances.ToolsRunner(cloud_type,
@@ -113,4 +114,4 @@ def start(request):
     return render(request, 'base/start.html', {'keyname': identifier})
   else:
     logging.error(str(form))
-    return HttpServerErrorResponse("404 Page not found")
+    return HttpResponseServerError("404 Page not found")
