@@ -58,10 +58,10 @@
                                 <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
                                 Below is a sample strategy: </p>
                                 <pre>
-  master : 192.168.33.10
-  appengine: 192.168.33.10
-  database: 192.168.33.10
-  zookeeper: 192.168.33.10
+master : 192.168.33.10
+appengine: 192.168.33.10
+database: 192.168.33.10
+zookeeper: 192.168.33.10
                                 </pre>
                             <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
                             {{ form.ips_yaml }}
@@ -100,11 +100,10 @@
                 {{ form.ec2_euca_url }}
                 <label for="instance_type">Instance type:</label>
                 {{ form.instance_type }}
-                <label for="secret">EC2/Eucalyptus
-                Access Key:</label>
-                {{ form.secret }}
-                <label for="key">EC2/Eucalyptus Secret Key:</label>
+                <label for="key">EC2/Eucalyptus Access Key:</label>
                 {{ form.key }}
+                <label for="secret">EC2/Eucalyptus Secret Key:</label>
+                {{ form.secret }}
                 {{ form.cloud }}
                 <label>AMI/EMI:</label>
                 {{ form.machine }}

@@ -59,7 +59,8 @@ def start(request):
     form = CommonFields(data=request.POST)
     tools_runner = None
     email = form['admin_email'].value()
-    password = form['admin_pass'].value()
+    password = form['admin_pass'].value() or form['cloud_admin_pass'].value()
+    assert password != None
     keyname = helpers.generate_keyname()
    
     cloud_type = None
@@ -115,7 +116,9 @@ def start(request):
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
       root_password = form['root_pass'].value()
-      tools_runner = create_instances.ToolsRunner(cloud_type, keyname, email,
+      tools_runner = create_instances.ToolsRunner(cloud_type, 
+                                   keyname,  
+                                   email,
                                    password,
                                    ips_yaml=ips_yaml,
                                    root_pass=root_password)
