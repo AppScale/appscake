@@ -54,14 +54,11 @@ class ToolsRunner(threading.Thread):
   # The default location URL for EC2.
   EC2_URL_DEFAULT = "https://ec2.us-east-1.amazonaws.com"
 
-  # The default root password of an appscale instance.
-  HOST_ROOT_PASSWORD = "appscale" 
-
   def __init__(self, deployment_type, keyname, admin_email, admin_pass, 
-    placement=None, infrastructure=None, min_nodes=None, max_nodes=None, 
-    machine=None, instance_type=None, ips_yaml=None, ec2_secret=None, 
-    ec2_access=None, ec2_url=None):
-    """ Constructor. 
+    root_pass=None, placement=None, infrastructure=None, min_nodes=None, 
+    max_nodes=None, machine=None, instance_type=None, ips_yaml=None, 
+    ec2_secret=None, ec2_access=None, ec2_url=None):
+    """ Constructor for Tools Runner. 
     
     Args:
       deployment_type: A str, the deployment type of either cloud or cluster.
@@ -69,6 +66,7 @@ class ToolsRunner(threading.Thread):
         deployment.
       admin_email: A str, email for the administrator.
       admin_pass: A str, password for the administrator.
+      root_pass: A str, the root password of the appscale image.
       placement: A str, of either automatic placement or manual.
       infrastructure: A str, the IaaS we're deploying on.
       max_nodes: An int, the maximum number of nodes AppScale can run.
@@ -118,7 +116,8 @@ class ToolsRunner(threading.Thread):
                       "--admin_pass", self.admin_pass,
                       "--keyname", self.keyname])
     self.link = None
-  
+    self.root_pass = root_pass
+ 
   def run(self):
     """ The initial function called when starting a tools runner thread. """
     self.status = self.RUNNING_STATE
@@ -146,7 +145,7 @@ class ToolsRunner(threading.Thread):
     """
     self.status = self.INIT_STATE
     add_keypair_args = ['--keyname', self.keyname, '--ips_layout', 
-      self.ips_yaml_b64, "--root_password", self.HOST_ROOT_PASSWORD,
+      self.ips_yaml_b64, "--root_password", self.root_pass,
       "--auto"]
     options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair").\
       args
@@ -157,6 +156,11 @@ class ToolsRunner(threading.Thread):
       self.status = self.ERROR_STATE
       logging.error(str(bad_config))
       self.err_message = "Bad configuration. Unable to set up keypairs."
+      return False
+    except Exception as exception:
+      self.status = self.ERROR_STATE
+      logging.exception(exception)
+      self.err_message = "Exception when running add key pair: {0}".format(exception)
       return False
     return True
 
@@ -197,27 +201,28 @@ class ToolsRunner(threading.Thread):
 
   def run_appscale(self):
     """ Exectutes the appscale tools once the configuration has been set. """
-    self.status = self.RUNNING_STATE
     logging.info("Tool's arguments: {0}".format(str(self.args)))
-    options = parse_args.ParseArgs(self.args, "appscale-run-instances").args
 
+    self.status = self.RUNNING_STATE
     old_stdout = sys.stdout
     old_stderr = sys.stderr
-    sys.stdout = self.std_out_capture
-    sys.stderr = self.std_err_capture
 
     try:
+      options = parse_args.ParseArgs(self.args, "appscale-run-instances").args
+      sys.stdout = self.std_out_capture
+      sys.stderr = self.std_err_capture
+
       AppScaleTools.run_instances(options)
       logging.info("AppScale run instances was successful!")
       self.status = self.COMPLETE_STATE 
       self.set_status_link()
     except BadConfigurationException as bad_config:
       self.status = self.ERROR_STATE
-      logging.error(str(bad_config))
+      logging.exception(bad_config)
       self.err_message = "Bad configuration."
     except Exception as exception:
       self.status = self.ERROR_STATE
-      logging.error(str(exception))
+      logging.exception(exception)
       self.err_message = "Unknown exception: {0}".format(str(exception))
     except SystemExit as sys_exit:
       self.status = self.ERROR_STATE

@@ -73,6 +73,11 @@ class CommonFields(forms.Form):
     'data-minlength': '6', 'data-required':"true"}), label="Admin Password", 
     min_length=6, required=True, )
 
+  root_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
+    attrs={'id':'root_pass', 'name':"root_pass", 'class': 'required parsley-validate',
+    'data-minlength': '6', 'data-required':"true"}), label="Root Password", 
+    min_length=6, required=True, )
+
   pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'pass_confirm', 'class': 'required parsley-validate', 'data-equalto': 
     '#admin_pass', 'name':'pass_confirm', 'data-minlength': '6', 

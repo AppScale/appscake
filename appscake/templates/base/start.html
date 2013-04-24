@@ -27,26 +27,39 @@
     };
 
     $(document).ready(function(){
+      var dots = ".";
       var progresspump = setInterval(function(){
         $.getJSON("/getstatus/",
                 {"keyname": "{{ keyname }}"}, function(data){
+          if(dots == "." || dots == ".."){
+            dots = dots + ".";
+          } else{
+            dots = "." ;
+          }
+
           if(data.status == "complete") {
             clearInterval(progresspump);
+            $("#progress").css('width',"100%");
+            $("#progress").html("100%");
             $("#progressouter").removeClass("active");
-            $("#progress").html(data.link);
+            $("#init").html("<a href=\"" + data.link + "\">Click here to go to your AppScale deployment</a>");
           }
           else if(data.status == 'error'){
-            $('#progressrouter').html('ERROR')
-            $('#init').html(data.error_message)
+            clearInterval(progresspump);
+            $("#progress").css('width',"0%");
+            $("#progress").html("ERROR");
+            $("#progressouter").removeClass("active");
+            $('#init').html('ERROR')
+            $('#error_msg').html(data.error_message)
           }
           else if(data.status == 'running'){
-            $("#progress").css('width',data.percent+'%');
-            $("#progress").html(data.percent+'%');
-            $('#init').html(data.status);
+            $("#progress").css('width',data.percent +'%');
+            $("#progress").html(data.percent +'%');
+            $('#init').html("Deploying" + dots);
           }
         })
-        /*poll every 5000ms*/
-      }, 5000);
+        /*poll every 1 second*/
+      }, 1000);
 
     });
 
@@ -63,7 +76,7 @@
                 <h4> Your cloud is being processed, please be patient.</h4>
                     <!--<img width="5%"  src="{{ STATIC_URL }}img/illustrations/settings.png">-->
 
-                <div style="width:600px; margin:25px 0 0px 180px;">
+                <div style="width:400px; margin:25px 0 0px 280px;">
                   <div style="height: 40px" class="progress progress-success
                   progress-striped
                   active"
@@ -73,8 +86,9 @@
                 </div>
                     <hr>
               <div style="text-align: center;">
-                  <h3>AppScale Status:</h3>
+                  <h3>AppScale Tools Status:</h3>
                   <h1 id="init"></h1>
+                  <span id="error_msg"></span>
                 </div>
 
               </div>

@@ -36,21 +36,21 @@ def about(request):
 
 def get_status(request):
   """ Returns a json string of the status of the tools being run. """
-  logging.error("Get status")
   get = request.GET.copy()
   identifier = None
   if 'keyname' in get:
     identifier = get['keyname']
   else:
-    message = { 'error': True, 'error_message': 
+    message = {'status': 'error', 'error_message': 
       "Bad JSON request (missing keyname)."}
     return HttpResponse(simplejson.dumps(message))  
 
   if identifier not in ALL_THREADS:
-    message = {'error': True, 'error_message': 
-      "Unknown keyname give {0}.".form(identifier)}
+    message = {'status': 'error', 'error_message': 
+      "Unknown keyname give {0}.".format(identifier)}
+  else:
+    message = ALL_THREADS[identifier].get_status()
 
-  message = ALL_THREADS[identifier].get_status()
   return HttpResponse(simplejson.dumps(message))  
 
 def start(request):
@@ -71,7 +71,14 @@ def start(request):
     if cloud_type == CLOUD_DEPLOY:
       infras = form['infrastructure'].value()
       deployment_type = form['deployment_type'].value()
+      instance_type = form['instance_type'].value()
       machine = form['machine'].value()
+      access_key = form['key'].value()
+      secret_key = form['secret'].value()
+      ec2_url = form['ec2_euca_url'].value()
+      if not ec2_url:
+        ec2_url = None
+
       if deployment_type == ADVANCE_DEPLOYMENT:
         ips_yaml = form['ips_yaml'].value()
         tools_runner = create_instances.ToolsRunner(cloud_type,
@@ -81,7 +88,11 @@ def start(request):
                                    placement=ADVANCE_DEPLOYMENT,
                                    machine=machine,
                                    instance_type=instance_type,
-                                   ips_yaml=ips_yaml)
+                                   infrastructure=infras,
+                                   ips_yaml=ips_yaml,
+                                   ec2_access=access_key,
+                                   ec2_secret=secret_key,
+                                   ec2_url=ec2_url)
       elif deployment_type == SIMPLE_DEPLOYMENT:
         min_nodes = form['min'].value()
         max_nodes = form['max'].value()
@@ -92,25 +103,27 @@ def start(request):
                                    placement=SIMPLE_DEPLOYMENT,
                                    machine=machine,
                                    instance_type=instance_type,
+                                   infrastructure=infras,
                                    min_nodes=min_nodes,
-                                   max_nodes=max_nodes)
+                                   max_nodes=max_nodes,
+                                   ec2_access=access_key,
+                                   ec2_secret=secret_key,
+                                   ec2_url=ec2_url)
       else:
-        logging.error(str(form))
-        return HttpServerErrorResponse("Unable to get the deployment strategy")
+        return HttpResponseServerError("Unable to get the deployment strategy")
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
-      tools_runner = create_instances.ToolsRunner(cloud_type,
-                                 keyname,
-                                 email,
-                                 password,
-                                 ips_yaml=ips_yaml)
+      root_password = form['root_pass'].value()
+      tools_runner = create_instances.ToolsRunner(cloud_type, keyname, email,
+                                   password,
+                                   ips_yaml=ips_yaml,
+                                   root_pass=root_password)
     else:
-      logging.error(str(form))
       return HttpResponseServerError("Unable to figure out the type of cloud deployment")  
+
     tools_runner.start()
     identifier = tools_runner.keyname
     ALL_THREADS[identifier] = tools_runner
     return render(request, 'base/start.html', {'keyname': identifier})
   else:
-    logging.error(str(form))
-    return HttpServerErrorResponse("404 Page not found")
+    return HttpResponseServerError("404 Page not found")
