@@ -22,7 +22,7 @@ DEPLOY_TYPE=[
 ]
 
 # Different instance sizes for the user to pick from.
-MACHINE=[('selection', 'Select Instance Type'),
+MACHINE=[
   ('m1.small', 'm1.small'),
   ('m1.medium', 'm1.medium'),
   ('m1.large', 'm1.large'),
