@@ -34,6 +34,9 @@ Install the tools by going into appscale-tools/debian and running
 See the install script for MacOSX for the required dependencies. Contact us if you 
 have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
 
+# Running Unit Tests #
+```python manage.py test```
+
 License
 -------
 This software is licensed under the [New BSD License][BSD]. For more
