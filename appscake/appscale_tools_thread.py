@@ -334,7 +334,7 @@ class AppScaleUp(threading.Thread):
     Returns:
       True on success, False otherwise.
     """
-    self.args.extend(["--infrastructure", self.infrastructure, 
+    self.args.extend(["--infrastructure", str(self.infrastructure), 
                       "--machine", self.machine,  
                       "--ips_layout", self.ips_yaml_b64,
                       "--group", self.keyname,
@@ -350,7 +350,7 @@ class AppScaleUp(threading.Thread):
     Returns:
       True on success, False otherwise.
     """
-    self.args.extend(["--infrastructure", self.infrastructure, 
+    self.args.extend(["--infrastructure", str(self.infrastructure),
                       "--machine", self.machine,  
                       "--min", self.min_nodes,
                       "--max", self.max_nodes,
