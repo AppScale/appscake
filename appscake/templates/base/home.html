@@ -8,7 +8,7 @@
                 <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
                 <p>
                     AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
-                    Virtualbox.</p>
+                    virtual machines.</p>
                 <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
                 <hr/>
 
@@ -38,11 +38,11 @@
                             {{ form.non_field_errors }}
                             <label for="email">Admin Email:</label>
                             {{ form.admin_email }}
-                            <label for="id_admin_pass">Admin password:</label>
+                            <label for="id_admin_pass">AppScale admin password:</label>
                             {{ form.admin_pass }}
                             <label for="id_pass_confirm">Confirm password:</label>
                             {{ form.pass_confirm }}
-                            <label for="id_root_pass">Root password:</label>
+                            <label for="id_root_pass">Virtual machine root password:</label>
                             {{ form.root_pass }}
                             {{ form.cluster }}
                             <br><br>

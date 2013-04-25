@@ -14,7 +14,122 @@ from custom_exceptions import BadConfigurationException
 from cStringIO import StringIO 
 import parse_args
 
-class ToolsRunner(threading.Thread):
+# Cluster type deployment.
+CLUSTER = "cluster"
+
+# Cloud type deployment.
+CLOUD = "cloud"
+
+class AppScaleDown(threading.Thread):
+  """ Runs terminate instances thread on a currently running AppScale 
+      deployment. 
+  """
+
+  # When appscale-run-instances is currently running.
+  TERMINATING_STATE = "terminating"
+  
+  # When appscale-run-instances has successfully terminated.
+  TERMINATED_STATE = "terminated"
+
+  # When there was an error when trying to terminate instances.
+  ERROR_STATE = "error"
+
+  def __init__(self, deployment_type,  keyname, ec2_access=None, 
+    ec2_secret=None, ec2_url=None):
+    """ A constructor setting up the required arguments for running
+        appscale-terminate-instances. Named arguments are for cloud
+        deployments.
+    """
+    threading.Thread.__init__(self)
+
+    self.state = self.TERMINATING_STATE
+    self.deployment_type = deployment_type
+    self.keyname = keyname
+    self.ec2_access = ec2_access
+    self.ec2_secret = ec2_secret
+    self.ec2_url = ec2_url
+    self.err_message = ""
+    self.std_out_capture = StringIO()
+    self.std_err_capture = StringIO()
+
+  def run(self):
+    """ Checks the current state of the thread and terminates AppScale
+        if it is in the correct state.
+    """
+    logging.debug("Thread has started.")
+    if self.state != self.TERMINATING_STATE:
+      logging.error("Bad state to start terminating instances")
+    elif not self.appscale_down():
+      logging.error("Unable to shut down AppScale.")
+    else:
+      logging.info("AppScale deployment was successfully terminated.") 
+    logging.debug("Thread has stopped.")
+
+  def appscale_down(self):
+    """ Terminates a currently running deployment of AppScale. Calls on the 
+        AppScale tools by building an argument list, which varies based on 
+        the deployment type.
+   
+    Returns:
+      True on success, False otherwise. 
+    """
+    logging.debug("Starting AppScale down.")
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = self.std_out_capture
+    sys.stderr = self.std_err_capture
+
+    terminate_args = ['--keyname', self.keyname, "--verbose"]
+    if self.deployment_type == CLOUD:
+      terminate_args.extend(["--EC2_SECRET_KEY", self.ec2_secret,
+      "--EC2_ACCESS_KEY", self.ec2_access,
+      "--EC2_URL", self.ec2_url])
+    try: 
+      logging.info("Starting terminate instances.")
+      options = parse_args.ParseArgs(terminate_args, 
+        "appscale-terminate-instances").args
+      AppScaleTools.terminate_instances(options)
+      logging.info("AppScale terminate instances successfully ran!")
+      self.state = self.TERMINATED_STATE
+    except BadConfigurationException as bad_config:
+      self.state = self.ERROR_STATE
+      logging.exception(str(bad_config))
+      self.err_message = "Bad configuration. Unable to termiante AppScale. "\
+        "{0}".format(bad_config)
+      return False
+    except Exception as exception:
+      self.state = self.ERROR_STATE
+      logging.exception(exception)
+      self.err_message = "Exception when terminating: {0}".format(exception)
+      return False
+    finally:
+      sys.stdout = old_stdout
+      sys.stderr = old_stderr
+    return True
+
+  def get_status(self):
+    """ Parses the output of appscale-run-instances and sees what the current 
+        status of a running command is.
+  
+    Returns:
+      A json string of the current status of this thread of 
+      appscale-run-instances.
+    """
+    logging.debug("Current state: {0}".format(self.state))
+    logging.debug("Output of termination: {0}".format(self.std_out_capture.getvalue()))
+    logging.debug("Error of termination: {0}".format(self.std_err_capture.getvalue()))
+    status_dict = {}
+    status_dict['status'] = self.state
+    status_dict['percent'] = 0
+    if self.state == self.TERMINATING_STATE:
+      status_dict['percent'] = 50
+    elif self.state == self.TERMINATED_STATE:
+      status_dict['percent'] = 100
+    else:
+      status_dict['error_message'] = "Unknown state"
+    return status_dict
+
+class AppScaleUp(threading.Thread):
   """ Runs the AppScale tools to start a new deployment. """
 
   # When appscale-run-instances ended in an error state.
@@ -34,12 +149,6 @@ class ToolsRunner(threading.Thread):
 
   # Manual layout of roles in AppScale.
   ADVANCE = "advance"
-
-  # Cluster type deployment.
-  CLUSTER = "cluster"
-
-  # Cloud type deployment.
-  CLOUD = "cloud"
 
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
@@ -82,7 +191,7 @@ class ToolsRunner(threading.Thread):
     threading.Thread.__init__(self)
 
     logging.basicConfig(format='%(asctime)s %(levelname)s %(filename)s:' \
-      '%(lineno)s %(message)s ', level=logging.INFO)
+      '%(lineno)s %(message)s ', level=logging.DEBUG)
 
     self.keyname = keyname
     self.admin_email = admin_email
@@ -108,7 +217,7 @@ class ToolsRunner(threading.Thread):
 
     self.std_out_capture = StringIO()
     self.std_err_capture = StringIO()
-    self.status = self.INIT_STATE
+    self.state = self.INIT_STATE
     self.err_message = "" 
     self.args = ['--table', 'cassandra']
     logging.debug("Args at init: {0}".format(self.args))
@@ -119,19 +228,38 @@ class ToolsRunner(threading.Thread):
     self.root_pass = root_pass
  
   def run(self):
-    """ The initial function called when starting a tools runner thread. """
-    self.status = self.RUNNING_STATE
+    """ Checks the current state of an AppScale deployment and starts a 
+        deployment if in the correct state. 
+    """
+    if self.state != self.INIT_STATE:
+      logging.error("Bad state to start a new thread.")
+    elif not self.appscale_up():
+      logging.error("Unable to start AppScale.")
+    else:
+      logging.info("AppScale was successfully deployed.")
 
-    if self.deployment_type == self.CLOUD:
+  def appscale_up(self): 
+    """ Starts up an AppScale deployment. Checks the type of deployment
+        and placement strategy and calls on the correct initialization 
+        procedure.
+
+    Returns:
+      True on success, False otherwise.
+    Raises:
+      NotImplementedError: If there is an unknown placement or deployment.
+    """
+    self.state = self.RUNNING_STATE
+
+    if self.deployment_type == CLOUD:
       if self.placement == self.SIMPLE:
-        self.run_simple_cloud_deploy()
+        return self.run_simple_cloud_deploy()
       elif self.placement == self.ADVANCE:
-        self.run_advance_cloud_deploy()
+        return self.run_advance_cloud_deploy()
       else:
         raise NotImplementedError("Unknown placement of {0}".\
           format(self.placement))
-    elif self.deployment_type == self.CLUSTER:
-      self.run_cluster_deploy()
+    elif self.deployment_type == CLUSTER:
+      return self.run_cluster_deploy()
     else:
       raise NotImplementedError("Unknown deployment of {0}".format(
         self.deployment_type)) 
@@ -143,38 +271,46 @@ class ToolsRunner(threading.Thread):
     Returns:
       True on success, False otherwise.
     """
-    self.status = self.INIT_STATE
+    self.state = self.INIT_STATE
+    logging.debug("IPS 64: {0}".format(self.ips_yaml_b64))
     add_keypair_args = ['--keyname', self.keyname, '--ips_layout', 
-      self.ips_yaml_b64, "--root_password", self.root_pass,
-      "--auto"]
+      self.ips_yaml_b64, "--root_password", self.root_pass, "--auto"]
     options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair").\
       args
     try:
       AppScaleTools.add_keypair(options)
       logging.info("AppScale add key pair was successful")
     except BadConfigurationException as bad_config:
-      self.status = self.ERROR_STATE
+      self.state = self.ERROR_STATE
       logging.error(str(bad_config))
       self.err_message = "Bad configuration. Unable to set up keypairs."
       return False
     except Exception as exception:
-      self.status = self.ERROR_STATE
+      self.state = self.ERROR_STATE
       logging.exception(exception)
-      self.err_message = "Exception when running add key pair: {0}".format(exception)
+      self.err_message = "Exception when running add key pair: {0}".\
+        format(exception)
       return False
     return True
 
   def run_cluster_deploy(self):
-    """ Sets up deployment arguments of a cluster and runs the appscale 
-        tools. 
+    """ Sets up deployment arguments of a cluster starts up AppScale.
+  
+    Returns:
+      True on success, False otherwise.
     """
     self.args.extend(["--ips_layout", self.ips_yaml_b64])
     if self.run_add_keypair():
-      self.run_appscale()
+      return self.run_appscale()
+    else:
+      return False
 
   def run_advance_cloud_deploy(self):
     """ Sets up deployment arguments of an advance cloud layout and 
-        runs the appscale tools.
+        starts up AppScale.
+  
+    Returns:
+      True on success, False otherwise.
     """
     self.args.extend(["--infrastructure", self.infrastructure, 
                       "--machine", self.machine,  
@@ -183,11 +319,14 @@ class ToolsRunner(threading.Thread):
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
-    self.run_appscale()
+    return self.run_appscale()
 
   def run_simple_cloud_deploy(self):
     """ Sets up deployment arguments of a simple cloud layout and 
-        runs the appscale tools. 
+        starts up AppScale.
+  
+    Returns:
+      True on success, False otherwise.
     """
     self.args.extend(["--infrastructure", self.infrastructure, 
                       "--machine", self.machine,  
@@ -197,13 +336,17 @@ class ToolsRunner(threading.Thread):
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
-    self.run_appscale()
+    return self.run_appscale()
 
   def run_appscale(self):
-    """ Exectutes the appscale tools once the configuration has been set. """
+    """ Executes the appscale tools with deployment specific arguments.
+
+    Returns:
+      True on success, False otherwise.
+    """
     logging.info("Tool's arguments: {0}".format(str(self.args)))
 
-    self.status = self.RUNNING_STATE
+    self.state = self.RUNNING_STATE
     old_stdout = sys.stdout
     old_stderr = sys.stderr
 
@@ -214,23 +357,25 @@ class ToolsRunner(threading.Thread):
 
       AppScaleTools.run_instances(options)
       logging.info("AppScale run instances was successful!")
-      self.status = self.COMPLETE_STATE 
+      self.state = self.COMPLETE_STATE 
       self.set_status_link()
     except BadConfigurationException as bad_config:
-      self.status = self.ERROR_STATE
+      self.state = self.ERROR_STATE
       logging.exception(bad_config)
       self.err_message = "Bad configuration. {0}".format(bad_config)
     except Exception as exception:
-      self.status = self.ERROR_STATE
+      self.state = self.ERROR_STATE
       logging.exception(exception)
       self.err_message = "Exception--{0}".format(exception)
     except SystemExit as sys_exit:
-      self.status = self.ERROR_STATE
+      self.state = self.ERROR_STATE
       logging.error(str(sys_exit))
       self.err_message = str("Error with given arguments caused system exit.")
     finally:
       sys.stdout = old_stdout
       sys.stderr = old_stderr
+ 
+    return self.state == self.COMPLETE_STATE
 
   def set_status_link(self):
     """ Parses the output of the tools and get the status link. """
@@ -249,31 +394,34 @@ class ToolsRunner(threading.Thread):
     Returns:
       An int, an estimated percentage up to 100.
     """
-    logging.info("Captured tools output thus far: {0}".\
+    logging.debug("Captured tools output thus far: {0}".\
       format(self.std_out_capture.getvalue()))
+
     count = self.std_out_capture.getvalue().count('\n')
     if count >= self.EXPECTED_NUM_LINES:
       count = self.EXPECTED_NUM_LINES - 1
+
     percentage = int((float(count)/float(self.EXPECTED_NUM_LINES)) * 100)
     return percentage
 
   def get_status(self):
-    """ Parses the output of appscale-run-instances and sees what the current 
-        status of a running command is.
+    """ Sees what the current status of an AppScale deployment is.
   
     Returns:
-      A json string of the current status of this thread of run-instances.
+      A dictionary of the current status of this thread of 
+      appscale-run-instances. Includes the state of the tools and 
+      additional information depending on the current state.
     """
     status_dict = {}
-    status_dict['status'] = self.status
+    status_dict['status'] = self.state
     status_dict['percent'] = 0
-    if self.status == self.INIT_STATE:
+    if self.state == self.INIT_STATE:
       pass
-    elif self.status == self.ERROR_STATE:
+    elif self.state == self.ERROR_STATE:
       status_dict['error_message'] = self.err_message
-    elif self.status == self.RUNNING_STATE:
+    elif self.state == self.RUNNING_STATE:
       status_dict['percent'] = self.get_completion_percentage()
-    elif self.status == self.COMPLETE_STATE:
+    elif self.state == self.COMPLETE_STATE:
       status_dict['percent'] = 100 
       status_dict['link'] = self.link
     else:

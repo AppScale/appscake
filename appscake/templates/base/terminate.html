@@ -21,7 +21,7 @@
   <script type="text/javascript">
 
     window.onload=function(){
-      $("#init").html('Initializing');
+      $("#init").html('Terminating');
       $("#progress").css('width','0%');
       $("#progress").html('0%');
     };
@@ -29,7 +29,7 @@
     $(document).ready(function(){
       var dots = ".";
       var progresspump = setInterval(function(){
-        $.getJSON("/getdeploymentstatus/",
+        $.getJSON("/getterminationstatus/",
                 {"keyname": "{{ keyname }}"}, function(data){
           if(dots == "." || dots == ".."){
             dots = dots + ".";
@@ -37,13 +37,13 @@
             dots = "." ;
           }
 
-          if(data.status == "complete") {
+          if(data.status == "terminated") {
             clearInterval(progresspump);
             $("#progress").css('width',"100%");
             $("#progress").html("100%");
             $("#progressouter").removeClass("active");
-            $("#init").html("<a href=\"" + data.link + "\">Click here to go to your AppScale deployment</a>");
-            $("#terminate").html("<a href='/terminate/?keyname={{ keyname }}' class='btn btn-danger btn-large'>Terminate AppScale</a>");
+            $("#init").html("Successfully terminated.");
+            $("#terminator").css('display', "block");
           }
           else if(data.status == 'error'){
             clearInterval(progresspump);
@@ -52,14 +52,21 @@
             $("#progressouter").removeClass("active");
             $('#init').html('ERROR')
             $('#error_msg').html(data.error_message)
-            $("#terminate").html("<a href='/terminate/?keyname={{ keyname }}' class='btn btn-danger btn-large'>Terminate AppScale</a>");
           }
-          else if(data.status == 'running'){
+          else if(data.status == 'terminating'){
             $("#progress").css('width',data.percent +'%');
             $("#progress").html(data.percent +'%');
-            $('#init').html("Deploying" + dots);
+            $('#init').html("Terminating" + dots);
           }
         })
+        .error(function() {
+            clearInterval(progresspump);
+            $("#progress").css('width',"100%");
+            $("#progress").html("100%");
+            $("#progressouter").removeClass("active");
+            $("#init").html("Successfully terminated.");
+            $("#terminator").css('display', "block");
+        }
         /*poll every 1 second*/
       }, 1000);
 
@@ -73,14 +80,12 @@
     <div class="container">
         <div class="row">
             <div style="text-align: center;" class="span10 hero-unit">
-                <h1>AppScale Up!</h1>
+                <h1>AppScale Termination</h1>
                 <hr>
-                <h4> Your cloud is being brought up, please be patient.</h4>
+                <h4> Your cloud is being terminated.</h4>
 
                 <div style="width:400px; margin:25px 0 0px 280px;">
-                  <div style="height: 40px" class="progress progress-success
-                  progress-striped
-                  active"
+                  <div style="height: 40px" class="progress progress-danger progress-striped active"
                        id="progressouter">
                     <div class="bar" id="progress"></div>
                   </div>
@@ -90,8 +95,9 @@
                   <h3>AppScale Tools Status:</h3>
                   <h1 id="init"></h1>
                   <span id="error_msg"></span>
-                  </br></br></br>
-                  <span id="terminate"></span>
+                  <span id="terminator" style="display: none;">
+                    <img src="{{ STATIC_URL }}/images/terminator-main.jpeg" />
+                  </span>
                 </div>
 
               </div>

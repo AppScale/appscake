@@ -7,8 +7,10 @@ urlpatterns = patterns('appscake.views',
     (r'^about/$', 'about',),
     (r'^common/.*', 'common',),
     url(r'start/$', 'start'),
+    url(r'terminate/$', 'terminate'),
     url(r'test/$', 'test'),
-    url(r'getstatus/$', 'get_status')
+    url(r'getdeploymentstatus/$', 'get_deployment_status'),
+    url(r'getterminationstatus/$', 'get_termination_status')
     )
 
 
