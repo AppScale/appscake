@@ -60,14 +60,14 @@
           }
         })
         .error(function() {
-            clearInterval(progresspump);
-            $("#progress").css('width',"100%");
-            $("#progress").html("100%");
-            $("#progressouter").removeClass("active");
-            $("#init").html("Successfully terminated.");
-            $("#terminator").css('display', "block");
-        }
-        /*poll every 1 second*/
+          clearInterval(progresspump);
+          $("#progress").css('width',"100%");
+          $("#progress").html("100%");
+          $("#progressouter").removeClass("active");
+          $("#init").html("Successfully terminated.");
+          $("#terminator").css('display', "block");
+        })
+       /*poll every 1 second*/
       }, 1000);
 
     });

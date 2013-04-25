@@ -25,6 +25,10 @@ class AppScaleDown(threading.Thread):
       deployment. 
   """
 
+  # Expected number of lines of output from doing appscale-terminate-instances
+  # with verbose on.
+  EXPECTED_NUM_LINES = 5
+
   # When appscale-run-instances is currently running.
   TERMINATING_STATE = "terminating"
   
@@ -122,12 +126,30 @@ class AppScaleDown(threading.Thread):
     status_dict['status'] = self.state
     status_dict['percent'] = 0
     if self.state == self.TERMINATING_STATE:
-      status_dict['percent'] = 50
+      status_dict['percent'] = self.get_completition_percentage()
     elif self.state == self.TERMINATED_STATE:
       status_dict['percent'] = 100
     else:
       status_dict['error_message'] = "Unknown state"
     return status_dict
+
+  def get_completion_percentage(self):
+    """ Gets an estimated percentage of how close to finished we are based
+        on the number of lines output by appscale-terminate-instances.
+    
+    Returns:
+      An int, an estimated percentage up to 100.
+    """
+    logging.debug("Captured tools output thus far: {0}".\
+      format(self.std_out_capture.getvalue()))
+
+    count = self.std_out_capture.getvalue().count('\n')
+    if count >= self.EXPECTED_NUM_LINES:
+      count = self.EXPECTED_NUM_LINES - 1
+
+    percentage = int((float(count)/float(self.EXPECTED_NUM_LINES)) * 100)
+    return percentage
+
 
 class AppScaleUp(threading.Thread):
   """ Runs the AppScale tools to start a new deployment. """
