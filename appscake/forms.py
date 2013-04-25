@@ -1,13 +1,10 @@
 """ Form creation class for deployment options in AppScale. """
-from django.db import models
 from django import forms
-from django.forms import ModelForm
 from django.core.validators import validate_email
-from django.core.validators import email_re
-from django.core.exceptions import ValidationError
+
 
 # Infrastructures to choose from for cloud deployments.
-INFRAS=[('selection', 'Select Infrastructure'),
+INFRAS=[
   ('ec2', 'Amazon EC2'),
   ('euca', 'Eucaylptus')]
 
@@ -22,7 +19,7 @@ DEPLOY_TYPE=[
 ]
 
 # Different instance sizes for the user to pick from.
-MACHINE=[('selection', 'Select Instance Type'),
+MACHINE=[
   ('m1.small', 'm1.small'),
   ('m1.medium', 'm1.medium'),
   ('m1.large', 'm1.large'),
@@ -93,7 +90,6 @@ class CommonFields(forms.Form):
 
   cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'cloud_pass_confirm',
-    'class': 'required parsley-validate',
     'data-equalto': '#cloud_admin_pass',
     'name':'pass_confirm',
     'data-minlength': '6',
@@ -118,11 +114,10 @@ class CommonFields(forms.Form):
                                       widget=forms.Select(attrs={
                                         'placeholder': 'Select Deployment',
                                         'id': 'select-required',
-                                        'class': 'required',
                                         'data-required': 'true',
                                       }))
 
-  machine = forms.CharField(max_length=100, widget=forms.TextInput)
+  machine = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+  }))
 
-class Cluster(forms.Form):
-  """ TODO(tyler): doc string """

@@ -4,7 +4,6 @@ import logging
 from appscake import helpers
 from appscake import appscale_tools_thread
 from appscake.forms import CommonFields
-from appscake.forms import Cluster
  
 from django.contrib import  messages
 from django.http import HttpResponse
