@@ -1,10 +1,7 @@
 """ Form creation class for deployment options in AppScale. """
-from django.db import models
 from django import forms
-from django.forms import ModelForm
 from django.core.validators import validate_email
-from django.core.validators import email_re
-from django.core.exceptions import ValidationError
+
 
 # Infrastructures to choose from for cloud deployments.
 INFRAS=[
@@ -93,7 +90,6 @@ class CommonFields(forms.Form):
 
   cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'cloud_pass_confirm',
-    'class': 'required parsley-validate',
     'data-equalto': '#cloud_admin_pass',
     'name':'pass_confirm',
     'data-minlength': '6',
@@ -121,7 +117,7 @@ class CommonFields(forms.Form):
                                         'data-required': 'true',
                                       }))
 
-  machine = forms.CharField(max_length=100, widget=forms.TextInput)
+  machine = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+  }))
 
-class Cluster(forms.Form):
-  """ TODO(tyler): doc string """
