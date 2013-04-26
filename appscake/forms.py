@@ -67,12 +67,12 @@ class CommonFields(forms.Form):
 
   admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 'required parsley-validate',
-    'data-minlength': '6', 'data-required':"true"}), label="Admin Password", 
+    'data-minlength': '6', 'data-required':"true"}), label="AppScale Admin Password", 
     min_length=6, required=True, )
 
   root_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'root_pass', 'name':"root_pass", 'class': 'required parsley-validate',
-    'data-minlength': '6', 'data-required':"true"}), label="Root Password", 
+    'data-minlength': '6', 'data-required':"true"}), label="Virtual Machine Root Password", 
     min_length=6, required=True, )
 
   pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
@@ -86,7 +86,7 @@ class CommonFields(forms.Form):
     'class': 'required parsley-validate',
     'data-minlength': '6',
     'data-required':"true"}),
-    label="Admin Password", min_length=6)
+    label="AppScale Admin Password", min_length=6)
 
   cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
     attrs={'id':'cloud_pass_confirm',
