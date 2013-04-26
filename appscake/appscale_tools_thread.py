@@ -116,17 +116,14 @@ class AppScaleDown(threading.Thread):
         status of a running command is.
   
     Returns:
-      A json string of the current status of this thread of 
-      appscale-run-instances.
+      A dictionary of the current status of this thread of 
+      appscale-terminate-instances.
     """
-    logging.debug("Current state: {0}".format(self.state))
-    logging.debug("Output of termination: {0}".format(self.std_out_capture.getvalue()))
-    logging.debug("Error of termination: {0}".format(self.std_err_capture.getvalue()))
     status_dict = {}
     status_dict['status'] = self.state
     status_dict['percent'] = 0
     if self.state == self.TERMINATING_STATE:
-      status_dict['percent'] = self.get_completition_percentage()
+      status_dict['percent'] = self.get_completion_percentage()
     elif self.state == self.TERMINATED_STATE:
       status_dict['percent'] = 100
     else:
@@ -170,7 +167,7 @@ class AppScaleUp(threading.Thread):
   SIMPLE = "simple"
 
   # Manual layout of roles in AppScale.
-  ADVANCE = "advance"
+  ADVANCE = "advanced"
 
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
