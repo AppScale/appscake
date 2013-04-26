@@ -27,7 +27,7 @@ TERMINATING_THREADS = {}
 
 # Placement stategies for cloud deployments.
 SIMPLE_DEPLOYMENT = "simple"
-ADVANCE_DEPLOYMENT = "advance"
+ADVANCE_DEPLOYMENT = "advanced"
 
 def terminate(request):
   """ A request to the terminate page which goes and looks up a currently 

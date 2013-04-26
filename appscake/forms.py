@@ -114,10 +114,8 @@ class CommonFields(forms.Form):
                              )
 
   deployment_type = forms.ChoiceField(label='Select Deployment Type',
-                                      initial={'advanced': 'Advanced'},
                                       choices=DEPLOY_TYPE,
                                       widget=forms.Select(attrs={
-                                        'placeholder': 'Select Deployment',
                                         'id': 'select-required',
                                         'data-required': 'true',
                                       }))
