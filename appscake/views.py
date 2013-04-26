@@ -129,6 +129,7 @@ def start(request):
   """ This is the page a user submits a request to start AppScale. """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
+    print(request.POST)
     appscale_up_thread = None
     email = form['admin_email'].value()
     password = form['admin_pass'].value() or form['cloud_admin_pass'].value()
@@ -168,7 +169,6 @@ def start(request):
                                    ec2_secret=secret_key,
                                    ec2_url=ec2_url)
       elif deployment_type == SIMPLE_DEPLOYMENT:
-        min_nodes = form['min'].value()
         max_nodes = form['max'].value()
         appscale_up_thread = appscale_tools_thread.AppScaleUp(cloud_type,
                                    keyname,
@@ -178,7 +178,6 @@ def start(request):
                                    machine=machine,
                                    instance_type=instance_type,
                                    infrastructure=infras,
-                                   min_nodes=min_nodes,
                                    max_nodes=max_nodes,
                                    ec2_access=access_key,
                                    ec2_secret=secret_key,
