@@ -16,25 +16,24 @@ $(document).ready(function () {
     });
 });
 
+
+
 $(function() {
     var options = {
-        range: true,
         min: 1,
         max: 8,
-        values: [1, 2],
+        values: [1],
         slide: function(event, ui) {
-            var min = ui.values[0],
-                max = ui.values[1];
-
-            $("#amount").val("" + min + " - " + max);
+            $("#amount").val(ui.value);
         }
-    }, min, max;
+    }, min;
 
     $("#slider-range").slider(options);
-
     min = $("#slider-range").slider("values", 0);
-    max = $("#slider-range").slider("values", 1);
 
-    $("#amount").val("" + min + " - " + max);
+    $("#amount").val("" + min );
 
 });
+
+
+
