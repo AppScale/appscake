@@ -177,7 +177,8 @@
 
 body {
     color: #34495e;
-    font: 14px/1.231 "Lato", sans-serif; }
+    font: 14px/1.231 "Lato", sans-serif;
+}
 
 a {
     color: #1abc9c;
@@ -511,7 +512,9 @@ h6 {
     font-size: inherit;
     font-weight: 700;
     padding-bottom: 16px;
-    padding-top: 15px; }
+    padding-top: 15px;
+    margin-left: 60px;
+}
 .navbar .nav > li:hover > ul {
     top: 100%; }
 .navbar .nav > li > ul {
@@ -1323,7 +1326,7 @@ textarea,
 .not_valid {
     background: #fbd8db !important;
     color: #90111a !important; }
-/*
+
 .progress, .ui-slider {
     background: #e8edf2;
     border-radius: 32px;
@@ -1350,7 +1353,7 @@ textarea,
 .progress .bar-info, .ui-slider .bar-info {
     background-color: #3498db;
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); }
-*/
+
 .ui-slider {
     margin-bottom: 20px;
     position: relative; }

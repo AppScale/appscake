@@ -68,3 +68,15 @@ html, body {height:100%;overflow:auto}
 .required {
     color: firebrick;
 }
+
+#logo{
+    width: 50px;
+    position: absolute;
+    top: 12px;
+    z-index: 10000;
+}
+
+.brd {
+    float: left;
+    border-right: 1px solid #808080;
+}

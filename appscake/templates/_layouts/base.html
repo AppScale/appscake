@@ -30,12 +30,16 @@
        Create your own custom Modernizr build: www.modernizr.com/download/ -->
     <script src="{{ STATIC_URL }}js/parsley.js"></script>
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
     <!--<script src="{{ STATIC_URL }}js/flat-js/jquery-ui-1.10.0.custom.min.js"> </script>-->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-ui.min.js"><\/script>')</script>
+   <!-- <script type="text/javascript" src="http://ajax.googleapis
+   .com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-ui
+    .min.js"><\/script>')</script>-->
+  <script src="{{ STATIC_URL }}js/flat-js/jquery-1.8.2.min.js"></script>
+  <script src="{{ STATIC_URL }}js/flat-js/jquery-ui-1.10.0.custom.min.js"></script>
 
 
 
@@ -51,7 +55,10 @@
   <header>
       <div id="navbar" class="navbar navbar-inverse navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
           <div class="navbar-inner">
+
               <div class="container">
+                    <img id="logo" src=
+                   "{{ STATIC_URL }}/img/appscale-logo.png">
                   <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                       <span class="icon-bar"></span>
                       <span class="icon-bar"></span>
@@ -126,12 +133,10 @@
   <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 
     <!-- le flat ui js files -->
-  <!--<script src="{{ STATIC_URL }}js/flat-js/jquery-1.8.2.min.js"></script>
-  <script src="{{ STATIC_URL }}js/flat-js/jquery-ui-1.10.0.custom.min.js"></script>-->
+
   <script src="{{ STATIC_URL }}js/flat-js/custom_checkbox_and_radio.js"></script>
   <script src="{{ STATIC_URL }}js/flat-js/custom_radio.js"></script>
   <script src="{{ STATIC_URL }}js/flat-js/html5shiv.js"></script>
-  <script src="{{ STATIC_URL }}js/flat-js/jquery.dropkick-1.0.0.js"></script>
   <script src="{{ STATIC_URL }}js/flat-js/jquery.tagsinput.js"></script>
   <script src="{{ STATIC_URL }}js/flat-js/bootstrap-tooltip.js"></script>
   <script src="{{ STATIC_URL }}js/flat-js/jquery.placeholder.js"></script>
