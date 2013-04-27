@@ -30,9 +30,9 @@ Install the tools by going into appscale-tools/osx
 Install the tools by going into appscale-tools/debian and running
 ```bash appscale_install.sh```
 If your default installation of python is not 2.7, then you will have to 
-install boto, SOAPpy, yaml, and termcolor by hand for 2.7.
+install boto, SOAPpy, yaml, and termcolor by hand for python2.7.
 
-Fetching source code of dependencies:
+Useful commands For manual installation of dependencies:
 ```
 wget https://pypi.python.org/pypi/termcolor
 git clone https//github.com/boto/boto.git
@@ -42,8 +42,11 @@ git clone https://github.com/kiorky/SOAPpy.git
 ```
 
 ### Other distros ###
-See the install script for MacOSX for the required dependencies. Contact us if you 
-have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
+Contact us if you have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
+
+# Running AppsCake #
+```python2.7 manage.py runserver localhost:8000```
+Go to http://localhost:8000
 
 License
 -------
