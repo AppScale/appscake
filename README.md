@@ -18,9 +18,15 @@ based on Django.
 - Python 2.7
 - Django 1.5 (get the tar ball here: https://www.djangoproject.com/download/1.5.1/tarball/)
 - Git
+- Expect (http://downloads.sourceforge.net/project/expect/Expect/5.45/expect5.45.tar.gz or 
+  ```apt-get install expect```)
 
-# Install process ##
+# Tools Install Process ##
 Run ```bash get_tools.sh```.
+
+### On an AppScale Image ###
+Install the tools for python2.7 by going into appscale/tools/src_install
+```bash appscale_install.sh```
 
 ### For Mac OSX ###
 Install the tools by going into appscale-tools/osx
@@ -29,24 +35,21 @@ Install the tools by going into appscale-tools/osx
 ### For Debian based systems ###
 Install the tools by going into appscale-tools/debian and running
 ```bash appscale_install.sh```
-If your default installation of python is not 2.7, then you will have to 
-install boto, SOAPpy, yaml, and termcolor by hand for python2.7.
 
-Useful commands For manual installation of dependencies:
-```
-wget https://pypi.python.org/pypi/termcolor
-git clone https//github.com/boto/boto.git
-wget http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz
-https://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz#md5=7df2a529a074f613b509fb44feefe74e
-git clone https://github.com/kiorky/SOAPpy.git
-```
+### Source Install ###
+Install the tools for python2.7 by going into appscale/tools/src_install
+```bash appscale_install.sh```
 
-### Other distros ###
+### Issues ###
 Contact us if you have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
 
 # Running AppsCake #
 ```python2.7 manage.py runserver localhost:8000```
-Go to http://localhost:8000
+Go to http://localhost:8000 with a browser. 
+
+If you are running AppScake on the image that you will be starting AppScale:
+```/usr/local/Python-2.7.3/python manage.py runserver <ip>:8090```
+Go to http://<ip>:8090 with a browser.
 
 License
 -------
