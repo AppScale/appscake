@@ -2,7 +2,7 @@
 from django.conf.urls import patterns
 from django.conf.urls import url
 
-URL_PATTERNS = patterns('appscake.views',
+urlpatterns = patterns('src.views',
     url(r'^$', 'home', name='home'),
     (r'^about/$', 'about',),
     (r'^common/.*', 'common',),

@@ -42,7 +42,7 @@
             $("#progress").css('width',"100%");
             $("#progress").html("100%");
             $("#progressouter").removeClass("active");
-            $("#init").html("<a href=\"" + data.link + "\ target='_blank'">Click here to go to your AppScale deployment</a>");
+            $("#init").html("<a href='" + data.link + "' target='_blank'>Click here to go to your AppScale deployment</a>");
             $("#terminate").html("<a href='/terminate/?keyname={{ keyname }}' class='btn btn-danger btn-large'>Terminate AppScale</a>");
           }
           else if(data.status == 'error'){

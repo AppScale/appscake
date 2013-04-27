@@ -5,7 +5,7 @@ from flexmock import flexmock
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from appscake import appscale_tools_thread
+import appscale_tools_thread
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../appscale-tools/lib"))
 from appscale_tools import AppScaleTools
