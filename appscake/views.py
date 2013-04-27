@@ -151,6 +151,7 @@ def start(request):
   """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
+    print(request.POST)
     appscale_up_thread = None
     email = form['admin_email'].value()
     password = form['admin_pass'].value() or form['cloud_admin_pass'].value()
@@ -198,7 +199,6 @@ def start(request):
                                    machine=machine,
                                    instance_type=instance_type,
                                    infrastructure=infras,
-                                   min_nodes=min_nodes,
                                    max_nodes=max_nodes,
                                    ec2_access=access_key,
                                    ec2_secret=secret_key,

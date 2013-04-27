@@ -217,7 +217,6 @@ class AppScaleUp(threading.Thread):
     self.admin_pass = admin_pass
     self.deployment_type = deployment_type # cloud or cluster
     self.placement = placement # simple or advance
-    self.min_nodes = min_nodes
     self.max_nodes = max_nodes
     self.machine = machine
     self.infrastructure = infrastructure
@@ -349,7 +348,6 @@ class AppScaleUp(threading.Thread):
     """
     self.args.extend(["--infrastructure", str(self.infrastructure),
                       "--machine", self.machine,  
-                      "--min", self.min_nodes,
                       "--max", self.max_nodes,
                       "--group", self.keyname,
                       "--EC2_SECRET_KEY", self.ec2_secret,

@@ -125,11 +125,10 @@ zookeeper: 192.168.33.10
                 {{ form.ips_yaml }}
             </div>
           <!--min/max-->
-            <div id="simple" class="box span3">
-        <label for="amount">Minimum and maximum number of nodes:</label>
-        <input type="text" id="amount" style="border:0; color:#16a085;
-        font-weight:bold;" />
-    </h4>
+            <div id="simple" class="box span4">
+        <label style="float: left;" for="amount">
+            Maximum number of nodes to deploy over:</label>
+        <p>{{ form.max }}</p>
                 <div id="slider-range"></div>
             </div>
 
