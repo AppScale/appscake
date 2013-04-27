@@ -195,6 +195,7 @@ class TestAppScaleUp(unittest.TestCase):
 
     appscale.state = appscale.COMPLETE_STATE
     self.assertEquals({'status': 'complete', 'link': None, 'percent': 100}, appscale.get_status())
+  
     
 if __name__ == "__main__":
   unittest.main()

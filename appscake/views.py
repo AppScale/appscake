@@ -1,22 +1,23 @@
-""" Views for different pages. """
+""" Views for different pages in particular for starting and stopping AppScale. 
+"""
 import logging
+import os
+import sys
 
-from appscake import helpers
-from appscake import appscale_tools_thread
-from appscake.forms import CommonFields
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
+import helpers
+import appscale_tools_thread
+from forms import CommonFields
  
-from django.contrib import  messages
 from django.http import HttpResponse
-from django.http import HttpResponseRedirect
 from django.http import HttpResponseServerError
 from django.shortcuts import render
-from django.shortcuts import render_to_response
 from django.utils import simplejson
 
 # When deploying on virtual machines without IaaS support.
 CLUSTER_DEPLOY = "cluster"
 
-# When deploying on IaaS.
+# When deploying on IaaS such as EC2 or Eucalyptus.
 CLOUD_DEPLOY = "cloud"
 
 # A global variable to store all threads deploying AppScale.
@@ -28,6 +29,12 @@ TERMINATING_THREADS = {}
 # Placement stategies for cloud deployments.
 SIMPLE_DEPLOYMENT = "simple"
 ADVANCE_DEPLOYMENT = "advanced"
+
+# The location of template files.
+TERMINATE_HTML_FILE_PATH = "base/terminate.html"
+HOMEPAGE_HTML_FILE_PATH = "base/home.html"
+ABOUT_HTML_FILE_PATH = "base/about.html"
+APPSCALE_STARTED_HTML_FILE_PATH = "base/start.html"
 
 def terminate(request):
   """ A request to the terminate page which goes and looks up a currently 
@@ -42,22 +49,26 @@ def terminate(request):
   get = request.GET.copy()
   if 'keyname' not in get:
     return HttpResponseServerError("Did not receive the keyname of the "\
-      "instances to terminate")
+      "instances to terminate.")
+
   keyname = get['keyname']
   if keyname not in DEPLOYMENT_THREADS:
     return HttpResponseServerError("Unknown keyname of the "\
-      "instances to terminate")
+      "instances to terminate.")
+
   appscale_up_thread = DEPLOYMENT_THREADS[keyname]
+
   terminate_thread = appscale_tools_thread.AppScaleDown(
     appscale_up_thread.deployment_type, keyname,
     ec2_access=appscale_up_thread.ec2_access, 
     ec2_secret=appscale_up_thread.ec2_secret,
     ec2_url=appscale_up_thread.ec2_url)
+
   TERMINATING_THREADS[keyname] = terminate_thread
-  logging.debug("Starting terminate thread.")
+
   terminate_thread.start()
-  logging.debug("Thread started.")
-  return render(request, 'base/terminate.html', {'keyname': keyname})
+
+  return render(request, TERMINATE_HTML_FILE_PATH, {'keyname': keyname})
 
 def home(request):
   """ Render the home page which takes in input from the user to start 
@@ -68,7 +79,7 @@ def home(request):
   Returns:
     A rendered version of home.html with form fields.
   """
-  return render(request, 'base/home.html', {'form': CommonFields()})
+  return render(request, HOMEPAGE_HTML_FILE_PATH, {'form': CommonFields()})
 
 def about(request):
   """ Render the about page that tells users about AppsCake. 
@@ -78,13 +89,15 @@ def about(request):
   Returns:  
     A rendered version of about.html. 
   """
-  return render(request, 'base/about.html')
+  return render(request, ABOUT_HTML_FILE_PATH)
 
 def get_deployment_status(request):
   """ Returns a json string of the status of the tools being run.
 
   Args:
     request: A Django web request.
+  Returns:
+    A HttpResponse object with a json message of the current deployment status.
   """
   get = request.GET.copy()
   identifier = None
@@ -106,7 +119,11 @@ def get_deployment_status(request):
   return HttpResponse(simplejson.dumps(message))  
 
 def get_termination_status(request):
-  """ Returns a json string of the status of the tools being run. """
+  """ Returns a json string of the status of the tools being run.
+
+  Returns:
+    A HttpResponse object with a json message of the current termination status.
+  """
   get = request.GET.copy()
   identifier = None
   if 'keyname' in get:
@@ -126,13 +143,17 @@ def get_termination_status(request):
 
 
 def start(request):
-  """ This is the page a user submits a request to start AppScale. """
+  """ This is the page a user submits a request to start AppScale. 
+
+  Returns:
+    A HttpResponse rendering the start page or HttpResponseServerError
+    if there was an error.
+  """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
     appscale_up_thread = None
     email = form['admin_email'].value()
     password = form['admin_pass'].value() or form['cloud_admin_pass'].value()
-    assert password != None
     keyname = helpers.generate_keyname()
    
     cloud_type = None
@@ -168,8 +189,7 @@ def start(request):
                                    ec2_secret=secret_key,
                                    ec2_url=ec2_url)
       elif deployment_type == SIMPLE_DEPLOYMENT:
-        min_nodes = form['min'].value()
-        max_nodes = form['max'].value()
+        min_nodes = max_nodes = form['max'].value()
         appscale_up_thread = appscale_tools_thread.AppScaleUp(cloud_type,
                                    keyname,
                                    email,
@@ -184,7 +204,7 @@ def start(request):
                                    ec2_secret=secret_key,
                                    ec2_url=ec2_url)
       else:
-        return HttpResponseServerError("Unable to get the deployment strategy")
+        return HttpResponseServerError("Unable to get the deployment strategy.")
     elif cloud_type == CLUSTER_DEPLOY:
       ips_yaml = form['ips_yaml'].value()
       root_password = form['root_pass'].value()
@@ -196,11 +216,14 @@ def start(request):
                                    root_pass=root_password)
     else:
       return HttpResponseServerError(
-        "Unable to figure out the type of cloud deployment")  
+        "Unable to figure out the type of cloud deployment.")  
 
     appscale_up_thread.start()
+
     identifier = appscale_up_thread.keyname
     DEPLOYMENT_THREADS[identifier] = appscale_up_thread
-    return render(request, 'base/start.html', {'keyname': identifier})
+
+    return render(request, APPSCALE_STARTED_HTML_FILE_PATH, {'keyname': 
+      identifier})
   else:
     return HttpResponseServerError("404 Page not found")

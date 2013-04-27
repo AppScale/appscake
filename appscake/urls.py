@@ -1,8 +1,8 @@
-from django.conf.urls import *
-from appscake import views
+""" Maps URL AppsCake UI paths to rendering functions in views.py. """
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-
-urlpatterns = patterns('appscake.views',
+URL_PATTERNS = patterns('appscake.views',
     url(r'^$', 'home', name='home'),
     (r'^about/$', 'about',),
     (r'^common/.*', 'common',),
