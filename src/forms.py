@@ -38,17 +38,17 @@ class CommonFields(forms.Form):
      'class': 'dk_fix' }))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
-    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required' }))
+    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required'}))
 
   secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, 
-    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required' }))
+    widget=forms.TextInput(attrs={'data-required': 'true', 'class': 'required'}))
 
   infrastructure = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
-    'id': 'infrastructure', 'class': 'dk_fix' }))
+    'id': 'infrastructure', 'class': 'dk_fix'}))
 
   min = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'value': '1', 
-    'class': 'required' }))
+    'class': 'required'}))
 
   max = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={
@@ -106,11 +106,10 @@ class CommonFields(forms.Form):
 
   ips_yaml = forms.CharField(label=("ips.yaml"), max_length=120,
     widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",'data-trigger':"change",
-    'data-required':"true", 'class': 'required' }), required=True)
+    'data-required':"true", 'class': 'required'}), required=True)
 
   ec2_euca_url = forms.CharField(label='Eucalyptus URL',
-    max_length=120,
-    )
+    max_length=120, )
 
   deployment_type = forms.ChoiceField(label='Select Deployment Type',
     choices=DEPLOY_TYPE,
