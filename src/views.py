@@ -1,5 +1,5 @@
 """ Views for different pages in particular for starting and stopping AppScale.
- """
+"""
 import logging
 import os
 import sys
