@@ -1,5 +1,5 @@
-""" Views for different pages in particular for starting and stopping AppScale. 
-"""
+""" Views for different pages in particular for starting and stopping AppScale.
+ """
 import logging
 import os
 import sys
@@ -151,7 +151,6 @@ def start(request):
   """
   if request.method == 'POST':
     form = CommonFields(data=request.POST)
-    print(request.POST)
     appscale_up_thread = None
     email = form['admin_email'].value()
     password = form['admin_pass'].value() or form['cloud_admin_pass'].value()

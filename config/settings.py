@@ -1,9 +1,10 @@
-# Django settings for config project.
+# Django settings for AppScake project.
 
 import os
 PROJECT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 DEBUG = True
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -14,13 +15,15 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'db/appscake.sqlite3',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 
+         # 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'db/appscake.sqlite3', # Or path to database file if using 
+         # sqlite3. The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '', # Empty for localhost through domain sockets or 
+                    # '127.0.0.1' for localhost through TCP.
+        'PORT': '', # Set to empty string for default.
     }
 }
 
@@ -93,7 +96,7 @@ SECRET_KEY = '_dewixn9=l&3=h39n8f^np*^ss795ng#z0iv32o1@tc+(iu)$)'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+#    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (

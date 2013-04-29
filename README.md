@@ -1,5 +1,6 @@
+![AppScale Logo](http://www.appscale.com/img/appscale-logo.png)
 
-#Appscake - Web Frontend for AppScale Tools #
+# Appscake - Web Frontend for AppScale Tools #
 
 ## About ##
 
@@ -25,11 +26,11 @@ based on Django.
 Run ```bash get_tools.sh```.
 
 ### On an AppScale Image ###
-Install the tools for python2.7 by going into appscale/tools/src_install
+Install the tools for python2.7 by going into appscale/tools/src_install and running
 ```bash appscale_install.sh```
 
 ### For Mac OSX ###
-Install the tools by going into appscale-tools/osx
+Install the tools by going into appscale-tools/osx and running
 ```bash appscale_install.sh```
 
 ### For Debian based systems ###
@@ -40,16 +41,19 @@ Install the tools by going into appscale-tools/debian and running
 Install the tools for python2.7 by going into appscale/tools/src_install
 ```bash appscale_install.sh```
 
-### Issues ###
-Contact us if you have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
-
 # Running AppsCake #
 ```python2.7 manage.py runserver localhost:8000```
+
 Go to http://localhost:8000 with a browser. 
 
 If you are running AppScake on the image that you will be starting AppScale:
 ```/usr/local/Python-2.7.3/python manage.py runserver <ip>:8090```
+
 Go to http://<ip>:8090 with a browser.
+
+### Issues ###
+Contact us if you have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
+
 
 License
 -------

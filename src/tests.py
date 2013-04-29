@@ -23,7 +23,7 @@ class TestAppScaleDown(unittest.TestCase):
   def test_constructor(self):
     appscale_down = appscale_tools_thread.\
       AppScaleDown("cloud", "keyname")
-    self.assertEquals(appscale_tools_thread.AppScaleDown.TERMINATING_STATE,
+    self.assertEquals(appscale_tools_thread.AppScaleDown.INIT_STATE,
       appscale_down.state)
 
   def test_run(self):
@@ -54,6 +54,7 @@ class TestAppScaleDown(unittest.TestCase):
   def test_get_status(self):
     appscale_thread = appscale_tools_thread.AppScaleDown("cloud", "keyname")
     percent = 10
+    appscale_thread.state = "terminating"
     flexmock(appscale_thread).should_receive("get_completion_percentage").\
       and_return(percent).once()
     self.assertEquals({'status':'terminating', 'percent':percent}, appscale_thread.get_status())

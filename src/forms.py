@@ -32,8 +32,7 @@ class CommonFields(forms.Form):
     'checkTransType(this.value)', 'type': 'radio', 'name': '', 'data-required': 
     'true', 'class': 'required', }))
 
-  instance_type = forms.ChoiceField(choices=MACHINE,
-                                    widget=forms.Select(attrs={
+  instance_type = forms.ChoiceField(choices=MACHINE, widget=forms.Select(attrs={
      'class': 'dk_fix' }))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
@@ -42,10 +41,8 @@ class CommonFields(forms.Form):
   secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, 
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required' }))
 
-  infrastructure = forms.ChoiceField(choices=INFRAS,
-                                    widget=forms.Select(attrs={
-    'id':
-    'infrastructure', 'class': 'dk_fix' }))
+  infrastructure = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
+    'id': 'infrastructure', 'class': 'dk_fix' }))
 
   min = forms.IntegerField(max_value=100,min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'value': '1', 

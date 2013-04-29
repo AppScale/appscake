@@ -1,5 +1,5 @@
-""" Methods for running the appscale-run-instances command for different
-    types of deployments.
+""" Thread classes for running the AppScale tools for different types of 
+    deployments.
 """
 import base64
 import logging
@@ -10,14 +10,14 @@ import threading
 sys.path.append(os.path.join(os.path.dirname(__file__),"../appscale-tools/lib"))
 from appscale_tools import AppScaleTools
 from custom_exceptions import BadConfigurationException
-
-from cStringIO import StringIO 
 import parse_args
 
-# Cluster type deployment.
+from cStringIO import StringIO 
+
+# Cluster deployment type. Examples include EC2 and Euca.
 CLUSTER = "cluster"
 
-# Cloud type deployment.
+# Cloud deployment type. Examples include VirtualBox and KVM.
 CLOUD = "cloud"
 
 class AppScaleDown(threading.Thread):
@@ -29,10 +29,13 @@ class AppScaleDown(threading.Thread):
   # with verbose on.
   EXPECTED_NUM_LINES = 5
 
-  # When appscale-run-instances is currently running.
+  # When the constructure has been setup by the terminating thread has not started.
+  INIT_STATE = "init"
+
+  # When appscale-terminat-instances is currently running.
   TERMINATING_STATE = "terminating"
   
-  # When appscale-run-instances has successfully terminated.
+  # When appscale-terminate-instances has successfully terminated.
   TERMINATED_STATE = "terminated"
 
   # When there was an error when trying to terminate instances.
@@ -43,10 +46,18 @@ class AppScaleDown(threading.Thread):
     """ A constructor setting up the required arguments for running
         appscale-terminate-instances. Named arguments are for cloud
         deployments.
+    
+    Args:
+      deployment_type: A str, either cloud or cluster deployment.
+      keyname: A str, the keyname referencing the deployment to terminate.
+      ec2_access: A str, the EC2/Euca access key.
+      ec2_secret: A str, the EC2/Euca secret key.
+      ec2_url: A str, a URL pointing to where the EC2/Euca cloud is located. 
+        (required for Euca).
     """
     threading.Thread.__init__(self)
 
-    self.state = self.TERMINATING_STATE
+    self.state = self.INIT_STATE
     self.deployment_type = deployment_type
     self.keyname = keyname
     self.ec2_access = ec2_access
@@ -57,12 +68,11 @@ class AppScaleDown(threading.Thread):
     self.std_err_capture = StringIO()
 
   def run(self):
-    """ Checks the current state of the thread and terminates AppScale
-        if it is in the correct state.
-    """
-    logging.debug("Thread has started.")
-    if self.state != self.TERMINATING_STATE:
-      logging.error("Bad state to start terminating instances")
+    """ Checks the current state of the thread and terminates AppScale. """
+    logging.debug("AppScaleDown thread has started.")
+    if self.state != self.INIT_STATE:
+      logging.error("Bad state to start terminating instances: {0}.".\
+        format(self.state))
     elif not self.appscale_down():
       logging.error("Unable to shut down AppScale.")
     else:
@@ -78,42 +88,49 @@ class AppScaleDown(threading.Thread):
       True on success, False otherwise. 
     """
     logging.debug("Starting AppScale down.")
+    self.state = self.TERMINATING_STATE
+
+    # We capture the stdout and stderr of the tools and use it to calculate
+    # the percentage towards completion.
     old_stdout = sys.stdout
     old_stderr = sys.stderr
     sys.stdout = self.std_out_capture
     sys.stderr = self.std_err_capture
 
     terminate_args = ['--keyname', self.keyname, "--verbose"]
+
     if self.deployment_type == CLOUD:
       terminate_args.extend(["--EC2_SECRET_KEY", self.ec2_secret,
       "--EC2_ACCESS_KEY", self.ec2_access,
       "--EC2_URL", self.ec2_url])
     try: 
       logging.info("Starting terminate instances.")
+
       options = parse_args.ParseArgs(terminate_args, 
         "appscale-terminate-instances").args
       AppScaleTools.terminate_instances(options)
-      logging.info("AppScale terminate instances successfully ran!")
       self.state = self.TERMINATED_STATE
+
+      logging.info("AppScale terminate instances successfully ran!")
     except BadConfigurationException as bad_config:
       self.state = self.ERROR_STATE
       logging.exception(str(bad_config))
-      self.err_message = "Bad configuration. Unable to termiante AppScale. "\
+      self.err_message = "Bad configuration. Unable to terminate AppScale. "\
         "{0}".format(bad_config)
-      return False
     except Exception as exception:
       self.state = self.ERROR_STATE
       logging.exception(exception)
       self.err_message = "Exception when terminating: {0}".format(exception)
-      return False
     finally:
       sys.stdout = old_stdout
       sys.stderr = old_stderr
-    return True
+
+    return self.state == self.TERMINATED_STATE
 
   def get_status(self):
-    """ Parses the output of appscale-run-instances and sees what the current 
-        status of a running command is.
+    """ Gets the status of the current thread by parsing the output of 
+        appscale-terminate-instances. It sets the status and the completition 
+        percentage of the command in a dictionary returned to the caller.
   
     Returns:
       A dictionary of the current status of this thread of 
@@ -122,7 +139,9 @@ class AppScaleDown(threading.Thread):
     status_dict = {}
     status_dict['status'] = self.state
     status_dict['percent'] = 0
-    if self.state == self.TERMINATING_STATE:
+    if self.state == self.INIT_STATE:
+      pass
+    elif self.state == self.TERMINATING_STATE:
       status_dict['percent'] = self.get_completion_percentage()
     elif self.state == self.TERMINATED_STATE:
       status_dict['percent'] = 100
@@ -149,20 +168,23 @@ class AppScaleDown(threading.Thread):
 
 
 class AppScaleUp(threading.Thread):
-  """ Runs the AppScale tools to start a new deployment. """
+  """ Runs the AppScale tools command appscale-run-instances to start a new 
+      AppScale deployment. 
+  """
 
-  # When appscale-run-instances ended in an error state.
-  ERROR_STATE = "error"
-  
-  # When appscale-run-instances in currently running.
-  RUNNING_STATE = "running"
- 
   # When appscale-run-instances is initializing.
   INIT_STATE = "initializing"
 
+ 
+  # When appscale-run-instances in currently running.
+  RUNNING_STATE = "running"
+ 
   # When appscale-run-instances has successfully completed.
   COMPLETE_STATE = "complete"
 
+  # When appscale-run-instances ended in an error state.
+  ERROR_STATE = "error"
+ 
   # Automatic layout of roles in AppScale.
   SIMPLE = "simple"
 
@@ -175,10 +197,6 @@ class AppScaleUp(threading.Thread):
   # Contents of the line which contains the status link from the tools output.
   STATUS_LINK_LINE = "View status information about your AppScale deployment at"
 
-  # Deployment clouds.
-  EC2 = "ec2"
-  EUCA = "euca"
-
   # The default location URL for EC2.
   EC2_URL_DEFAULT = "https://ec2.us-east-1.amazonaws.com"
 
@@ -186,17 +204,17 @@ class AppScaleUp(threading.Thread):
     root_pass=None, placement=None, infrastructure=None, min_nodes=None, 
     max_nodes=None, machine=None, instance_type=None, ips_yaml=None, 
     ec2_secret=None, ec2_access=None, ec2_url=None):
-    """ Constructor for Tools Runner. 
+    """ A constructor setting up the required arguments for running
+        appscale-run-instances. 
     
     Args:
       deployment_type: A str, the deployment type of either cloud or cluster.
-      keyname: A str representing the keyname used for an AppScale
-        deployment.
+      keyname: A str representing the keyname used for an AppScale deployment.
       admin_email: A str, email for the administrator.
       admin_pass: A str, password for the administrator.
       root_pass: A str, the root password of the appscale image.
       placement: A str, of either automatic placement or manual.
-      infrastructure: A str, the IaaS we're deploying on.
+      infrastructure: A str, the IaaS we're deploying on ('ec2' or 'euca').
       max_nodes: An int, the maximum number of nodes AppScale can run.
       min_nodes: An int, the minimum number of nodes AppScale can run.
       machine: A str representing the emi or ami identifier of the cloud image 
@@ -210,7 +228,7 @@ class AppScaleUp(threading.Thread):
     threading.Thread.__init__(self)
 
     logging.basicConfig(format='%(asctime)s %(levelname)s %(filename)s:' \
-      '%(lineno)s %(message)s ', level=logging.DEBUG)
+      '%(lineno)s %(message)s ', level=logging.INFO)
 
     self.keyname = keyname
     self.admin_email = admin_email
@@ -238,23 +256,25 @@ class AppScaleUp(threading.Thread):
     self.state = self.INIT_STATE
     self.err_message = "" 
     self.args = ['--table', 'cassandra']
-    logging.debug("Args at init: {0}".format(self.args))
     self.args.extend(["--admin_user", self.admin_email,
                       "--admin_pass", self.admin_pass,
                       "--keyname", self.keyname])
     self.link = None
     self.root_pass = root_pass
+
+    logging.debug("Initial arguments: {0}".format(self.args))
  
   def run(self):
     """ Checks the current state of an AppScale deployment and starts a 
         deployment if in the correct state. 
     """
     if self.state != self.INIT_STATE:
-      logging.error("Bad state to start a new thread.")
+      logging.error("Bad state to start a new thread for AppScaleUp.")
     elif not self.appscale_up():
       logging.error("Unable to start AppScale.")
     else:
-      logging.info("AppScale was successfully deployed.")
+      logging.info("AppScale was successfully deployed!")
+    logging.debug("Thread has stopped.")
 
   def appscale_up(self): 
     """ Starts up an AppScale deployment. Checks the type of deployment
@@ -290,7 +310,6 @@ class AppScaleUp(threading.Thread):
       True on success, False otherwise.
     """
     self.state = self.INIT_STATE
-    logging.debug("IPS 64: {0}".format(self.ips_yaml_b64))
     add_keypair_args = ['--keyname', self.keyname, '--ips_layout', 
       self.ips_yaml_b64, "--root_password", self.root_pass, "--auto"]
     options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair").\
@@ -312,7 +331,7 @@ class AppScaleUp(threading.Thread):
     return True
 
   def run_cluster_deploy(self):
-    """ Sets up deployment arguments of a cluster starts up AppScale.
+    """ Sets up deployment arguments of a cluster start up.
   
     Returns:
       True on success, False otherwise.
@@ -395,7 +414,7 @@ class AppScaleUp(threading.Thread):
     return self.state == self.COMPLETE_STATE
 
   def set_status_link(self):
-    """ Parses the output of the tools and get the status link. """
+    """ Parses the output of the tools and sets the status link. """
     lines = self.std_out_capture.getvalue().split('\n')
     for line in lines:
       if self.STATUS_LINK_LINE in line:
