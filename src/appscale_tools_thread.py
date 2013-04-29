@@ -190,10 +190,12 @@ class AppScaleUp(threading.Thread):
   # When appscale-run-instances ended in an error state.
   ERROR_STATE = "error"
  
-  # Automatic layout of roles in AppScale.
+  # Automatic layout of roles in AppScale. User supplies the minimum and 
+  # maximum number of nodes.
   SIMPLE = "simple"
 
-  # Manual layout of roles in AppScale.
+  # Manual layout of roles in AppScale. User manually specifies what roles
+  # go on which nodes in an ips.yaml configuration.
   ADVANCED = "advanced"
 
   # Expected number of lines of output from doing appscale-run-instances.
