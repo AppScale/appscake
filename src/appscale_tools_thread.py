@@ -29,7 +29,7 @@ class AppScaleDown(threading.Thread):
   # with verbose on.
   EXPECTED_NUM_LINES = 5
 
-  # When the constructor  has been setup by the terminating thread has not started.
+  # Initialization of the AppScaleDown thread. The tools have not yet been run.
   INIT_STATE = "init"
 
   # When appscale-terminate-instances is currently running.
