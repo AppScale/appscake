@@ -10,7 +10,7 @@ AppsCake is a simple and lightweight web application that allows users to
 interact with AppScale Tools over the web. This way, even those users who
 are not familiar with general cloud principles or those who are not
 comfortable working with a traditional command line interface can get
-started with deploying AppScale clouds and AppScale cloud applications.
+started with deploying AppScale clouds.
 
 AppsCake has been developed using the Python programming language and is
 based on Django. 
