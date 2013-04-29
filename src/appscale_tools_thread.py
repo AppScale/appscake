@@ -29,7 +29,11 @@ class AppScaleDown(threading.Thread):
   # with verbose on.
   EXPECTED_NUM_LINES = 5
 
-  # Initialization of the AppScaleDown thread. The tools have not yet been run.
+  # Initialization state of the AppScaleDown thread. 
+  # States are used internally by this class to keep track of where 
+  # we are in the process of running appscale-terminate-instances. States are 
+  # shared with the web front end in JSON format for the user to know the 
+  # current stage of the tools.
   INIT_STATE = "init"
 
   # When appscale-terminate-instances is currently running.
