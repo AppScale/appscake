@@ -2,12 +2,11 @@
 # The humans responsible & technology colophon
 
 # TEAM
-
-    <name> -- <role> -- <twitter>
+    The AppScale Crew
 
 # THANKS
 
-    <name>
+    The Community
 
 # TECHNOLOGY COLOPHON
 
