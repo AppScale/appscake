@@ -118,7 +118,7 @@ class AppScaleDown(threading.Thread):
       logging.info("AppScale terminate instances successfully ran!")
     except BadConfigurationException as bad_config:
       self.state = self.ERROR_STATE
-      logging.exception(str(bad_config))
+      logging.exception(bad_config)
       self.err_message = "Bad configuration. Unable to terminate AppScale. " \
         "{0}".format(bad_config)
     except Exception as exception:
