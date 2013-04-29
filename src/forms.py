@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 
 # Infrastructures to choose from for cloud deployments. Tuples map form names
 # to labels.
-INFRAS=[
+INFRAS = [
   ('ec2', 'Amazon EC2'),
   ('euca', 'Eucalyptus')]
 
@@ -38,10 +38,12 @@ class CommonFields(forms.Form):
      'class': 'dk_fix' }))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
-    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 'required'}))
+    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 
+    'required'}))
 
   secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, 
-    widget=forms.TextInput(attrs={'data-required': 'true', 'class': 'required'}))
+    widget=forms.TextInput(attrs={'data-required': 'true', 'class': 
+    'required'}))
 
   infrastructure = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
     'id': 'infrastructure', 'class': 'dk_fix'}))
@@ -51,12 +53,8 @@ class CommonFields(forms.Form):
     'class': 'required'}))
 
   max = forms.IntegerField(max_value=100, min_value=1,
-    widget=forms.TextInput(attrs={
-    'data-required': 'true',
-    'id': 'amount',
-    'type': 'text',
-    'class': 'clearfix',
-  }))
+    widget=forms.TextInput(attrs={ 'data-required': 'true', 'id': 'amount',
+    'type': 'text', 'class': 'clearfix', }))
 
   cloud = forms.CharField(widget=forms.HiddenInput(attrs={
     'readonly':'cloud'}))
@@ -70,21 +68,24 @@ class CommonFields(forms.Form):
     'data-required':"true"}))
 
   admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 'required parsley-validate',
-    'data-minlength': '6', 'data-required':"true"}), label="AppScale Admin Password", 
-    min_length=6, required=True, )
+    attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 
+    'required parsley-validate', 'data-minlength': '6', 
+    'data-required':"true"}), label="AppScale Admin Password", min_length=6, 
+    required=True, )
 
   root_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'root_pass', 'name':"root_pass", 'class': 'required parsley-validate',
-    'data-minlength': '6', 'data-required':"true"}), label="Virtual Machine Root Password", 
-    min_length=6, required=True, )
+    attrs={'id':'root_pass', 'name':"root_pass", 'class': 
+    'required parsley-validate', 'data-minlength': '6', 'data-required':
+    "true"}), label="Virtual Machine Root Password", min_length=6, 
+     required=True, )
 
   pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'pass_confirm', 'class': 'required parsley-validate', 'data-equalto': 
-    '#admin_pass', 'name':'pass_confirm', 'data-minlength': '6', 
-    'data-required':"true"}), label="Confirm Password", min_length=6)
+    attrs={'id':'pass_confirm', 'class': 'required parsley-validate', 
+    'data-equalto': '#admin_pass', 'name':'pass_confirm', 'data-minlength': 
+    '6', 'data-required':"true"}), label="Confirm Password", min_length=6)
 
-  cloud_admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
+  cloud_admin_pass = forms.CharField(widget=forms.PasswordInput(
+    render_value=False,
     attrs={'id':'cloud_admin_pass',
     'name':"admin_pass",
     'class': 'required parsley-validate',
@@ -92,7 +93,8 @@ class CommonFields(forms.Form):
     'data-required':"true"}),
     label="AppScale Admin Password", min_length=6)
 
-  cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
+  cloud_pass_confirm = forms.CharField(widget=forms.PasswordInput(
+    render_value=False,
     attrs={'id':'cloud_pass_confirm',
     'data-equalto': '#cloud_admin_pass',
     'name':'pass_confirm',
@@ -105,8 +107,9 @@ class CommonFields(forms.Form):
     'data-trigger':"change", 'data-required':"true"}))
 
   ips_yaml = forms.CharField(label=("ips.yaml"), max_length=120,
-    widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",'data-trigger':"change",
-    'data-required':"true", 'class': 'required'}), required=True)
+    widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",
+    'data-trigger':"change", 'data-required':"true", 'class': 'required'}), 
+    required=True)
 
   ec2_euca_url = forms.CharField(label='Eucalyptus URL',
     max_length=120, )

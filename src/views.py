@@ -199,6 +199,7 @@ def start(request):
                                    instance_type=instance_type,
                                    infrastructure=infras,
                                    max_nodes=max_nodes,
+                                   min_nodes=min_nodes,
                                    ec2_access=access_key,
                                    ec2_secret=secret_key,
                                    ec2_url=ec2_url)
