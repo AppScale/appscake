@@ -1,0 +1,101 @@
+{% extends '_layouts/base.html' %}
+
+{% block content %}
+
+  <script type="text/javascript">
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      crossDomain: false, // obviates need for sameOrigin test
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", '{% csrf_token %}');
+        }
+      }
+    });
+
+  </script>
+
+  <script type="text/javascript">
+
+    window.onload=function(){
+      $("#init").html('Initializing');
+      $("#progress").css('width','0%');
+      $("#progress").html('0%');
+    };
+
+    $(document).ready(function(){
+      var dots = ".";
+      var progresspump = setInterval(function(){
+        $.getJSON("/getdeploymentstatus/",
+                {"keyname": "{{ keyname }}"}, function(data){
+          if(dots == "." || dots == ".."){
+            dots = dots + ".";
+          } else{
+            dots = "." ;
+          }
+
+          if(data.status == "complete") {
+            clearInterval(progresspump);
+            $("#progress").css('width',"100%");
+            $("#progress").html("100%");
+            $("#progressouter").removeClass("active");
+            $("#init").html("<a href='" + data.link + "' target='_blank'>Click here to go to your AppScale deployment</a>");
+            $("#terminate").html("<a href='/terminate/?keyname={{ keyname }}' class='btn btn-danger btn-large'>Terminate AppScale</a>");
+          }
+          else if(data.status == 'error'){
+            clearInterval(progresspump);
+            $("#progress").css('width',"0%");
+            $("#progress").html("ERROR");
+            $("#progressouter").removeClass("active");
+            $('#init').html('ERROR')
+            $('#error_msg').html(data.error_message)
+            $("#terminate").html("<a href='/terminate/?keyname={{ keyname }}' class='btn btn-danger btn-large'>Terminate AppScale</a>");
+          }
+          else if(data.status == 'running'){
+            $("#progress").css('width',data.percent +'%');
+            $("#progress").html(data.percent +'%');
+            $('#init').html("Deploying" + dots);
+          }
+        })
+        /*poll every 1 second*/
+      }, 1000);
+
+    });
+
+  </script>
+
+    <div class="container">
+        <div class="row">
+            <div style="text-align: center;" class="span10 hero-unit">
+                <h1>AppScale Up!</h1>
+                <hr>
+                <h4> Your cloud is being brought up, please be patient.</h4>
+
+                <div style="width:400px; margin-left: auto;
+                margin-right: auto">
+                  <div style="height: 40px" class="progress progress-success
+                  progress-striped
+                  active"
+                       id="progressouter">
+                    <div class="bar" id="progress"></div>
+                  </div>
+                </div>
+                    <hr>
+              <div style="text-align: center;">
+                  <h3>AppScale Tools Status:</h3>
+                  <h1 id="init"></h1>
+                  <span id="error_msg"></span>
+                  </br></br></br>
+                  <span id="terminate"></span>
+                </div>
+
+              </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
