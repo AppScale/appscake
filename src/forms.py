@@ -35,7 +35,7 @@ class CommonFields(forms.Form):
     'true', 'class': 'required', }))
 
   instance_type = forms.ChoiceField(choices=MACHINE, widget=forms.Select(attrs={
-     'class': 'dk_fix' }))
+     'class': 'dk_fix'}))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 
