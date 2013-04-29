@@ -7,12 +7,12 @@
 "AppsCake makes deploying AppScale a piece of cake"
 
 AppsCake is a simple and lightweight web application that allows users to
-interact with AppScale tools over the web. This way even those users who
+interact with AppScale Tools over the web. This way, even those users who
 are not familiar with general cloud principles or those who are not
 comfortable working with a traditional command line interface can get
 started with deploying AppScale clouds and AppScale cloud applications.
 
-AppsCake has been developed using the python programming language and is
+AppsCake has been developed using the Python programming language and is
 based on Django. 
 
 ## Prerequisites ##
@@ -46,7 +46,7 @@ Install the tools for python2.7 by going into appscale/tools/src_install
 
 Go to http://localhost:8000 with a browser. 
 
-If you are running AppScake on the image that you will be starting AppScale:
+If you are running AppsCake on the image that you will be starting AppScale:
 ```/usr/local/Python-2.7.3/python manage.py runserver <ip>:8090```
 
 Go to http://<ip>:8090 with a browser.

@@ -38,7 +38,7 @@ APPSCALE_STARTED_HTML_FILE_PATH = "base/start.html"
 
 def terminate(request):
   """ A request to the terminate page which goes and looks up a currently 
-      running deployment and terminates that deployment.
+  running deployment and terminates that deployment.
   
   Args:
     request: A Django web request.
@@ -72,7 +72,7 @@ def terminate(request):
 
 def home(request):
   """ Render the home page which takes in input from the user to start 
-      AppScale. 
+  AppScale. 
 
   Args:
     request: A Django web request.

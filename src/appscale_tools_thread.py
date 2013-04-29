@@ -14,25 +14,25 @@ import parse_args
 
 from cStringIO import StringIO 
 
-# Cluster deployment type. Examples include EC2 and Euca.
+# Cluster deployment type. Examples include VirtualBox and KVM.
 CLUSTER = "cluster"
 
-# Cloud deployment type. Examples include VirtualBox and KVM.
+# Cloud deployment type. Examples include EC2 and Eucalyptus.
 CLOUD = "cloud"
 
 class AppScaleDown(threading.Thread):
   """ Runs terminate instances thread on a currently running AppScale 
-      deployment. 
+  deployment. 
   """
 
   # Expected number of lines of output from doing appscale-terminate-instances
   # with verbose on.
   EXPECTED_NUM_LINES = 5
 
-  # When the constructure has been setup by the terminating thread has not started.
+  # When the constructor  has been setup by the terminating thread has not started.
   INIT_STATE = "init"
 
-  # When appscale-terminat-instances is currently running.
+  # When appscale-terminate-instances is currently running.
   TERMINATING_STATE = "terminating"
   
   # When appscale-terminate-instances has successfully terminated.
@@ -41,11 +41,11 @@ class AppScaleDown(threading.Thread):
   # When there was an error when trying to terminate instances.
   ERROR_STATE = "error"
 
-  def __init__(self, deployment_type,  keyname, ec2_access=None, 
+  def __init__(self, deployment_type, keyname, ec2_access=None, 
     ec2_secret=None, ec2_url=None):
     """ A constructor setting up the required arguments for running
-        appscale-terminate-instances. Named arguments are for cloud
-        deployments.
+    appscale-terminate-instances. Named arguments are for cloud
+    deployments.
     
     Args:
       deployment_type: A str, either cloud or cluster deployment.
@@ -81,8 +81,8 @@ class AppScaleDown(threading.Thread):
 
   def appscale_down(self):
     """ Terminates a currently running deployment of AppScale. Calls on the 
-        AppScale tools by building an argument list, which varies based on 
-        the deployment type.
+    AppScale tools by building an argument list, which varies based on 
+    the deployment type.
    
     Returns:
       True on success, False otherwise. 
@@ -129,8 +129,8 @@ class AppScaleDown(threading.Thread):
 
   def get_status(self):
     """ Gets the status of the current thread by parsing the output of 
-        appscale-terminate-instances. It sets the status and the completition 
-        percentage of the command in a dictionary returned to the caller.
+    appscale-terminate-instances. It sets the status and the completition 
+    percentage of the command in a dictionary returned to the caller.
   
     Returns:
       A dictionary of the current status of this thread of 
@@ -151,7 +151,7 @@ class AppScaleDown(threading.Thread):
 
   def get_completion_percentage(self):
     """ Gets an estimated percentage of how close to finished we are based
-        on the number of lines output by appscale-terminate-instances.
+    on the number of lines output by appscale-terminate-instances.
     
     Returns:
       An int, an estimated percentage up to 100.
@@ -169,12 +169,11 @@ class AppScaleDown(threading.Thread):
 
 class AppScaleUp(threading.Thread):
   """ Runs the AppScale tools command appscale-run-instances to start a new 
-      AppScale deployment. 
+  AppScale deployment. 
   """
 
   # When appscale-run-instances is initializing.
   INIT_STATE = "initializing"
-
  
   # When appscale-run-instances in currently running.
   RUNNING_STATE = "running"
@@ -205,7 +204,7 @@ class AppScaleUp(threading.Thread):
     max_nodes=None, machine=None, instance_type=None, ips_yaml=None, 
     ec2_secret=None, ec2_access=None, ec2_url=None):
     """ A constructor setting up the required arguments for running
-        appscale-run-instances. 
+    appscale-run-instances. 
     
     Args:
       deployment_type: A str, the deployment type of either cloud or cluster.
@@ -266,7 +265,7 @@ class AppScaleUp(threading.Thread):
  
   def run(self):
     """ Checks the current state of an AppScale deployment and starts a 
-        deployment if in the correct state. 
+    deployment if in the correct state. 
     """
     if self.state != self.INIT_STATE:
       logging.error("Bad state to start a new thread for AppScaleUp.")
@@ -278,8 +277,8 @@ class AppScaleUp(threading.Thread):
 
   def appscale_up(self): 
     """ Starts up an AppScale deployment. Checks the type of deployment
-        and placement strategy and calls on the correct initialization 
-        procedure.
+    and placement strategy and calls on the correct initialization 
+    procedure.
 
     Returns:
       True on success, False otherwise.
@@ -304,7 +303,7 @@ class AppScaleUp(threading.Thread):
 
   def run_add_keypair(self):
     """ Sets up the add keypair arguments and attempts to add the
-        keyname generated.
+    keyname generated.
 
     Returns:
       True on success, False otherwise.
@@ -344,7 +343,7 @@ class AppScaleUp(threading.Thread):
 
   def run_advance_cloud_deploy(self):
     """ Sets up deployment arguments of an advance cloud layout and 
-        starts up AppScale.
+    starts up AppScale.
   
     Returns:
       True on success, False otherwise.
@@ -360,7 +359,7 @@ class AppScaleUp(threading.Thread):
 
   def run_simple_cloud_deploy(self):
     """ Sets up deployment arguments of a simple cloud layout and 
-        starts up AppScale.
+    starts up AppScale.
   
     Returns:
       True on success, False otherwise.
@@ -380,7 +379,7 @@ class AppScaleUp(threading.Thread):
     Returns:
       True on success, False otherwise.
     """
-    logging.info("Tool's arguments: {0}".format(str(self.args)))
+    logging.info("Tools arguments: {0}".format(str(self.args)))
 
     self.state = self.RUNNING_STATE
     old_stdout = sys.stdout
@@ -425,7 +424,7 @@ class AppScaleUp(threading.Thread):
   
   def get_completion_percentage(self):
     """ Gets an estimated percentage of how close to finished we are based
-        on the number of lines output by appscale-run-instances.
+    on the number of lines output by appscale-run-instances.
     
     Returns:
       An int, an estimated percentage up to 100.

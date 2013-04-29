@@ -3,23 +3,25 @@ from django import forms
 from django.core.validators import validate_email
 
 
-# Infrastructures to choose from for cloud deployments.
+# Infrastructures to choose from for cloud deployments. Tuples map form names
+# to labels.
 INFRAS=[
   ('ec2', 'Amazon EC2'),
-  ('euca', 'Eucaylptus')]
+  ('euca', 'Eucalyptus')]
 
-# Deployment options.
-DEPLOYS=[('cluster','Cluster'),
-         ('cloud','Cloud')]
+# Deployment options. Tuples map form names to labels.
+DEPLOYS = [('cluster','Cluster'),
+  ('cloud','Cloud')]
 
-#Deployment type: simple or advanced
-DEPLOY_TYPE=[
+# Deployment type: simple or advanced. Tuples map form names to labels.
+DEPLOY_TYPE = [
   ('simple', 'Simple'),
   ('advanced', 'Advanced')
 ]
 
-# Different instance sizes for the user to pick from.
-MACHINE=[
+# Different instance sizes for the user to pick from. Tuples map form names
+# to labels.
+MACHINE = [
   ('m1.small', 'm1.small'),
   ('m1.medium', 'm1.medium'),
   ('m1.large', 'm1.large'),
@@ -27,7 +29,7 @@ MACHINE=[
 
 class CommonFields(forms.Form):
   """ A form object for the user to deploy AppScale. """
-  cloud = forms.ChoiceField(choices=DEPLOYS, required = True, label = False,
+  cloud = forms.ChoiceField(choices=DEPLOYS, required=True, label=False,
     widget=forms.RadioSelect(attrs={ 'value': '', 'onclick': 
     'checkTransType(this.value)', 'type': 'radio', 'name': '', 'data-required': 
     'true', 'class': 'required', }))
@@ -44,11 +46,11 @@ class CommonFields(forms.Form):
   infrastructure = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
     'id': 'infrastructure', 'class': 'dk_fix' }))
 
-  min = forms.IntegerField(max_value=100,min_value=1,
+  min = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'value': '1', 
     'class': 'required' }))
 
-  max = forms.IntegerField(max_value=100,min_value=1,
+  max = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={
     'data-required': 'true',
     'id': 'amount',
@@ -56,10 +58,10 @@ class CommonFields(forms.Form):
     'class': 'clearfix',
   }))
 
-  cloud = forms.CharField(widget = forms.HiddenInput(attrs={
+  cloud = forms.CharField(widget=forms.HiddenInput(attrs={
     'readonly':'cloud'}))
 
-  cluster = forms.CharField(widget = forms.HiddenInput(attrs={
+  cluster = forms.CharField(widget=forms.HiddenInput(attrs={
     'readonly':'cluster'}))
 
   admin_email = forms.EmailField(validators=[validate_email], max_length=40,
@@ -107,15 +109,15 @@ class CommonFields(forms.Form):
     'data-required':"true", 'class': 'required' }), required=True)
 
   ec2_euca_url = forms.CharField(label='Eucalyptus URL',
-                             max_length=120,
-                             )
+    max_length=120,
+    )
 
   deployment_type = forms.ChoiceField(label='Select Deployment Type',
-                                      choices=DEPLOY_TYPE,
-                                      widget=forms.Select(attrs={
-                                        'id': 'select-required',
-                                        'data-required': 'true',
-                                      }))
+    choices=DEPLOY_TYPE,
+    widget=forms.Select(attrs={
+    'id': 'select-required',
+    'data-required': 'true',
+    }))
 
   machine = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
     'data-required': 'true',
