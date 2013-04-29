@@ -194,7 +194,7 @@ class AppScaleUp(threading.Thread):
   SIMPLE = "simple"
 
   # Manual layout of roles in AppScale.
-  ADVANCE = "advanced"
+  ADVANCED = "advanced"
 
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
@@ -296,7 +296,7 @@ class AppScaleUp(threading.Thread):
     if self.deployment_type == CLOUD:
       if self.placement == self.SIMPLE:
         return self.run_simple_cloud_deploy()
-      elif self.placement == self.ADVANCE:
+      elif self.placement == self.ADVANCED:
         return self.run_advance_cloud_deploy()
       else:
         raise NotImplementedError("Unknown placement of {0}". \
