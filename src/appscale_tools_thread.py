@@ -1,5 +1,5 @@
 """ Thread classes for running the AppScale tools for different types of 
-    deployments.
+deployments.
 """
 import base64
 import logging
