@@ -6,8 +6,8 @@ from django.core.validators import validate_email
 # Infrastructures to choose from for cloud deployments. Tuples map form names
 # to labels.
 INFRAS = [
-  ('ec2', 'Amazon EC2'),
-  ('euca', 'Eucalyptus')]
+  'ec2', 'Amazon EC2',
+  'euca', 'Eucalyptus']
 
 # Deployment options. Tuples map form names to labels.
 DEPLOYS = [('cluster','Cluster'),
@@ -30,27 +30,37 @@ MACHINE = [
 class CommonFields(forms.Form):
   """ A form object for the user to deploy AppScale. """
   cloud = forms.ChoiceField(choices=DEPLOYS, required=True, label=False,
-    widget=forms.RadioSelect(attrs={ 'value': '', 'onclick': 
-    'checkTransType(this.value)', 'type': 'radio', 'name': '', 'data-required': 
-    'true', 'class': 'required', }))
+    widget=forms.RadioSelect(attrs={
+    'value': '', 'onclick':
+    'checkTransType(this.value)',
+    'type': 'radio',
+    'name': '',
+    'data-required': 'true',
+    'class': 'required',
+    }))
 
   instance_type = forms.ChoiceField(choices=MACHINE, widget=forms.Select(attrs={
-     'class': 'dk_fix' }))
+     'class': 'dk_fix'}))
 
   key = forms.CharField(label=("EC2/Eucalyptus Key"), required=True, 
-    widget=forms.TextInput(attrs={ 'data-required': 'true', 'class': 
-    'required'}))
+    widget=forms.TextInput(attrs={
+      'data-required': 'true',
+      'class': 'required'}))
 
   secret = forms.CharField(label=("EC2/Eucalyptus Secret"), required=True, 
-    widget=forms.TextInput(attrs={'data-required': 'true', 'class': 
-    'required'}))
+    widget=forms.TextInput(attrs={
+      'data-required': 'true',
+      'class': 'required'}))
 
   infrastructure = forms.ChoiceField(choices=INFRAS, widget=forms.Select(attrs={
-    'id': 'infrastructure', 'class': 'dk_fix'}))
+    'id': 'infrastructure',
+    'class': 'dk_fix'}))
 
   min = forms.IntegerField(max_value=100, min_value=1,
-    widget=forms.TextInput(attrs={ 'data-required': 'true', 'value': '1', 
-    'class': 'required'}))
+    widget=forms.TextInput(attrs={
+      'data-required': 'true',
+      'value': '1',
+      'class': 'required'}))
 
   max = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'id': 'amount',
