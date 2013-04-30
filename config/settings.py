@@ -7,9 +7,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    # ('Admin', 'admin@appscale.com'),
-)
+ADMINS = ()
 
 MANAGERS = ADMINS
 

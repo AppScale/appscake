@@ -86,7 +86,7 @@ class TestAppScaleUp(unittest.TestCase):
     appscale.placement = appscale.SIMPLE
     self.assertEquals(True, appscale.appscale_up())
 
-    appscale.placement = appscale.ADVANCE
+    appscale.placement = appscale.ADVANCED
     flexmock(appscale).should_receive("run_simple_cloud_deploy").and_return(True).\
       never()
     flexmock(appscale).should_receive("run_advance_cloud_deploy").and_return(True).\

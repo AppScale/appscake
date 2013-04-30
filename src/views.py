@@ -1,5 +1,5 @@
 """ Views for different pages in particular for starting and stopping AppScale.
- """
+"""
 import logging
 import os
 import sys
@@ -48,12 +48,12 @@ def terminate(request):
   """
   get = request.GET.copy()
   if 'keyname' not in get:
-    return HttpResponseServerError("Did not receive the keyname of the "\
+    return HttpResponseServerError("Did not receive the keyname of the " \
       "instances to terminate.")
 
   keyname = get['keyname']
   if keyname not in DEPLOYMENT_THREADS:
-    return HttpResponseServerError("Unknown keyname of the "\
+    return HttpResponseServerError("Unknown keyname of the " \
       "instances to terminate.")
 
   appscale_up_thread = DEPLOYMENT_THREADS[keyname]

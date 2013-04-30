@@ -1,5 +1,5 @@
 """ Thread classes for running the AppScale tools for different types of 
-    deployments.
+  deployments.
 """
 import base64
 import logging
@@ -29,7 +29,11 @@ class AppScaleDown(threading.Thread):
   # with verbose on.
   EXPECTED_NUM_LINES = 5
 
-  # When the constructor  has been setup by the terminating thread has not started.
+  # Initialization state of the AppScaleDown thread. 
+  # States are used internally by this class to keep track of where 
+  # we are in the process of running appscale-terminate-instances. States are 
+  # shared with the web front end in JSON format for the user to know the 
+  # current stage of the tools.
   INIT_STATE = "init"
 
   # When appscale-terminate-instances is currently running.
@@ -71,7 +75,7 @@ class AppScaleDown(threading.Thread):
     """ Checks the current state of the thread and terminates AppScale. """
     logging.debug("AppScaleDown thread has started.")
     if self.state != self.INIT_STATE:
-      logging.error("Bad state to start terminating instances: {0}.".\
+      logging.error("Bad state to start terminating instances: {0}.". \
         format(self.state))
     elif not self.appscale_down():
       logging.error("Unable to shut down AppScale.")
@@ -114,8 +118,8 @@ class AppScaleDown(threading.Thread):
       logging.info("AppScale terminate instances successfully ran!")
     except BadConfigurationException as bad_config:
       self.state = self.ERROR_STATE
-      logging.exception(str(bad_config))
-      self.err_message = "Bad configuration. Unable to terminate AppScale. "\
+      logging.exception(bad_config)
+      self.err_message = "Bad configuration. Unable to terminate AppScale. " \
         "{0}".format(bad_config)
     except Exception as exception:
       self.state = self.ERROR_STATE
@@ -129,16 +133,14 @@ class AppScaleDown(threading.Thread):
 
   def get_status(self):
     """ Gets the status of the current thread by parsing the output of 
-    appscale-terminate-instances. It sets the status and the completition 
+    appscale-terminate-instances. It sets the status and the completion 
     percentage of the command in a dictionary returned to the caller.
   
     Returns:
       A dictionary of the current status of this thread of 
       appscale-terminate-instances.
     """
-    status_dict = {}
-    status_dict['status'] = self.state
-    status_dict['percent'] = 0
+    status_dict = {'status': self.state, 'percent': 0}
     if self.state == self.INIT_STATE:
       pass
     elif self.state == self.TERMINATING_STATE:
@@ -156,7 +158,7 @@ class AppScaleDown(threading.Thread):
     Returns:
       An int, an estimated percentage up to 100.
     """
-    logging.debug("Captured tools output thus far: {0}".\
+    logging.debug("Captured tools output thus far: {0}". \
       format(self.std_out_capture.getvalue()))
 
     count = self.std_out_capture.getvalue().count('\n')
@@ -173,6 +175,10 @@ class AppScaleUp(threading.Thread):
   """
 
   # When appscale-run-instances is initializing.
+  # States are used internally by this class to keep track of where 
+  # we are in the process of running appscale-run-instances. States are 
+  # shared with the web front end in JSON format for the user to know the 
+  # current stage of the tools.
   INIT_STATE = "initializing"
  
   # When appscale-run-instances in currently running.
@@ -184,11 +190,13 @@ class AppScaleUp(threading.Thread):
   # When appscale-run-instances ended in an error state.
   ERROR_STATE = "error"
  
-  # Automatic layout of roles in AppScale.
+  # Automatic layout of roles in AppScale. User supplies the minimum and 
+  # maximum number of nodes.
   SIMPLE = "simple"
 
-  # Manual layout of roles in AppScale.
-  ADVANCE = "advanced"
+  # Manual layout of roles in AppScale. User manually specifies what roles
+  # go on which nodes in an ips.yaml configuration.
+  ADVANCED = "advanced"
 
   # Expected number of lines of output from doing appscale-run-instances.
   EXPECTED_NUM_LINES = 17
@@ -290,10 +298,10 @@ class AppScaleUp(threading.Thread):
     if self.deployment_type == CLOUD:
       if self.placement == self.SIMPLE:
         return self.run_simple_cloud_deploy()
-      elif self.placement == self.ADVANCE:
+      elif self.placement == self.ADVANCED:
         return self.run_advance_cloud_deploy()
       else:
-        raise NotImplementedError("Unknown placement of {0}".\
+        raise NotImplementedError("Unknown placement of {0}". \
           format(self.placement))
     elif self.deployment_type == CLUSTER:
       return self.run_cluster_deploy()
@@ -311,7 +319,7 @@ class AppScaleUp(threading.Thread):
     self.state = self.INIT_STATE
     add_keypair_args = ['--keyname', self.keyname, '--ips_layout', 
       self.ips_yaml_b64, "--root_password", self.root_pass, "--auto"]
-    options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair").\
+    options = parse_args.ParseArgs(add_keypair_args, "appscale-add-keypair"). \
       args
     try:
       AppScaleTools.add_keypair(options)
@@ -324,7 +332,7 @@ class AppScaleUp(threading.Thread):
     except Exception as exception:
       self.state = self.ERROR_STATE
       logging.exception(exception)
-      self.err_message = "Exception when running add key pair: {0}".\
+      self.err_message = "Exception when running add key pair: {0}". \
         format(exception)
       return False
     return True
@@ -429,7 +437,7 @@ class AppScaleUp(threading.Thread):
     Returns:
       An int, an estimated percentage up to 100.
     """
-    logging.debug("Captured tools output thus far: {0}".\
+    logging.debug("Captured tools output thus far: {0}". \
       format(self.std_out_capture.getvalue()))
 
     count = self.std_out_capture.getvalue().count('\n')
@@ -447,9 +455,7 @@ class AppScaleUp(threading.Thread):
       appscale-run-instances. Includes the state of the tools and 
       additional information depending on the current state.
     """
-    status_dict = {}
-    status_dict['status'] = self.state
-    status_dict['percent'] = 0
+    status_dict = {'status': self.state, 'percent': 0}
     if self.state == self.INIT_STATE:
       pass
     elif self.state == self.ERROR_STATE:
