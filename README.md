@@ -17,7 +17,8 @@ based on Django.
 
 ## Prerequisites ##
 - Python 2.7
-- Django 1.5 (get the tar ball here: https://www.djangoproject.com/download/1.5.1/tarball/)
+- Django 1.5 (get the tar ball here: https://www.djangoproject.com/download/1.5.1/tarball/) or 
+  run "easy_install django"
 - Git
 - Expect (http://downloads.sourceforge.net/project/expect/Expect/5.45/expect5.45.tar.gz or 
   ```apt-get install expect```)
