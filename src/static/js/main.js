@@ -35,5 +35,13 @@ $(function() {
 
 });
 
+$(document).ready(); {
+    $("#slider_input").change(function(){
+
+         var index = $(this).attr('class').substring(0,1);
+        $("#slider_"+ index).slider('value', this.value);
+        refreshSliders( index - 0 );
+});
+
 
 
