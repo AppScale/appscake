@@ -64,7 +64,7 @@ class CommonFields(forms.Form):
 
   max = forms.IntegerField(max_value=100, min_value=1,
     widget=forms.TextInput(attrs={ 'data-required': 'true', 'id': 'amount',
-    'type': 'text', 'class': 'clearfix', }))
+    'type': 'text', 'class': 'clearfix', 'placeholder': '1' }))
 
   cloud = forms.CharField(widget=forms.HiddenInput(attrs={
     'readonly':'cloud'}))
