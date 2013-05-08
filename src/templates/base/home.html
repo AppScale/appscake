@@ -1,147 +1,118 @@
 {% extends "_layouts/base.html" %}
 {% block content %}
 
-    <div class="container" xmlns="http://www.w3.org/1999/html">
-        <div class="row">
-            <div class="span12 hero-unit">
-                <h1>Welcome to AppsCake!</h1>
-                <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
-                <p>
-                    AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
-                    virtual machines.</p>
-                <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
-                <hr/>
-
-
-
-
-            </div>
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="row">
+        <div class="span12 hero-unit">
+            <h1>Welcome to AppsCake!</h1>
+            <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
+            <p>AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
+                virtual machines.</p>
+            <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
+            <hr/>
         </div>
+    </div>
 
-
-
-        <div class="row">
-            <div class="span12">
-
-                <form action="/start/" method="post" data-validate="parsley"> {% csrf_token %}
-
-                    <label>Choose deployment infrastructure:</label>
-                    <label class="radio"><input class="" id="rdb1
-                    optionsRadio1" type="radio" name="toggler" value="1"
-                                                onclick="changeDeployType"
-                            />Cluster</label>
-                    <label class="radio"><input class="" id="rdb2" type="radio" name="toggler" value="2"  />Cloud</label>
-
-
-                    <div id="blk-1" class="toHide" style="display:none">
-                        <div class="span4" id="clusterDiv">
-                            {{ form.non_field_errors }}
-                            <label for="email">Admin Email:</label>
-                            {{ form.admin_email }}
-                            <label for="id_admin_pass">AppScale admin password:</label>
-                            {{ form.admin_pass }}
-                            <label for="id_pass_confirm">Confirm password:</label>
-                            {{ form.pass_confirm }}
-                            <label for="id_root_pass">Virtual machine root password:</label>
-                            {{ form.root_pass }}
-                            {{ form.cluster }}
-                            <br><br>
-                            <button type="submit" style="margin:0px 0 25px
-                            0px; width: 300px;" class="btn btn-large
-                            btn-success pull-left">Launch Now!</button>
-
-                        </div>
-
-                        <div class="span6">
-                            <p>Enter the desired deployment strategy in the dialog box below,
-                                if you are unfamiliar with how this works, please visit the
-                                <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
-                                Below is a sample strategy: </p>
-                                <pre>
+    <div class="row">
+        <div class="span3">
+            <form action="/start/" method="post" data-validate="parsley"> {% csrf_token %}
+                <label>Choose deployment infrastructure:</label>
+                <label class="radio"><input class="" id="rdb1 optionsRadio1" type="radio" name="toggler" value="1" onclick="changeDeployType"/>Cluster</label>
+                <label class="radio"><input class="" id="rdb2" type="radio" name="toggler" value="2"  />Cloud</label>
+        </div><!--close cluster/cloud span3-->
+<!--Cluster Deployment Form-->
+        <div class="span12">
+            <div id="blk-1" class="toHide" style="display:none">
+                <div class="span4" id="clusterDiv">
+                    {{ form.non_field_errors }}
+                    <label for="email">Admin Email:</label>
+                    {{ form.admin_email }}
+                    <label for="id_admin_pass">AppScale admin password:</label>
+                    {{ form.admin_pass }}
+                    <label for="id_pass_confirm">Confirm password:</label>
+                    {{ form.pass_confirm }}
+                    <label for="id_root_pass">Virtual machine root password:</label>
+                    {{ form.root_pass }}
+                    {{ form.cluster }}
+                    <br><br>
+                    <button type="submit" style="margin:0px 0 25px
+                    0px; width: 300px;" class="btn btn-large
+                    btn-success pull-left">Launch Now!</button>
+                </div>
+                <div class="span6">
+                    <p>Enter the desired deployment strategy in the dialog box below,
+                        if you are unfamiliar with how this works, please visit the
+                        <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
+                        Below is a sample strategy: </p>
+                        <pre>
 master : 192.168.33.10
 appengine: 192.168.33.10
 database: 192.168.33.10
 zookeeper: 192.168.33.10
-                                </pre>
-                            <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
-                            {{ form.ips_yaml }}
-                            {{ field }}
-                </form>
+                        </pre>
+                    <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
+                    {{ form.ips_yaml }}
+                    {{ field }}
+                    </form>
+                </div><!--Close IPS - span6 -->
+            </div><!--Closes blk-1 hidden div-->
+        </div><!--Closes span12-->
+    </div><!--Closes row-->
+
+<!--Cloud Deployment Form-->
+    <div class="span12">
+        <div id="blk-2" class="row toHide" style="display:none">
+            <div class="brd span4" id="">
+                <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <label>Deployment strategy:</label>
+                    {{ form.deployment_type }}
+                    <label for="email">Admin Email:</label>
+                    {{ form.admin_email }}
+                    <label for="id_admin_pass">Admin password:</label>
+                    {{ form.cloud_admin_pass }}
+                    <label for="id_pass_confirm">Confirm password:</label>
+                    {{ form.cloud_pass_confirm }}
+                    <label for="deploy_option1">Choose infrastructure:</label>
+                    {{ form.infrastructure }}
+                    <label>EC2/EUCA URL (required for Eucalyptus):</label>
+                    {{ form.ec2_euca_url }}
+                    <label for="instance_type">Instance type:</label>
+                    {{ form.instance_type }}
+                    <label for="key">EC2/Eucalyptus Access Key:</label>
+                    {{ form.key }}
+                    <label for="secret">EC2/Eucalyptus Secret Key:</label>
+                    {{ form.secret }}
+                    {{ form.cloud }}
+                    <label>AMI/EMI:</label>
+                    {{ form.machine }}
+                    <br><br>
+                    <button type="submit" style="margin:0px 0 25px 0px; width:
+                    300px;" class="btn btn-large btn-success pull-left">Launch
+                      Now!</button>
             </div>
-        </div>
-    </div>
-
-
-    </div>
-    <div id="blk-2" class="row toHide" style="display:none">
-
-        <div class="brd span4" id="">
-            <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
-                {{ form.non_field_errors }}
-
-                <label>Deployment strategy:</label>
-
-
-                {{ form.deployment_type }}
-                <label for="email">Admin Email:</label>
-                {{ form.admin_email }}
-                <label for="id_admin_pass">Admin password:</label>
-                {{ form.cloud_admin_pass }}
-                <label for="id_pass_confirm">Confirm password:</label>
-                {{ form.cloud_pass_confirm }}
-                <label for="deploy_option1">Choose infrastructure:</label>
-                {{ form.infrastructure }}
-                <label>URL (required for Eucalyptus):</label>
-                {{ form.ec2_euca_url }}
-                <label for="instance_type">Instance type:</label>
-                {{ form.instance_type }}
-                <label for="key">EC2/Eucalyptus Access Key:</label>
-                {{ form.key }}
-                <label for="secret">EC2/Eucalyptus Secret Key:</label>
-                {{ form.secret }}
-                {{ form.cloud }}
-                <label>AMI/EMI:</label>
-                {{ form.machine }}
-                <br><br>
-                <button type="submit" style="margin:0px 0 25px 0px; width:
-                300px;" class="btn btn-large btn-success pull-left">Launch
-                  Now!</button>
-
-        </div>
-
-        <div class="span7">
-            <div id="advanced" class="box" >
-              <p>Enter the desired deployment strategy in the dialog box below,
-                if you are unfamiliar with how this works, please visit the
-                <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
-                Below is a sample strategy: </p>
-                                <pre>
-  master : 192.168.33.10
-  appengine: 192.168.33.10
-  database: 192.168.33.10
-  zookeeper: 192.168.33.10
-                                </pre>
-                <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
-                {{ form.ips_yaml }}
+            <div class="span7">
+                <div id="advanced" class="box" >
+                  <p>Enter the desired deployment strategy in the dialog box below,
+                    if you are unfamiliar with how this works, please visit the
+                    <a href="https://github.com/AppScale/appscale/wiki/Advanced-Deployment">docs</a>.
+                    Below is a sample strategy: </p>
+                    <pre>
+master : 192.168.33.10
+appengine: 192.168.33.10
+database: 192.168.33.10
+zookeeper: 192.168.33.10
+                    </pre>
+                    <label for="id_ips_yaml">Enter your ips.yaml configuration below:</label>
+                    {{ form.ips_yaml }}
+                </div><!--Close advanced input -->
+                <div id="simple" class="box span4">
+                    <label style="float: left;" for="amount">Maximum number of nodes to deploy over:</label>
+                    <p>{{ form.max }}</p>
+                    <div id="slider"></div>
+                </div><!--Close simple input-->
+               </form>
             </div>
-          <!--min/max-->
-            <div id="simple" class="box span4">
-        <label style="float: left;" for="amount">
-            Maximum number of nodes to deploy over:</label>
-        <p>{{ form.max }}</p>
-                <div id="slider-range"></div>
-            </div>
-
-            </form>
-        </div>
-
-
-
-
+        </div><!--Close hidden blk-2 -->
     </div>
-    </div>
-
-
-
-
 {% endblock %}
