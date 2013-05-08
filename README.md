@@ -12,8 +12,7 @@ are not familiar with general cloud principles or those who are not
 comfortable working with a traditional command line interface can get
 started with deploying AppScale clouds.
 
-AppsCake has been developed using the Python programming language and is
-based on Django. 
+AppsCake has been developed using the Python programming language and uses Django.
 
 ## Prerequisites ##
 - Python 2.7
@@ -23,11 +22,12 @@ based on Django.
 - Expect (http://downloads.sourceforge.net/project/expect/Expect/5.45/expect5.45.tar.gz or 
   ```apt-get install expect```)
 
-# Tools Install Process ##
-Run ```bash get_tools.sh```.
+## Tools Install Process ##
+Run ```bash get_tools.sh```, which downloads the AppScale Tools and puts them in the
+appscake directory. Next, install the AppScale Tools:
 
 ### On an AppScale Image ###
-Install the tools for python2.7 by going into appscale/tools/src_install and running
+Install the tools for Python 2.7 by going into appscale-tools/src_install and running
 ```bash appscale_install.sh```
 
 ### For Mac OSX ###
@@ -39,7 +39,7 @@ Install the tools by going into appscale-tools/debian and running
 ```bash appscale_install.sh```
 
 ### Source Install ###
-Install the tools for python2.7 by going into appscale/tools/src_install
+Install the tools by going into appscale-tools/src_install and running
 ```bash appscale_install.sh```
 
 # Running AppsCake #
@@ -47,13 +47,13 @@ Install the tools for python2.7 by going into appscale/tools/src_install
 
 Go to http://localhost:8000 with a browser. 
 
-If you are running AppsCake on the image that you will be starting AppScale:
+If you are running AppsCake on the image that you will be starting AppScale, start AppsCake by running:
 ```/usr/local/Python-2.7.3/python manage.py runserver <ip>:8090```
 
-Go to http://<ip>:8090 with a browser.
+Go to `http://<ip>:8090` with a browser.
 
 ### Issues ###
-Contact us if you have problems at: support@appscale.com or visit our IRC channel #appscale on freenode.net.
+Contact us if you have problems at support@appscale.com or visit our IRC channel, #appscale on freenode.net.
 
 
 License
