@@ -6,15 +6,12 @@
         <div class="span12 hero-unit">
             <h1>Welcome to AppsCake!</h1>
             <h3>AppsCake makes deploying AppScale a piece of cake!</h3>
-            <p>
-                AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
+            <p>AppsCake currently supports deployment strategies over Amazon EC2, Eucalyptus and
                 virtual machines.</p>
             <p><a href="http://www.appscale.com/" class="btn btn-primary btn-large">Learn more about AppScale &raquo;</a></p>
             <hr/>
         </div>
     </div>
-
-
 
     <div class="row">
         <div class="span3">
@@ -23,6 +20,7 @@
                 <label class="radio"><input class="" id="rdb1 optionsRadio1" type="radio" name="toggler" value="1" onclick="changeDeployType"/>Cluster</label>
                 <label class="radio"><input class="" id="rdb2" type="radio" name="toggler" value="2"  />Cloud</label>
         </div><!--close cluster/cloud span3-->
+<!--Cluster Deployment Form-->
         <div class="span12">
             <div id="blk-1" class="toHide" style="display:none">
                 <div class="span4" id="clusterDiv">
@@ -61,7 +59,7 @@ zookeeper: 192.168.33.10
         </div><!--Closes span12-->
     </div><!--Closes row-->
 
-
+<!--Cloud Deployment Form-->
     <div class="span12">
         <div id="blk-2" class="row toHide" style="display:none">
             <div class="brd span4" id="">
@@ -117,8 +115,4 @@ zookeeper: 192.168.33.10
             </div>
         </div><!--Close hidden blk-2 -->
     </div>
-
-
-
-
 {% endblock %}
