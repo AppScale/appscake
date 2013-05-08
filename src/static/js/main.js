@@ -25,16 +25,13 @@ $(document).ready(function () {
 $("#slider").slider({
     range: "min",
     value: 1,
-    min: 0,
+    min: 1,
     max: 8,
     slide: function( event, ui ) {
         $( "#amount" ).val( ui.value );
     }
 });
-
-
 $("#amount").change(function () {
     var value = this.value.substring();
-    console.log(value);
     $("#slider").slider("value", parseInt(value));
 });

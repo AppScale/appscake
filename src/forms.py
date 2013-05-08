@@ -6,8 +6,8 @@ from django.core.validators import validate_email
 # Infrastructures to choose from for cloud deployments. Tuples map form names
 # to labels.
 INFRAS = [
-  'ec2', 'Amazon EC2',
-  'euca', 'Eucalyptus']
+    ('ec2', 'Amazon EC2'),
+    ('euca', 'Eucalyptus')]
 
 # Deployment options. Tuples map form names to labels.
 DEPLOYS = [('cluster','Cluster'),
