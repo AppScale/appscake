@@ -20,20 +20,23 @@ $(document).ready(function () {
 
 $(function() {
     var options = {
+        range: "min",
+        value: 1,
         min: 1,
         max: 8,
-        values: [1],
         slide: function(event, ui) {
             $("#amount").val(ui.value);
         }
     }, min;
 
-    $("#slider-range").slider(options);
-    min = $("#slider-range").slider("values", 0);
+    $("#slider").slider(options);
+    min = $("#slider").slider("values", 0);
 
     $("#amount").val("" + min );
 
 });
 
-
-
+$("#amount").change(function () {
+    var value = this.value.substring();
+    $("#slider").slider("value", parseInt(value));
+});
