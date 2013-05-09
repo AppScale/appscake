@@ -80,7 +80,7 @@ cd appscake
 source bin/activate
 ```
 
-5. Installing dependencies for debian systems -- for Mac OSX ensure git and expect are installed in your path:
+5. Installing dependencies for debian systems -- for Mac OSX ensure git and expect are installed in your path (if not use homebrew to install):
 ```
 sudo apt-get install git-core
 sudo apt-get install expect
@@ -100,7 +100,7 @@ sudo pip install -r requirements.txt
 
 8. Running AppsCake:
 ```
-python  manage.py runserver
+python manage.py runserver
 ```
 
 9. Navigate to the URL returned from the command above to use AppsCake.
