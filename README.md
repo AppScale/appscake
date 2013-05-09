@@ -99,7 +99,9 @@ sudo pip install -r requirements.txt
 ```
 
 8. Running AppsCake:
-```pytohn manage.py runserver```
+```
+python  manage.py runserver
+```
 
 
 
