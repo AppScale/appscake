@@ -61,7 +61,9 @@ Contact us if you have problems at support@appscale.com or visit our IRC channel
 Prerequisites:Python 2.6+ , pip/easy_install
 
 1. Installing virtualenv & virtualenvwrapper (http://www.virtualenv.org/) via the terminal:
-```sudo pip install virtualenvwrapper```
+```
+sudo pip install virtualenvwrapper
+```
 
 2. Create the AppsCake virtualenv working directory:
 ```
