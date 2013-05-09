@@ -73,8 +73,10 @@ pip/easy_install
 ```source bin/activate```
 
 5. Installing dependencies:
-```sudo apt-get install git-core```
-```sudo apt-get install expect```
+```
+sudo apt-get install git-core
+sudo apt-get install expect
+```
 
 6. Cloning the AppsCake repository:
 ```git clone https://github.com/AppScale/appscake.git```
