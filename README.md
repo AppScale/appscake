@@ -103,7 +103,7 @@ sudo pip install -r requirements.txt
 python  manage.py runserver
 ```
 
-
+9. Navigate to the URL returned from the command above to use AppsCake.
 
 
 
