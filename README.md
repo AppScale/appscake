@@ -80,7 +80,7 @@ cd appscake
 source bin/activate
 ```
 
-5. Installing dependencies for debian systems -- for Mac OSX ensure git and expect are installed in your path (if not use <a href="#">homebrew</a> to install):
+5. Installing dependencies for debian systems -- for Mac OSX ensure git and expect are installed in your path (if not use <a href="http://mxcl.github.io/homebrew/">Homebrew</a> to install):
 ```
 sudo apt-get install git-core
 sudo apt-get install expect
