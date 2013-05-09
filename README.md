@@ -64,13 +64,19 @@ Prerequisites:Python 2.6+ , pip/easy_install
 ```sudo pip install virtualenvwrapper```
 
 2. Create the AppsCake virtualenv working directory:
-```virtualenv appscake```
+```
+virtualenv appscake-env
+```
 
 3. Open newly created virtualenv working directory:
-```cd appscake```
+```
+cd appscake
+```
 
 4. Activate the AppsCake virtualenv.
-```source bin/activate```
+```
+source bin/activate
+```
 
 5. Installing dependencies:
 ```
