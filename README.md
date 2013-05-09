@@ -85,7 +85,9 @@ sudo apt-get install expect
 ```
 
 6. Cloning the AppsCake repository:
-```git clone https://github.com/AppScale/appscake.git```
+```
+git clone https://github.com/AppScale/appscake.git
+```
 
 7. Installing the AppScale Tools and requirements:
 ```
