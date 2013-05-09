@@ -55,10 +55,10 @@ Go to `http://<ip>:8090` with a browser.
 ### Issues ###
 Contact us if you have problems at support@appscale.com or visit our IRC channel, #appscale on freenode.net.
 
-### AppsCake w/ virtualenv ###
-Prerequisites:
-Python 2.6+ 
-pip/easy_install
+***
+
+# AppsCake w/ virtualenv #
+Prerequisites:Python 2.6+ , pip/easy_install
 
 1. Installing virtualenv & virtualenvwrapper (http://www.virtualenv.org/) via the terminal:
 ```sudo pip install virtualenvwrapper```
