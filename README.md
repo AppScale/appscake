@@ -55,6 +55,57 @@ Go to `http://<ip>:8090` with a browser.
 ### Issues ###
 Contact us if you have problems at support@appscale.com or visit our IRC channel, #appscale on freenode.net.
 
+***
+
+# AppsCake w/ virtualenv #
+Prerequisites: Python 2.6+, pip/easy_install
+
+1. Installing virtualenv/virtualenvwrapper via the terminal:
+```
+sudo pip install virtualenvwrapper
+```
+
+2. Create the AppsCake virtualenv working directory:
+```
+virtualenv appscake-env
+```
+
+3. Open newly created virtualenv working directory:
+```
+cd appscake
+```
+
+4. Activate the AppsCake virtualenv:
+```
+source bin/activate
+```
+
+5. Installing dependencies for debian systems -- for Mac OSX ensure git and expect are installed in your path (if not use <a href="http://mxcl.github.io/homebrew/">Homebrew</a> to install):
+```
+sudo apt-get install git-core
+sudo apt-get install expect
+```
+
+6. Cloning the AppsCake repository:
+```
+git clone https://github.com/AppScale/appscake.git
+```
+
+7. Installing the AppScale Tools and requirements:
+```
+cd appscake
+bash get_tools.sh
+sudo pip install -r requirements.txt
+```
+
+8. Running AppsCake:
+```
+python manage.py runserver
+```
+
+9. Navigate to the URL returned from the command above to use AppsCake.
+
+
 
 License
 -------
