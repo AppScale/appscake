@@ -80,7 +80,7 @@ cd appscake
 source bin/activate
 ```
 
-5. Installing dependencies:
+5. Installing dependencies for debian systems:
 ```
 sudo apt-get install git-core
 sudo apt-get install expect
