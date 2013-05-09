@@ -60,33 +60,33 @@ Prerequisites:
 Python 2.6+ 
 pip/easy_install
 
-(1) Installing virtualenv & virtualenvwrapper (http://www.virtualenv.org/) via the terminal:
+1. Installing virtualenv & virtualenvwrapper (http://www.virtualenv.org/) via the terminal:
 ```sudo pip install virtualenvwrapper```
 
-(2) Create the AppsCake virtualenv working directory via the terminal.
+2. Create the AppsCake virtualenv working directory:
 ```virtualenv appscake```
 
-(3) Open newly created virtualenv working directory.
+3. Open newly created virtualenv working directory:
 ```cd appscake```
 
-(4) Activate the AppsCake virtualenv.
+4. Activate the AppsCake virtualenv.
 ```source bin/activate```
 
-(5) Installing dependencies:
+5. Installing dependencies:
 ```sudo apt-get install git-core```
 ```sudo apt-get install expect```
-```sudo bin/pip install -r requirements.txt```
 
-(6) Cloning the AppsCake repository:
+6. Cloning the AppsCake repository:
 ```git clone https://github.com/AppScale/appscake.git```
 
-(6) Installing the AppScale Tools:
+7. Installing the AppScale Tools and requirements:
 ```
 cd appscake
 bash get_tools.sh
+sudo pip install -r requirements.txt
 ```
 
-(7) Running AppsCake:
+8. Running AppsCake:
 ```pytohn manage.py runserver```
 
 
