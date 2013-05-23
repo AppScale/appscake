@@ -64,6 +64,7 @@ zookeeper: 192.168.33.10
         <div id="blk-2" class="row toHide" style="display:none">
             <div class="brd span4" id="">
                 <form action="/start/" method="post" id="appscake-form" data-validate="parsley"> {% csrf_token %}
+                    {{ form.cloud }}<!--Hidden Input-->
                     {{ form.non_field_errors }}
                     <label>Deployment strategy:</label>
                     {{ form.deployment_type }}
@@ -75,17 +76,33 @@ zookeeper: 192.168.33.10
                     {{ form.cloud_pass_confirm }}
                     <label for="deploy_option1">Choose infrastructure:</label>
                     {{ form.infrastructure }}
+                    <div id="url">
                     <label>EC2/EUCA URL (required for Eucalyptus):</label>
-                    {{ form.ec2_euca_url }}
+                    {{ form.ec2_euca_url }}</div>
+                    <div id="instance_type">
                     <label for="instance_type">Instance type:</label>
-                    {{ form.instance_type }}
+                    {{ form.instance_type }}</div>
+                    <div id="access_key">
                     <label for="key">EC2/Eucalyptus Access Key:</label>
-                    {{ form.key }}
+                    {{ form.key }}</div>
+                    <div id="secret_key">
                     <label for="secret">EC2/Eucalyptus Secret Key:</label>
-                    {{ form.secret }}
-                    {{ form.cloud }}
+                    {{ form.secret }}</div>
+                    <div id="machine_type">
                     <label>AMI/EMI:</label>
-                    {{ form.machine }}
+                    {{ form.machine }}</div>
+                    <div id="gce_creds" style="display: none">
+                    <label for="gce_creds">GCE JSON Credentials:</label>
+                        {{ form.gceCredentials }}
+                    </div>
+                    <div id="gce_project" style="display: none">
+                    <label for="gce_project">GCE Project Id:</label>
+                        {{ form.gceProjectId }}
+                    </div>
+                    <div id="gce_image" style="display: none">
+                        <label for="gce_image">GCE Image Name:</label>
+                        {{ form.gceImageName }}
+                    </div>
                     <br><br>
                     <button type="submit" style="margin:0px 0 25px 0px; width:
                     300px;" class="btn btn-large btn-success pull-left">Launch

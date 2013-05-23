@@ -7,7 +7,8 @@ from django.core.validators import validate_email
 # to labels.
 INFRAS = [
     ('ec2', 'Amazon EC2'),
-    ('euca', 'Eucalyptus')]
+    ('euca', 'Eucalyptus'),
+    ('gce', 'Google Compute Engine')]
 
 # Deployment options. Tuples map form names to labels.
 DEPLOYS = [('cluster','Cluster'),
@@ -73,26 +74,39 @@ class CommonFields(forms.Form):
     'readonly':'cluster'}))
 
   admin_email = forms.EmailField(validators=[validate_email], max_length=40,
-    required=True, widget=forms.TextInput(attrs={'id':'email', 
-    'data-type':'email', 'name':"email", 'data-trigger':"change", 
-    'data-required':"true"}))
+    required=True, widget=forms.TextInput(attrs={
+      'id':'email',
+      'data-type':'email',
+      'name':"email",
+      'data-trigger':"change",
+      'data-required':"true"}))
 
   admin_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'admin_pass', 'name':"admin_pass", 'class': 
-    'required parsley-validate', 'data-minlength': '6', 
-    'data-required':"true"}), label="AppScale Admin Password", min_length=6, 
-    required=True, )
+    attrs={
+      'id':'admin_pass',
+      'name':"admin_pass",
+      'class': 'required parsley-validate',
+      'data-minlength': '6',
+      'data-required':"true"
+    }), label="AppScale Admin Password", min_length=6, required=True, )
 
   root_pass = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'root_pass', 'name':"root_pass", 'class': 
-    'required parsley-validate', 'data-minlength': '6', 'data-required':
-    "true"}), label="Virtual Machine Root Password", min_length=6, 
-     required=True, )
+    attrs={
+      'id':'root_pass',
+      'name':"root_pass",
+      'class': 'required parsley-validate',
+      'data-minlength': '6',
+      'data-required': "true"
+    }), label="Virtual Machine Root Password", min_length=6, required=True, )
 
   pass_confirm = forms.CharField(widget=forms.PasswordInput(render_value=False,
-    attrs={'id':'pass_confirm', 'class': 'required parsley-validate', 
-    'data-equalto': '#admin_pass', 'name':'pass_confirm', 'data-minlength': 
-    '6', 'data-required':"true"}), label="Confirm Password", min_length=6)
+    attrs={
+      'id':'pass_confirm',
+      'class': 'required parsley-validate',
+      'data-equalto': '#admin_pass',
+      'name':'pass_confirm', 'data-minlength': '6',
+      'data-required':"true"
+    }), label="Confirm Password", min_length=6)
 
   cloud_admin_pass = forms.CharField(widget=forms.PasswordInput(
     render_value=False,
@@ -113,12 +127,21 @@ class CommonFields(forms.Form):
     label="Confirm Password", min_length=6)
 
   keyname = forms.CharField(min_length=4, max_length=24, required=True,
-    widget=forms.TextInput(attrs={'id':'keyname', 'name':"keyname",
-    'data-trigger':"change", 'data-required':"true"}))
+    widget=forms.TextInput(attrs={
+      'id':'keyname',
+      'name':"keyname",
+      'data-trigger':"change",
+      'data-required':"true"
+    }))
 
   ips_yaml = forms.CharField(label=("ips.yaml"), max_length=120,
-    widget=forms.Textarea(attrs={'id':'ips_yaml', 'name':"ips",
-    'data-trigger':"change", 'data-required':"true", 'class': 'required'}), 
+    widget=forms.Textarea(attrs={
+      'id':'ips_yaml',
+      'name':"ips",
+      'data-trigger':"change",
+      'data-required':"true",
+      'class': 'required'
+    }),
     required=True)
 
   ec2_euca_url = forms.CharField(label='Eucalyptus URL',
@@ -133,5 +156,25 @@ class CommonFields(forms.Form):
 
   machine = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
     'data-required': 'true',
+  }))
+
+  #Form for JSON GCE credentials
+  gceCredentials = forms.CharField(max_length=100, widget=forms.TextInput(
+    attrs={
+    'placeholder': 'Paste your GCE JSON credentials',
+    'id': 'gce-credentials',
+    'data-required': 'true',
+  }))
+
+  #Form for entering your project ID
+  gceProjectId = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+    'id': 'gce-project-id',
+  }))
+
+  #Form for naming your image
+  gceImageName = forms.CharField(max_length=100, widget=forms.TextInput(attrs={
+    'data-required': 'true',
+    'id': 'gce-image-name',
   }))
 

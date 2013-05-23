@@ -9,7 +9,7 @@
 
 #root_pass, #admin_pass, #id_machine, #id_ec2_euca_url, #cloud_admin_pass, #cloud_pass_confirm,
 #pass_confirm, #keyname, #email, #id_key, #id_secret, #id_deploy_option1, #id_deploy_option2,
-#dk_container_id_machine, #dk_container_infrastructure{
+#dk_container_id_machine, #dk_container_infrastructure, #gce-credentials, #gce-image-name, #gce-project-id{
     width: 288px;
 }
 

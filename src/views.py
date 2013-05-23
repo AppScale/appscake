@@ -171,6 +171,9 @@ def start(request):
       access_key = form['key'].value()
       secret_key = form['secret'].value()
       ec2_url = form['ec2_euca_url'].value()
+    #Blocked on GCE tools support
+    #elif infras == form['infrastructure'].value('gce'):
+      
       if not ec2_url:
         ec2_url = None
 
