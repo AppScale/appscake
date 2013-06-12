@@ -1,0 +1,5 @@
+boto
+django
+soappy
+pyyaml
+termcolor
