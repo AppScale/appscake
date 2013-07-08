@@ -3,4 +3,4 @@ django
 soappy
 pyyaml
 termcolor
-expect
+
