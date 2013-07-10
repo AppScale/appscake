@@ -1,0 +1,30 @@
+upstream app_server {
+  server 127.0.0.1:8000 fail_timeout=0;
+}
+
+server {
+       listen         80;
+       server_name    _;
+       rewrite        ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+  listen 443 ssl;
+  ssl on;
+  ssl_certificate server.crt;
+  ssl_certificate_key server.key;
+  client_max_body_size 4G;
+  keepalive_timeout 5;
+  root /root/appscake;
+
+  location / {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    if (!-f $request_filename) {
+      proxy_pass http://app_server;
+      break;
+    }
+  }
+  error_page 500 502 503 504 /500.html;
+}
