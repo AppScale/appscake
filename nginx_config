@@ -1,16 +1,16 @@
 upstream app_server {
-  server {{ my_public_ip }}:8000 fail_timeout=0;
+  server {{ my_private_ip }}:8000 fail_timeout=0;
 }
 
 server {
        listen         80;
-       server_name    localhost;
+       server_name    {{ my_public_ip }};
        rewrite        ^ https://$server_name$request_uri? permanent;
 }
 
 server {
   listen 443 ssl;
-  server_name localhost;
+  server_name {{ my_public_ip }};
   ssl on;
   ssl_certificate /etc/nginx/appscake-cert.pem;
   ssl_certificate_key /etc/nginx/appscake-key.pem;
