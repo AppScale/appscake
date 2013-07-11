@@ -4,15 +4,15 @@ upstream app_server {
 
 server {
        listen         80;
-       server_name    _;
+       server_name    0.0.0.0;
        rewrite        ^ https://$server_name$request_uri? permanent;
 }
 
 server {
   listen 443 ssl;
   ssl on;
-  ssl_certificate server.crt;
-  ssl_certificate_key server.key;
+  ssl_certificate appscake-cert.pem;
+  ssl_certificate_key appscake-key.pem;
   client_max_body_size 4G;
   keepalive_timeout 5;
   root /root/appscake;

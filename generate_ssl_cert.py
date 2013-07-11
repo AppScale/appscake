@@ -1,3 +1,5 @@
+import subprocess
+
 class NginxCert():
 
   # The path on the local filesystem where we can read and write
@@ -34,7 +36,7 @@ class NginxCert():
 
 
   @classmethod
-  def generate_ssl_cert(cls, keyname, is_verbose):
+  def generate_ssl_cert(cls, keyname):
     """Generates a self-signed SSL certificate that AppScale services can use
     to encrypt traffic with.
 
@@ -44,7 +46,13 @@ class NginxCert():
       is_verbose: A bool that indicates if we want to print out the certificate
         generation to stdout or not.
     """
-    cls.shell("openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 " + \
+    subprocess.call("openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 " + \
       "-subj '/C=US/ST=Foo/L=Bar/O=AppScale/CN=appscale.com' " + \
       "-keyout {0} -out {1}".format(NginxCert.get_private_key_location(keyname),
-      NginxCert.get_certificate_location(keyname)), is_verbose, stdin=None)
+      NginxCert.get_certificate_location(keyname)), shell=True)
+
+    def main():
+      NginxCert.generate_ssl_cert('appscake')
+
+    if __name__ == '__main__':
+      main()
