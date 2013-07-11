@@ -51,8 +51,8 @@ class NginxCert():
       "-keyout {0} -out {1}".format(NginxCert.get_private_key_location(keyname),
       NginxCert.get_certificate_location(keyname)), shell=True)
 
-    def main():
-      NginxCert.generate_ssl_cert('appscake')
+def main():
+  NginxCert.generate_ssl_cert('appscake')
 
-    if __name__ == '__main__':
-      main()
+if __name__ == '__main__':
+  main()

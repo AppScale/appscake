@@ -1,18 +1,18 @@
 upstream app_server {
-  server 127.0.0.1:8000 fail_timeout=0;
+  server {{ my_public_ip }}:8000 fail_timeout=0;
 }
 
 server {
        listen         80;
-       server_name    0.0.0.0;
+       server_name    localhost;
        rewrite        ^ https://$server_name$request_uri? permanent;
 }
 
 server {
   listen 443 ssl;
   ssl on;
-  ssl_certificate appscake-cert.pem;
-  ssl_certificate_key appscake-key.pem;
+  ssl_certificate /etc/nginx/appscake-cert.pem;
+  ssl_certificate_key /etc/nginx/appscake-key.pem;
   client_max_body_size 4G;
   keepalive_timeout 5;
   root /root/appscake;
