@@ -1,5 +1,5 @@
 upstream app_server {
-  server {{ my_private_ip }}:8000 fail_timeout=0;
+  server {{ my_public_ip }}:8000 fail_timeout=0;
 }
 
 server {
