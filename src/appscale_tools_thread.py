@@ -7,6 +7,7 @@ import os
 import sys
 import threading
 
+sys.path.append(os.path.join(os.path.dirname(__file__),"."))
 #  Since AppScake doesn't run the tools on the main thread, use a fake
 #  implementation of the signal class.
 import fake_signal
