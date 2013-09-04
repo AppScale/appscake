@@ -366,6 +366,7 @@ class AppScaleUp(threading.Thread):
                       "--machine", self.machine,  
                       "--ips_layout", self.ips_yaml_b64,
                       "--group", self.keyname,
+                      "--force",
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
@@ -382,6 +383,7 @@ class AppScaleUp(threading.Thread):
                       "--machine", self.machine,  
                       "--max", self.max_nodes,
                       "--group", self.keyname,
+                      "--force",
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
