@@ -7,13 +7,12 @@ import os
 import sys
 import threading
 
-sys.path.append(os.path.join(os.path.dirname(__file__),"../appscale-tools/lib"))
-
 #  Since AppScake doesn't run the tools on the main thread, use a fake
-#  implementation of the signal class. 
+#  implementation of the signal class.
 import fake_signal
 sys.modules['signal'] = __import__('fake_signal').FakeSignal
 
+sys.path.append(os.path.join(os.path.dirname(__file__),"../appscale-tools/lib"))
 from appscale_tools import AppScaleTools
 from custom_exceptions import BadConfigurationException
 import parse_args
