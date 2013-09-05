@@ -22,25 +22,13 @@ AppsCake has been developed using the Python programming language and uses Djang
 - Expect (http://downloads.sourceforge.net/project/expect/Expect/5.45/expect5.45.tar.gz or 
   ```apt-get install expect```)
 
-## Tools Install Process ##
+## Install Process ##
 Run ```bash get_tools.sh```, which downloads the AppScale Tools and puts them in the
-appscake directory. Next, install the AppScale Tools:
+appscake directory.
 
-### On an AppScale Image ###
-Install the tools for Python 2.7 by going into appscale-tools/src_install and running
-```bash appscale_install.sh```
-
-### For Mac OSX ###
-Install the tools by going into appscale-tools/osx and running
-```bash appscale_install.sh```
-
-### For Debian based systems ###
-Install the tools by going into appscale-tools/debian and running
-```bash appscale_install.sh```
-
-### Source Install ###
-Install the tools by going into appscale-tools/src_install and running
-```bash appscale_install.sh```
+Next, install the tools dependencies by going into the appscake/debian directory
+and running
+```bash appscake_dependencies_install.sh```
 
 # Running AppsCake #
 ```python2.7 manage.py runserver localhost:8000```

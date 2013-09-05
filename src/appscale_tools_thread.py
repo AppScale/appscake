@@ -7,6 +7,12 @@ import os
 import sys
 import threading
 
+sys.path.append(os.path.join(os.path.dirname(__file__),"."))
+#  Since AppScake doesn't run the tools on the main thread, use a fake
+#  implementation of the signal class.
+import fake_signal
+sys.modules['signal'] = __import__('fake_signal').FakeSignal
+
 sys.path.append(os.path.join(os.path.dirname(__file__),"../appscale-tools/lib"))
 from appscale_tools import AppScaleTools
 from custom_exceptions import BadConfigurationException
@@ -106,7 +112,8 @@ class AppScaleDown(threading.Thread):
     if self.deployment_type == CLOUD:
       terminate_args.extend(["--EC2_SECRET_KEY", self.ec2_secret,
       "--EC2_ACCESS_KEY", self.ec2_access,
-      "--EC2_URL", self.ec2_url])
+      "--EC2_URL", self.ec2_url,
+      "--test"])
     try: 
       logging.info("Starting terminate instances.")
 
@@ -360,6 +367,7 @@ class AppScaleUp(threading.Thread):
                       "--machine", self.machine,  
                       "--ips_layout", self.ips_yaml_b64,
                       "--group", self.keyname,
+                      "--force",
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
@@ -376,6 +384,7 @@ class AppScaleUp(threading.Thread):
                       "--machine", self.machine,  
                       "--max", self.max_nodes,
                       "--group", self.keyname,
+                      "--force",
                       "--EC2_SECRET_KEY", self.ec2_secret,
                       "--EC2_ACCESS_KEY", self.ec2_access,
                       "--EC2_URL", self.ec2_url])
