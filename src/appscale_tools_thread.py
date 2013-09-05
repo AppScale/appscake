@@ -112,7 +112,8 @@ class AppScaleDown(threading.Thread):
     if self.deployment_type == CLOUD:
       terminate_args.extend(["--EC2_SECRET_KEY", self.ec2_secret,
       "--EC2_ACCESS_KEY", self.ec2_access,
-      "--EC2_URL", self.ec2_url])
+      "--EC2_URL", self.ec2_url,
+      "--test"])
     try: 
       logging.info("Starting terminate instances.")
 
